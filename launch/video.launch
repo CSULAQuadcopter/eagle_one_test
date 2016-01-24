@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- This is a sample lanuch file, please change it based on your needs -->
+<launch>
+    <node name="ardrone_driver"
+		pkg="ardrone_autonomy"
+		type="ardrone_driver"
+		output="screen"
+		clear_params="true"
+    />
+    <node
+		name="keyboard_controller"
+		pkg="ardrone_tutorials"
+		type="keyboard_controller.py"
+		required="true"
+	/>
+</launch>
