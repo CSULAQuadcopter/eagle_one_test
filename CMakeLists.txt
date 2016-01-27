@@ -133,6 +133,7 @@ add_executable(takeoff src/takeoff.cpp)
 add_executable(backandforth src/backandforth.cpp)
 # add_executable(turnaround src/turnaround.cpp)
 add_executable(forward_takeoff src/forward_takeoff.cpp)
+add_executable(sub_nav src/sub_nav.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -191,6 +192,7 @@ target_link_libraries(takeoff ${catkin_LIBRARIES})
 target_link_libraries(backandforth ${catkin_LIBRARIES})
 # target_link_libraries(turnaround ${catkin_LIBRARIES})
 target_link_libraries(forward_takeoff ${catkin_LIBRARIES})
+target_link_libraries(sub_nav ${catkin_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
