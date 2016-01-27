@@ -6,5 +6,5 @@ flight of the AR.Drone 2.0.
 ## Dependencies
 * rospy
 * roscpp
-* ardrone_autonom
+* ardrone_autonomy
 * ardrone_tutorials
