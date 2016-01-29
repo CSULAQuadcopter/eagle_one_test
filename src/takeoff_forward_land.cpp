@@ -54,12 +54,26 @@ int main(int argc, char** argv)
         {
             case TAKEOFF  :
             {
+                ROS_INFO{"MODE: TAKEOFF"}
                 ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
                         "ardrone_autonomy/Navdata", queue, &arAltdCallback);
-                    break;
+                break;
             }
-            case FLYING   : {break;}
-            case LANDING  : {break;}
+            case FLYING   :
+            {
+                ROS_INFO{"MODE: FLYING"}
+                break;
+            }
+            case LANDING  :
+            {
+                ROS_INFO{"MODE: LANDING"}
+                break;
+            }
+            default:
+            {
+                ROS_INFO{"Quitting"}
+                exit(0);
+            }
         }
     }
 
