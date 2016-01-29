@@ -24,23 +24,23 @@ Date modified: 1/27/2016
 void arNavDataCallback(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
     ROS_INFO("\nAltd: %i\n", msg->altd);
-    /*
+
     ROS_INFO("\n\nAccelerations\n\nax: %f\nay: %f\naz: %f\n\n",
              msg->ax, msg->ay, msg->az);
 
-    ROS_INFO("\nVelocities\n\nvx: %f\nvy: %f\nvz: %f\n\n",msg->vx, msg->vy, msg->vz);
-    */
+    ROS_INFO("\n\nVelocities\n\nvx: %f\nvy: %f\nvz: %f\n\n",msg->vx, msg->vy, msg->vz);
+
 }
 
 void arOdometyCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-    ROS_INFO("\nOdometry - Poses:\n");
-    ROS_INFO("\nx: %f\ny: %f\nz: %f",
-             msg->pose.pose.position.x,
-             msg->pose.pose.position.y,
-             msg->pose.pose.position.z);
+    ROS_INFO("\nOdometry - Quaternion:\n");
+    ROS_INFO("\nw: %f\nx: %f\ny: %f\nz: %f",
+             msg->pose.pose.orientation.w,
+             msg->pose.pose.orientation.x,
+             msg->pose.pose.orientation.y,
+             msg->pose.pose.orientation.z);
 }
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
