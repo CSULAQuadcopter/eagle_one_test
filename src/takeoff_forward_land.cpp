@@ -58,6 +58,7 @@ int main(int argc, char** argv)
             {
                 ROS_INFO("MODE: TAKEOFF");
                 pub_takeoff.publish(empty);
+                mode = FLYING;
                 break;
             }
             case FLYING   :
