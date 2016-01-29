@@ -59,8 +59,8 @@ int main(int argc, char** argv)
                         "ardrone_autonomy/Navdata", queue, &arAltdCallback);
                     break;
             }
-            case FLYING   : {break;}
-            case LANDING  : {break;}
+            case FLYING   : {break};
+            case LANDING  : {break};
         }
     }
 
