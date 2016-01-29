@@ -41,6 +41,8 @@ int main(int argc, char** argv)
     ros::NodeHandle node;
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
+    ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
+                "ardrone_autonomy/Navdata", queue, &arAltdCallback);
 
     // We start off in secure mode
     int mode = SECURE;
@@ -55,8 +57,7 @@ int main(int argc, char** argv)
             case TAKEOFF  :
             {
                 ROS_INFO("MODE: TAKEOFF");
-                ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
-                        "ardrone_autonomy/Navdata", queue, &arAltdCallback);
+                pub_takeoff.publish(empty);
                 break;
             }
             case FLYING   :
