@@ -35,17 +35,16 @@ int main(int argc, char** argv)
     // flight_command -> flight maneuvers
     std_msgs::Empty empty;
     geometry_msgs::Twist flight_command;
-
-    // We start off in secure mode
-    int mode = SECURE;
     int queue = 1000;
-    ros::Rate rate(200); // Hz
 
     // Nodehandler, publishers, subscribers
     ros::NodeHandle node;
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
 
+    // We start off in secure mode
+    int mode = SECURE;
+    ros::Rate rate(200); // Hz
 
     mode = TAKEOFF;
 
