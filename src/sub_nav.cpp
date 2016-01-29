@@ -18,6 +18,8 @@ Date modified: 1/27/2016
 
 // This is the callback to display the information received from the
 // /ardrone/navdata topic
+// The standard template for the callback is:
+//   callBackName     (const package_name::Message::ConstPtr& msg)
 void arNavDataCallback(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
     ROS_INFO("\nAltd: [%i]", msg->altd);
