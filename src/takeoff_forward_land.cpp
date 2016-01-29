@@ -46,9 +46,6 @@ int main(int argc, char** argv)
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
 
-    ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
-        "ardrone_autonomy/Navdata", queue, &arAltdCallback);
-
 
     mode = TAKEOFF;
 
@@ -57,10 +54,13 @@ int main(int argc, char** argv)
         switch(mode)
         {
             case TAKEOFF  :
-                ("/ardrone/takeoff", queue, &arTakeoffCallBack);
-                break;
-            case FLYING   : break;
-            case LANDING  : break;
+            {
+                ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
+                        "ardrone_autonomy/Navdata", queue, &arAltdCallback);
+                    break;
+            }
+            case FLYING   : {break};
+            case LANDING  : {break};
         }
     }
 
