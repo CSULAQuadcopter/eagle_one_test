@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     double time_now=(double)ros::Time::now().toSec();
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
-    ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
+    ros::Publisher pub_land = node.advertise<std_msgs::Empty>(
         "/ardrone/land", queue);
     ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
                 "ardrone_autonomy/Navdata", queue, &arAltdCallback);
