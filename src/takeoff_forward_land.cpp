@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 	flight_command.linear.z=0.0;
 	flight_command.angular.x=0.0;
 	flight_command.angular.y=0.0;
-	flight_command.angular.z=0.5;
+	flight_command.angular.z=0.0;
 
     while(ros::ok())
     {
@@ -91,7 +91,7 @@ int main(int argc, char** argv)
             case LANDING  :
             {
                 ROS_INFO("MODE: LANDING");
-                pub_land.publish(empty);
+                //pub_land.publish(empty);
                 break;
             }
             default:
