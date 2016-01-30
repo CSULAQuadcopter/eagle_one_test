@@ -78,7 +78,7 @@ int main(int argc, char** argv)
                 exit(0);
             }
         }
-        loop_rate.sleep();
+        rate.sleep();
     }
 
     return 0;
