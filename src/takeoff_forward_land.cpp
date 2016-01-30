@@ -81,6 +81,7 @@ int main(int argc, char** argv)
             case LANDING  :
             {
                 ROS_INFO("MODE: LANDING");
+                pub_land.publish(empty);
                 break;
             }
             default:
