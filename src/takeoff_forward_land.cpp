@@ -36,6 +36,7 @@ int main(int argc, char** argv)
     std_msgs::Empty empty;
     geometry_msgs::Twist flight_command;
     int queue = 1000;
+    double time_start=(double)ros::Time::now().toSec();
 
     // Nodehandler, publishers, subscribers
     ros::NodeHandle node;
@@ -59,7 +60,10 @@ int main(int argc, char** argv)
                 ROS_INFO("MODE: TAKEOFF");
                 pub_takeoff.publish(empty);
                 ros::spinOnce();
-                mode = FLYING;
+                if(time_start > 5)
+                {
+                    mode = FLYING;
+                }
                 break;
             }
             case FLYING   :
