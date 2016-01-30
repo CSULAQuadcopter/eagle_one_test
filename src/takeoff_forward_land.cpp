@@ -58,6 +58,7 @@ int main(int argc, char** argv)
             {
                 ROS_INFO("MODE: TAKEOFF");
                 pub_takeoff.publish(empty);
+                ros::spinOnce();
                 mode = FLYING;
                 break;
             }
@@ -77,6 +78,7 @@ int main(int argc, char** argv)
                 exit(0);
             }
         }
+        loop_rate.sleep();
     }
 
     return 0;
