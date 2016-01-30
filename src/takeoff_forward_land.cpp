@@ -56,12 +56,12 @@ int main(int argc, char** argv)
 
     mode = TAKEOFF;
 
-    forward_msg.linear.x=0.0;
-	forward_msg.linear.y=0.0;
-	forward_msg.linear.z=0.0;
-	forward_msg.angular.x=0.0;
-	forward_msg.angular.y=0.0;
-	forward_msg.angular.z=0.5;
+    flight_command.linear.x=0.0;
+	flight_command.linear.y=0.0;
+	flight_command.linear.z=0.0;
+	flight_command.angular.x=0.0;
+	flight_command.angular.y=0.0;
+	flight_command.angular.z=0.5;
 
     while(ros::ok())
     {
