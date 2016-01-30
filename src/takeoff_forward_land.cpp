@@ -43,6 +43,8 @@ int main(int argc, char** argv)
     double time_now=(double)ros::Time::now().toSec();
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
+    ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
+        "/ardrone/land", queue);
     ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
                 "ardrone_autonomy/Navdata", queue, &arAltdCallback);
 
@@ -61,7 +63,6 @@ int main(int argc, char** argv)
             {
                 ROS_INFO("MODE: TAKEOFF");
                 pub_takeoff.publish(empty);
-                ros::spinOnce();
                 if(time_now > time_start + 5.0)
                 {
                     mode = FLYING;
@@ -71,6 +72,10 @@ int main(int argc, char** argv)
             case FLYING   :
             {
                 ROS_INFO("MODE: FLYING");
+                if(time_now > time_start + 10.0)
+                {
+                    mode = LANDING;
+                }
                 break;
             }
             case LANDING  :
@@ -84,6 +89,7 @@ int main(int argc, char** argv)
                 exit(0);
             }
         }
+        ros::spinOnce();
         rate.sleep();
     }
 
