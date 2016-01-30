@@ -45,6 +45,8 @@ int main(int argc, char** argv)
         "/ardrone/takeoff", queue);
     ros::Publisher pub_land = node.advertise<std_msgs::Empty>(
         "/ardrone/land", queue);
+    ros::Publisher pub_flight = node.advertise<geometry_msgs::Twist>(
+        "/cmd_vel", queue);
     ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
                 "ardrone_autonomy/Navdata", queue, &arAltdCallback);
 
@@ -53,6 +55,13 @@ int main(int argc, char** argv)
     ros::Rate rate(200); // Hz
 
     mode = TAKEOFF;
+
+    forward_msg.linear.x=0.0;
+	forward_msg.linear.y=0.0;
+	forward_msg.linear.z=0.0;
+	forward_msg.angular.x=0.0;
+	forward_msg.angular.y=0.0;
+	forward_msg.angular.z=0.5;
 
     while(ros::ok())
     {
@@ -71,6 +80,7 @@ int main(int argc, char** argv)
             }
             case FLYING   :
             {
+                pub_flight.publish(flight_command);
                 ROS_INFO("MODE: FLYING");
                 if(time_now > time_start + 10.0)
                 {
