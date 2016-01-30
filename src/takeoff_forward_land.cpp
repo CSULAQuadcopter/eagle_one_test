@@ -36,10 +36,10 @@ int main(int argc, char** argv)
     std_msgs::Empty empty;
     geometry_msgs::Twist flight_command;
     int queue = 1000;
-    double time_start=(double)ros::Time::now().toSec();
 
-    // Nodehandler, publishers, subscribers
+    // Nodehandler, timer, publishers, subscribers
     ros::NodeHandle node;
+    double time_start=(double)ros::Time::now().toSec();
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
     ros::Subscriber sub_atld = node.subscribe<ardrone_autonomy::Navdata>(
