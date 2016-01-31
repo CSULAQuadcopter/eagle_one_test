@@ -1,41 +1,4 @@
 <?xml version="1.0"?>
-<!-- This is a sample lanuch file, please change it based on your needs -->
-<launch>
-    <!-- IPv4 address of your drone -->
-    <arg name="ip" default="192.168.1.1" />
-  <!-- Ultrasound frequency (7 or 8). -->
-  <arg name="freq" default="8" />
-    <node name="ardrone_driver"
-		pkg="ardrone_autonomy"
-		type="ardrone_driver"
-		output="screen" 
-		clear_params="true" 
-		args="-ip $(arg ip)">
-        <param name="outdoor" value="0" />
-        <param name="max_bitrate" value="4000" />
-        <param name="bitrate" value="4000" />
-        <param name="navdata_demo" value="0" />
-        <param name="flight_without_shell" value="0" />
-        <param name="altitude_max" value="4000" />
-        <param name="altitude_min" value="50" />
-        <param name="euler_angle_max" value="0.21" />
-        <param name="control_vz_max" value="700" />
-        <param name="control_yaw" value="1.75" />
-        <param name="detect_type" value="10" />
-        <param name="enemy_colors" value="3" />
-        <param name="detections_select_h" value="32" />
-        <param name="detections_select_v_hsync" value="128" />
-        <param name="enemy_without_shell" value="0" />
-        <param name="ultrasound_freq" value="$(arg freq)" />
-        <param name="realtime_navdata" value="true" />
-        <param name="realtime_video" value="true" />
-        <!-- Covariance Values (3x3 matrices reshaped to 1x9)-->
-        <rosparam param="cov/imu_la">[0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1]</rosparam>
-        <rosparam param="cov/imu_av">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]</rosparam>
-        <rosparam param="cov/imu_or">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 100000.0]</rosparam>
-    </node>
-</launch>
-
 <launch>
 	<!-- Launches the AR.Drone driver -->
 	<node
@@ -49,18 +12,18 @@
 	    <param name="outdoor" value="0" />
 
 	    <!-- Changes internal controller gains if we are flying without the propeller guard -->
-	    <param name="flight_without_shell" value="0" /> 
+	    <param name="flight_without_shell" value="0" />
 
-	    <!-- in millimeters = 3 meters = 9' -->
-	    <param name="altitude_max" value="2500" />
+	    <!-- in millimeters = 3 meters = 9' (2500)-->
+	    <param name="altitude_max" value="50000" />
 	    <!-- in millimeters = 5cm = 2" -->
         <param name="altitude_min" value="50" />
-        <!-- maximum allowable body angle in radians = 5 degrees -->
-        <param name="euler_angle_max" value="0.1" />
-		<!-- maximum z velocity in mm/sec = 0.2m/sec -->
+        <!-- maximum allowable body angle in radians = 5 degrees (0.1)-->
+        <param name="euler_angle_max" value="1" />
+		<!-- maximum z velocity in mm/sec = 0.2m/sec (100)-->
         <param name="control_vz_max" value="1000" />
-		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) -->
-	    <param name="control_yaw" value="0.7" />
+		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) (0.7)-->
+	    <param name="control_yaw" value="1" />
 
 	    <param name="detect_type" value="10" />
 		<!-- In the horizontal camera, look for the orange-blue-orange markers -->
@@ -70,7 +33,10 @@
 		<!-- Orange-Blue-Orange = 3 -->
 		<param name="enemy_colors" value="3" />
 		<!-- Detect the indoor stickers, rather than the outdoor hull -->
-	    <param name="enemy_without_shell" value="0" />
+	    <param name="enemy_without_shell" value="0" />\
+        <rosparam param="cov/imu_la">[0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1]</rosparam>
+        <rosparam param="cov/imu_av">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]</rosparam>
+        <rosparam param="cov/imu_or">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 100000.0]</rosparam>
 	</node>
 
 	<!-- Launches the keyboard controller -->

@@ -6,15 +6,17 @@ The QuadCopter (QC) will take off move forward and then land
 Inputs
 Outputs
 
-Created by: Josh Saunders
+Created by: Josh Saunders (jay3ss)
 Date Created: 1/29/2016
 
-Modified by:
-Date Modified:
+Modified by: Josh Saunders (jay3ss)
+Date Modified: 1/30/2016
 
+Problems: Program is now hanging during simulation. Look into timers in Gazebo
 */
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
+#include <iostream>
 #include <geometry_msgs/Twist.h>
 #include <ardrone_autonomy/Navdata.h>
 #include <nav_msgs/Odometry.h>
@@ -30,7 +32,10 @@ int arAltdCallback(const ardrone_autonomy::Navdata::ConstPtr& msg);
 
 int main(int argc, char** argv)
 {
+    std::cout << "Initializing ROS";
     ros::init(argc, argv, "takeoff_forward_land");
+
+    std::cout << "Initializing ROS Messages";
     // empty -> for takeoff, land
     // flight_command -> flight maneuvers
     std_msgs::Empty empty;
@@ -38,9 +43,18 @@ int main(int argc, char** argv)
     int queue = 1000;
 
     // Nodehandler, timer, publishers, subscribers
+    std::cout << "Initializing ROS Node Handlers";
     ros::NodeHandle node;
-    double time_start=(double)ros::Time::now().toSec();
-    double time_now=(double)ros::Time::now().toSec();
+    std::cout << "Initializing ROS Time Objects";
+    //double time_start=(double)ros::Time::now().toSec();
+    //double time_now=(double)ros::Time::now().toSec();
+    // for simulation
+    // For some reason the program now freezes in simulation
+    // perhaps due to the ros::WallTime::now()
+    double time_start=(double)ros::WallTime::now().toSec();
+    double time_now=(double)ros::WallTime::now().toSec();
+
+    std::cout << "Initializing ROS Publishers/Subscribers";
     ros::Publisher pub_takeoff = node.advertise<std_msgs::Empty>(
         "/ardrone/takeoff", queue);
     ros::Publisher pub_land = node.advertise<std_msgs::Empty>(
@@ -52,7 +66,9 @@ int main(int argc, char** argv)
 
     // We start off in secure mode
     int mode = SECURE;
-    ros::Rate rate(10); // Hz
+    //ros::Rate rate(10); // Hz
+    // for simulation
+    ros::WallRate rate(10); // Hz
 
     mode = TAKEOFF;
 
@@ -65,41 +81,31 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {
-        time_now=(double)ros::Time::now().toSec();
-        switch(mode)
+        // time_now=(double)ros::Time::now().toSec();
+        // for simulation
+        time_now=(double)ros::WallTime::now().toSec();
+        if(time_now > (time_start + 10.0))
         {
-            case TAKEOFF  :
-            {
-                ROS_INFO("MODE: TAKEOFF");
-                pub_takeoff.publish(empty);
-                if(time_now > time_start + 60.0)
-                {
-                    mode = FLYING;
-                }
-                break;
-            }
-            case FLYING   :
-            {
-                pub_flight.publish(flight_command);
-                ROS_INFO("MODE: FLYING");
-                if(time_now > time_start + 80.0)
-                {
-                    mode = LANDING;
-                }
-                break;
-            }
-            case LANDING  :
-            {
-                ROS_INFO("MODE: LANDING");
-                pub_land.publish(empty);
-                break;
-            }
-            default:
-            {
-                ROS_INFO("Quitting");
-                exit(0);
-            }
+            ROS_INFO("MODE: TAKEOFF");
+            /*
+            std::cout << "Time start: " << time_start << std::endl;
+            std::cout << "Time now: " << time_now << std::endl;
+            */
+            pub_takeoff.publish(empty);
         }
+
+        else if(time_now > (time_start + 20.0))
+        {
+            pub_flight.publish(flight_command);
+            ROS_INFO("MODE: FLYING");
+        }
+
+        else if(time_now > (time_start + 80.0))
+        {
+            ROS_INFO("MODE: LANDING");
+            pub_land.publish(empty);
+        }
+
         ros::spinOnce();
         rate.sleep();
     }

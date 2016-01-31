@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 			loop_rate.sleep();
 		}//time loop
 		ROS_INFO("AR.Drone 2.0 launched");
-		
+
 		while ((double)ros::Time::now().toSec()< time_start+12.0)
 		{
 			ROS_INFO("AR.Drone 2.0 moving forward");
