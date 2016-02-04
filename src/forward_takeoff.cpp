@@ -50,6 +50,13 @@ int main(int argc, char** argv)
 
  	while (ros::ok())
 	{
+		// This is necessary for simulation. Before the first message is
+		// received the time will be 0 (for simulation)
+		while(ros::Time::now().toSec() == 0)
+		{
+			std::cout << "Waiting for clock to start";
+		}
+
 		double time_start=(double)ros::Time::now().toSec();
 
 		/* Send command for seven seconds*/
