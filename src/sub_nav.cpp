@@ -23,33 +23,39 @@ Date modified: 1/27/2016
 //   callBackName     (const package_name::Message::ConstPtr& msg)
 void arNavDataCallback(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
-    ROS_INFO("\nAltd: %i\n", msg->altd);
+    std::cout << "\nAltd: " << msg->altd << "mm" << std::endl;
+    std::cout << "\n";
+    std::cout << "Accelerations\n";
+    std::cout << "ax: " << msg->ax << "g" << std::endl;
+    std::cout << "ay: " << msg->ay << "g" << std::endl;
+    std::cout << "az: " << msg->az << "g" << std::endl;
 
-    ROS_INFO("\n\nAccelerations\n\nax: %f\nay: %f\naz: %f\n\n",
-             msg->ax, msg->ay, msg->az);
-
-    ROS_INFO("\n\nVelocities\n\nvx: %f\nvy: %f\nvz: %f\n\n",msg->vx, msg->vy, msg->vz);
-
+    std::cout << "\n";
+    std::cout << "Velocities\n";
+    std::cout << "vx: " << msg->vx << "mm/s" << std::endl;
+    std::cout << "vy: " << msg->vy << "mm/s" << std::endl;
+    std::cout << "vz: " << msg->vz << "mm/s" << std::endl;
 }
 
 void arOdometyCallback(const nav_msgs::Odometry::ConstPtr& msg)
 {
-    ROS_INFO("\nOdometry - Quaternion:\n");
-    ROS_INFO("\nw: %f\nx: %f\ny: %f\nz: %f",
-             msg->pose.pose.orientation.w,
-             msg->pose.pose.orientation.x,
-             msg->pose.pose.orientation.y,
-             msg->pose.pose.orientation.z);
+    std::cout << "\nOdometry - Quaternion:\n";
+    std::cout << "x: " << msg->pose.pose.orientation.w << "mm/s" << std::endl;
+    std::cout << "y: " << msg->pose.pose.orientation.x << "mm/s" << std::endl;
+    std::cout << "z: " << msg->pose.pose.orientation.y << "mm/s" << std::endl;
+    std::cout << "z: " << msg->pose.pose.orientation.z << "mm/s" << std::endl;
 }
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
     ros::NodeHandle n;
+    ros::Rate rate(50);
 
     ros::Subscriber altd = n.subscribe("/ardrone/navdata", 1000, &arNavDataCallback);
-    ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &arOdometyCallback);
+    //ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &arOdometyCallback);
 
     ros::spin();
-
+    rate.sleep();
     return 0;
 }
