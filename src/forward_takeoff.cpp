@@ -57,12 +57,15 @@ int main(int argc, char** argv)
 			std::cout << "Waiting for clock to start\n";
 		}
 
-		double time_start=(double)ros::Time::now().toSec();
+		double time_start = (double) ros::Time::now().toSec();
+		double run_time;
 
 		/* Send command for seven seconds*/
 		while ((double)ros::Time::now().toSec()< time_start+7.0)
 		{
+			run_time =(double)ros::Time::now().toSec() - time_start;
 			std::cout << "AR.Drone 2.0 taking off\n";
+			std::cout << "Run time: " << run_time << "s" << std::endl;
 			pub_takeoff.publish(emp_msg); /* launches the drone */
 			ros::spinOnce();
 			loop_rate.sleep();
@@ -71,7 +74,9 @@ int main(int argc, char** argv)
 
 		while ((double)ros::Time::now().toSec()< time_start+12.0)
 		{
+			run_time =(double)ros::Time::now().toSec() - time_start;
 			std::cout << "AR.Drone 2.0 moving forward\n";
+			std::cout << "Run time: " << run_time << "s" << std::endl;
 			pub_forward.publish(forward_msg);
 			ros::spinOnce();
 			loop_rate.sleep();
@@ -81,8 +86,9 @@ int main(int argc, char** argv)
 		/* Message queue length is just 1 */
 		pub_land.publish(emp_msg);
 		ros::spinOnce();
-
+		run_time =(double)ros::Time::now().toSec() - time_start;
 		std::cout << "AR.Drone 2.0 landed\n";
+		std::cout << "Run time: " << run_time << "s" << std::endl;
 
 		exit(0);
 	}//ros::ok loop
