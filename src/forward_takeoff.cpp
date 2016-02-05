@@ -1,9 +1,15 @@
 /*
-Parker Conroy
-Algorithmic Robotics Lab @ University of Utah
+Name: forward_takeoff
 
-This program launches the AR Drone.
-It is intended as a simple example for those starting with the AR Drone platform.
+Autonomous takeoff of QuadCopter (QC) while moving forward
+
+Inputs: None
+Outputs: QC takes off while moving forward
+
+Written by: Josh Saunders (jay3ss)
+Date created: 1/21/2016
+Modified by: Josh Saunders (jay3ss)
+Date modified: 1/27/2016
 */
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
@@ -44,34 +50,45 @@ int main(int argc, char** argv)
 
  	while (ros::ok())
 	{
-		double time_start=(double)ros::Time::now().toSec();
-		/* Send command for seven seconds*/
+		// This is necessary for simulation. Before the first message is
+		// received the time will be 0 (for simulation)
+		while(ros::Time::now().toSec() == 0)
+		{
+			std::cout << "Waiting for clock to start\n";
+		}
 
+		double time_start = (double) ros::Time::now().toSec();
+		double run_time;
+
+		/* Send command for seven seconds*/
 		while ((double)ros::Time::now().toSec()< time_start+7.0)
 		{
+			run_time =(double)ros::Time::now().toSec() - time_start;
+			std::cout << "AR.Drone 2.0 taking off\n";
+			std::cout << "Run time: " << run_time << "s" << std::endl;
 			pub_takeoff.publish(emp_msg); /* launches the drone */
-			// pub_forward.publish(forward_msg);
 			ros::spinOnce();
 			loop_rate.sleep();
 		}//time loop
-		ROS_INFO("AR.Drone 2.0 launched");
+		std::cout << "AR.Drone 2.0 launched\n";
+
 		while ((double)ros::Time::now().toSec()< time_start+12.0)
 		{
-			//pub_takeoff.publish(emp_msg); /* launches the drone */
-			ROS_INFO("AR.Drone 2.0 moving forward");
+			run_time =(double)ros::Time::now().toSec() - time_start;
+			std::cout << "AR.Drone 2.0 moving forward\n";
+			std::cout << "Run time: " << run_time << "s" << std::endl;
 			pub_forward.publish(forward_msg);
 			ros::spinOnce();
 			loop_rate.sleep();
 		}//time loop
 
 
-
 		/* Message queue length is just 1 */
 		pub_land.publish(emp_msg);
 		ros::spinOnce();
-		//loop_rate.sleep();
-
-		ROS_INFO("AR.Drone 2.0 landed");
+		run_time =(double)ros::Time::now().toSec() - time_start;
+		std::cout << "AR.Drone 2.0 landed\n";
+		std::cout << "Run time: " << run_time << "s" << std::endl;
 
 		exit(0);
 	}//ros::ok loop
