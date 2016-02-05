@@ -34,7 +34,81 @@ void arOdometyCallback(const nav_msgs::Odometry::ConstPtr& msg)
 class ARNavData
 {
 public:
+    // Constructor
+    ARNavData(
+        double vx = 0, double vy = 0, double vz = 0,
+        double ax = 0, double ay = 0, double az = 0,
+        double al = 0)
+    {
+        vel_x_ = vx;
+        vel_y_ = vy;
+        vel_z_ = vz;
+        acc_x_ = ax;
+        acc_y_ = ay;
+        acc_z_ = az;
+        altd = al;
+
+    }
+
+    void setVels(double vx, double vy, double vz)
+    {
+        vel_x_ = vx;
+        vel_y_ = vy;
+        vel_z_ = vz;
+    }
+
+    void setAccels(double ax, double ay, double az)
+    {
+        acc_x_ = ax;
+        acc_y_ = ay;
+        acc_z_ = az;
+    }
+
+    void setAltd(double al)
+    {
+        altd = al;
+    }
+
+    double getVx()
+    {
+        return vel_x_;
+    }
+
+    double getVy()
+    {
+        return vel_y_;
+    }
+
+    double getVz()
+    {
+        return vel_z_;
+    }
+
+    double getAx()
+    {
+        return acc_x_;
+    }
+
+    double getAy()
+    {
+        return acc_y_;
+    }
+
+    double getAz()
+    {
+        return acc_z_;
+    }
+
+    double getAltd()
+    {
+        return altd;
+    }
+
     void callback(const ardrone_autonomy::Navdata::ConstPtr& msg);
+private:
+    double vel_x_; double vel_y_; double vel_z_;
+    double acc_x_; double acc_y_; double acc_z_;
+    double altd;
 };
 
 // This is the callback to display the information received from the
@@ -43,7 +117,8 @@ public:
 //   callBackName     (const package_name::Message::ConstPtr& msg)
 void ARNavData::callback(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
-    std::cout << "\nAltd: " << msg->altd << "mm" << std::endl;
+    this->setAltd(msg->altd);
+    std::cout << "\nAltitude: " << this->getAltd() << "mm" << std::endl;
     std::cout << "\n";
     std::cout << "Accelerations\n";
     std::cout << "ax: " << msg->ax << "g" << std::endl;
@@ -67,6 +142,8 @@ int main(int argc, char **argv)
 
     ros::Subscriber altd = n.subscribe("/ardrone/navdata", 1000, &ARNavData::callback, &navdata);
     //ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &arOdometyCallback);
+
+    //std::cout << "Test Potato: "  << navdata.av;
 
     ros::spin();
     rate.sleep();
