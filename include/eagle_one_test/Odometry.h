@@ -20,8 +20,8 @@ class Odometry
 public:
     Odometry();
     Odometry(                       // all in cartesian
-        double, double, double,     // poses (mm/s)
-        double, double, double,     // orientionelerations (w, x, y, z)
+        double, double, double,     // poses: x, y, z (mm/s)
+        double, double, double,     // quaternion: w, x, y, z
         double,
         double, double, double,     // linear velocities (mm/s)
         double, double, double);    // angular velocities (rad/s)
@@ -38,9 +38,9 @@ public:
     double getOrientationX();
     double getOrientationY();
     double getOrientationZ();
-    double getLinearX();     // Roll (degrees)
-    double getLinearY();     // Pitch (degrees)
-    double getLinearZ();     // Yaw (degrees)
+    double getLinearX();
+    double getLinearY();
+    double getLinearZ();
     double getAngularX();
     double getAngularY();
     double getAngularZ();
@@ -53,7 +53,6 @@ private:
     double oriention_y_; double oriention_z_;
     double linear_x_; double linear_y_; double linear_z_;
     double angular_x_; double angular_y_; double angular_z_;
-    double altd_;
 
     string frame_id;
     string child_frame_id;
