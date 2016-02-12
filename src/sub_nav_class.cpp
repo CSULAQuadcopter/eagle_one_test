@@ -13,6 +13,7 @@ Date modified: 2/8/2016
 #include <ros/ros.h>
 #include <ardrone_autonomy/Navdata.h>
 #include <nav_msgs/Odometry.h>
+#include <eagle_one_test/ARNavdata.h>
 
 
 
@@ -25,19 +26,16 @@ void arOdometyCallback(const nav_msgs::Odometry::ConstPtr& msg)
     std::cout << "z: " << msg->pose.pose.orientation.z << "mm/s" << std::endl;
 }
 
-
-//template<int>
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
     ros::NodeHandle n;
     ros::Rate rate(50);
 
-    ARNavData navdata;
+    ARNavdata navdata;
 
-    ros::Subscriber altd = n.subscribe("/ardrone/navdata", 1000, &ARNavData::callback, &navdata);
-    //ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &arOdometyCallback);
+    //ros::Subscriber altd = n.subscribe("/ardrone/navdata", 1000, &ARNavdata::callback, &navdata);
+    ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &arOdometyCallback);
 
     ros::spin();
     rate.sleep();
