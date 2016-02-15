@@ -20,10 +20,14 @@ include_directories(
 
 set(AA_HEADERS
     include/eagle_one_test/ARNavdata.h
+    include/eagle_one_test/Drone.h
 )
 
 add_library(ARNavdata src/ARNavdata.cpp)
 target_link_libraries(ARNavdata ${catkin_LIBRARIES})
+
+add_library(Drone src/Drone.cpp)
+target_link_libraries(Drone ${catkin_LIBRARIES})
 
 add_executable(takeoff src/takeoff.cpp)
 target_link_libraries(takeoff ${catkin_LIBRARIES})
