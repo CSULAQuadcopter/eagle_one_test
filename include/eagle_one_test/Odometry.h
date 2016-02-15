@@ -54,7 +54,7 @@ private:
     double linear_x_; double linear_y_; double linear_z_;
     double angular_x_; double angular_y_; double angular_z_;
 
-    string frame_id;
-    string child_frame_id;
+    string frame_id;            // necessary for /tf topic
+    string child_frame_id;      // necessary for /tf topic
 };
 #endif  /* ODOMETRY_H */
