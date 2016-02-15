@@ -24,7 +24,7 @@ public:
     void setVels(double, double, double);       // velocities: x, y, z (mm/s)
     void setAccels(double, double, double);     // accelerations: x, y, z in (g)
     void setRotations(double, double, double);  // rotations: x, y, z (degrees)
-    void setAltd(double);                       // altitude: (cm)
+    void setAltd(double);                       // altitude: (mm)
     double getVx();
     double getVy();
     double getVz();
@@ -47,16 +47,16 @@ private:
     // Tags in Vision Detection
     // TODO figure out how to implement the tags portion
     // As an array or just take the first values from the message array?
-    int tags_count;
-    int tags_type[];
-    int tags_xc[];
-    int tags_yc[];
-    int tags_width[];
-    int tags_height[];
-    float tags_orientation[];
-    float tags_distance[];
+    int tags_count_;
+    int tags_type_[];
+    int tags_xc_[];
+    int tags_yc_[];
+    int tags_width_[];
+    int tags_height_[];
+    float tags_orientation_[];
+    float tags_distance_[];
 
     //time stamp
-    float tm;
+    float tm_;
 };
 #endif  /* ARNavdata_H */
