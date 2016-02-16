@@ -23,7 +23,7 @@ public:
 
     void setVels(double, double, double);       // velocities: x, y, z (mm/s)
     void setAccels(double, double, double);     // accelerations: x, y, z in (g)
-    void setRotations(double, double, double);  // rotations: x, y, z (degrees)
+    void setRotations(double, double, double);  // rotations: roll, pitch, yaw (rads)
     void setAltd(double);                       // altitude: (mm)
     double getVx();
     double getVy();
@@ -31,9 +31,9 @@ public:
     double getAx();
     double getAy();
     double getAz();
-    double getRx();     // Roll (degrees)
-    double getRy();     // Pitch (degrees)
-    double getRz();     // Yaw (degrees)
+    double getRoll();    // Roll (degrees)
+    double getPitch();   // Pitch (degrees)
+    double getYaw();     // Yaw (degrees)
     double getAltd();
     int getTagCount();
     int getTagX();
@@ -51,7 +51,7 @@ public:
 private:
     double vel_x_; double vel_y_; double vel_z_;
     double acc_x_; double acc_y_; double acc_z_;
-    double rot_x_; double rot_y_; double rot_z_;
+    double roll_; double pitch_; double yaw_;
     double altd_;
 
     // Tags in Vision Detection

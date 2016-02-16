@@ -10,9 +10,9 @@ ARNavdata::ARNavdata()
     acc_x_ = 0.0;
     acc_y_ = 0.0;
     acc_z_ = 0.0;
-    rot_x_ = 0.0;
-    rot_y_ = 0.0;
-    rot_z_ = 0.0;
+    roll_ = 0.0;
+    pitch_ = 0.0;
+    yaw_ = 0.0;
     altd_ = 0.0;
 }
 ARNavdata::ARNavdata(
@@ -27,9 +27,9 @@ ARNavdata::ARNavdata(
     acc_x_ = ax;
     acc_y_ = ay;
     acc_z_ = az;
-    rot_x_ = ax;
-    rot_y_ = ay;
-    rot_z_ = az;
+    roll_ = ax;
+    pitch_ = ay;
+    yaw_ = az;
     altd_ = al;
 
 }
@@ -50,9 +50,9 @@ void ARNavdata::setAccels(double ax, double ay, double az)
 
 void ARNavdata::setRotations(double rx, double ry, double rz)
 {
-    rot_x_ = rx;
-    rot_y_ = ry;
-    rot_z_ = rz;
+    roll_ = rx;
+    pitch_ = ry;
+    yaw_ = rz;
 }
 
 void ARNavdata::setAltd(double alt)
@@ -90,19 +90,19 @@ double ARNavdata::getAz()
     return acc_z_;
 }
 
-double ARNavdata::getRx()
+double ARNavdata::getRoll()
 {
-    return rot_x_;
+    return roll_;
 }
 
-double ARNavdata::getRy()
+double ARNavdata::getPitch()
 {
-    return rot_y_;
+    return pitch_;
 }
 
-double ARNavdata::getRz()
+double ARNavdata::getYaw()
 {
-    return rot_z_;
+    return yaw_;
 }
 
 double ARNavdata::getAltd()
