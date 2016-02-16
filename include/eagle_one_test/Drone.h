@@ -1,7 +1,10 @@
 #ifndef DRONE_H
 #define DRONE_H
 
+#include <ardrone_autonomy/Navdata.h>
+#include <nav_msgs/Odometry.h>
 #include <eagle_one_test/ARNavdata.h>
+#include <ros/ros.h>
 
 class Drone: public ARNavdata
 {
@@ -11,17 +14,18 @@ public:
 
     void setMode(int);
     int getMode();
-    void setTagX(int);
-    int getTagX();
-    void setTagY(int);
-    int getTagY();
-    void setTagZ(int);
-    int getTagZ();
+    void setTagXDistance(int);
+    int getTagXDistance();
+    void setTagYDistance(int);
+    int getTagYDistance();
+    void setTagZDistance(int);
+    int getTagZDistance();
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
 
-    double getTagDistanceY(double y);
+    void printTagDistanceY();
+    double calcTagDistanceY(double y);
     void takeoff();
     void land();
     void emergency();
