@@ -112,46 +112,46 @@ double ARNavdata::getAltd()
 
 int ARNavdata::getTagCount()
 {
-
+    return tag_count_;
 }
 
 int ARNavdata::getTagX()
 {
-
+    return tag_xc_;
 }
 
 int ARNavdata::getTagY()
 {
-
+    return tag_yc_;
 }
 
 double ARNavdata::getTagOrientation()
 {
-
+    return tag_orientation_;
 }
 int ARNavdata::getTm()
 {
-
+    return tm_;
 }
 void ARNavdata::setTagCount(int count)
 {
-
+    tag_count_ = count;
 }
 void ARNavdata::setTagX(int tx)
 {
-
+    tag_xc_ = tx;
 }
-void ARNavdata::setTagY(int)
+void ARNavdata::setTagY(int ty)
 {
-
+    tag_yc_ = ty;
 }
-void ARNavdata::setTagOrientation(double)
+void ARNavdata::setTagOrientation(double to)
 {
-
+    tag_orientation_ = to;
 }
-void ARNavdata::setTm(int)
+void ARNavdata::setTm(int t)
 {
-
+    tm_ = t;
 }
 
 void ARNavdata::callback(const ardrone_autonomy::Navdata::ConstPtr& msg)
