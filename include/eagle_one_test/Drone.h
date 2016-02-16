@@ -18,6 +18,8 @@ public:
     void setTagZ(int);
     int getTagZ();
 
+    void navdata(const ardrone_autonomy::Navdata::ConstPtr&);
+
     double getTagDistanceY(double y);
     void takeoff();
     void land();

@@ -35,6 +35,16 @@ public:
     double getRy();     // Pitch (degrees)
     double getRz();     // Yaw (degrees)
     double getAltd();
+    int getTagCount();
+    int getTagX();
+    int getTagY();
+    double getTagOrientation();
+    int getTm();
+    void setTagCount(int);
+    void setTagX(int);
+    void setTagY(int);
+    void setTagOrientation(double);
+    void setTm(int);
 
     void callback(const ardrone_autonomy::Navdata::ConstPtr&);
 
@@ -47,16 +57,18 @@ private:
     // Tags in Vision Detection
     // TODO figure out how to implement the tags portion
     // As an array or just take the first values from the message array?
-    int tags_count_;
-    int tags_type_[];
-    int tags_xc_[];
-    int tags_yc_[];
-    int tags_width_[];
-    int tags_height_[];
-    float tags_orientation_[];
-    float tags_distance_[];
+
+    // Only grab the first (and only?) tag from the array
+    int tag_count_;
+    // int tags_type_;
+    int tag_xc_;
+    int tag_yc_;
+    // int tags_width_;
+    // int tags_height_;
+    double tag_orientation_;
+    // float tags_distance_;
 
     //time stamp
-    float tm_;
+    double tm_;
 };
 #endif  /* ARNavdata_H */

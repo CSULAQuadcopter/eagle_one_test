@@ -2,7 +2,18 @@
 #include <eagle_one_test/Drone.h>
 
 Drone::Drone()
-    :mode_(0){}
+    :mode_(0)
+{
+    setTagCount(0);
+    setTagX(0);
+    setTagY(0);
+    setTagOrientation(0.0);
+}
+
+void Drone::navdata(const ardrone_autonomy::Navdata::ConstPtr&)
+{
+
+}
 
 double Drone::getTagDistanceY(double y)
 {

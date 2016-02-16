@@ -110,5 +110,49 @@ double ARNavdata::getAltd()
     return altd_;
 }
 
+int ARNavdata::getTagCount()
+{
+
+}
+
+int ARNavdata::getTagX()
+{
+
+}
+
+int ARNavdata::getTagY()
+{
+
+}
+
+double ARNavdata::getTagOrientation()
+{
+
+}
+int ARNavdata::getTm()
+{
+
+}
+void ARNavdata::setTagCount(int count)
+{
+
+}
+void ARNavdata::setTagX(int tx)
+{
+
+}
+void ARNavdata::setTagY(int)
+{
+
+}
+void ARNavdata::setTagOrientation(double)
+{
+
+}
+void ARNavdata::setTm(int)
+{
+
+}
+
 void ARNavdata::callback(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {}
