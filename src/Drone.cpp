@@ -3,6 +3,7 @@
 #include <ardrone_autonomy/Navdata.h>
 #include <nav_msgs/Odometry.h>
 #include <eagle_one_test/Drone.h>
+#include <iostream>
 
 Drone::Drone()
     :mode_(0)
@@ -24,7 +25,8 @@ void Drone::set_navdata(const ardrone_autonomy::Navdata::ConstPtr& msg)
 
 void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
 {
-
+    double tag_y = calcTagDistanceY(getTagY());
+    std::cout << "Tag y distance: " << tag_y;
 }
 
 double Drone::calcTagDistanceY(double y)
@@ -36,6 +38,8 @@ double Drone::calcTagDistanceY(double y)
     double beta = atan(ZETA * (1 - y/500));
 	return getAltd() * tan(ALPHA + beta);
 }
+
+
 
 void Drone::setMode(int m)
 {
