@@ -45,6 +45,10 @@ add_executable(sub_nav src/sub_nav.cpp)
 target_link_libraries(sub_nav ${catkin_LIBRARIES})
 
 # Link the node and the library
+add_executable(tag_dist_test src/tag_dist_test.cpp)
+target_link_libraries(tag_dist_test ${catkin_LIBRARIES} Drone ARNavdata)
+
+# Link the node and the library
 add_executable(sub_nav_class src/sub_nav_class.cpp)
 target_link_libraries(sub_nav_class ${catkin_LIBRARIES} ARNavdata)
 

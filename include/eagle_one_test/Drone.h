@@ -23,6 +23,7 @@ public:
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
+    void print_tag_distance();
 
     void printTagDistanceY();
     double calcTagDistanceY(double y);
