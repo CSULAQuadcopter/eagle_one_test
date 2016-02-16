@@ -17,16 +17,20 @@ Drone::Drone()
 
 Drone::~Drone()
 {
-    
+
 }
 
 //
 void Drone::set_navdata(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
-    setTagX(msg->tags_xc[0]);
-    setTagY(msg->tags_yc[0]);
-    setAltd(msg->altd);
-    setTagOrientation(msg->tags_orientation[0]);
+    setTagCount(msg->tags_count);
+    if(getTagCount() >= 1)
+    {
+        setTagX(msg->tags_xc[0]);
+        setTagY(msg->tags_yc[0]);
+        setAltd(msg->altd);
+        setTagOrientation(msg->tags_orientation[0]);
+    }
 }
 
 void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
@@ -37,7 +41,15 @@ void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
 void Drone::print_tag_distance()
 {
     double tag_y = calcTagDistanceY(getTagY());
-    std::cout << "Tag y distance: " << tag_y;
+    std::cout << "Tag y distance: ";
+    if (getTagCount() >= 1)
+    {
+        std::cout << tag_y << "\n";
+    }
+    else
+    {
+        std::cout << "Unknown\n";
+    }
 }
 
 double Drone::calcTagDistanceY(double y)
