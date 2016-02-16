@@ -1,7 +1,18 @@
+#include <cmath>
 #include <eagle_one_test/Drone.h>
 
 Drone::Drone()
     :mode_(0){}
+
+double Drone::getTagDistanceY(double y)
+{
+    double ALPHA = 0.0;
+    double GAMMA_2 = 1.2743; // radians
+    double ZETA = tan(GAMMA_2);
+    double altd = getAltd();
+    double beta = atan(ZETA * (1 - y/500));
+	return getAltd() * tan(ALPHA + beta);
+}
 
 void Drone::setMode(int m)
 {

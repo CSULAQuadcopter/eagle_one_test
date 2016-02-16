@@ -18,6 +18,7 @@ public:
     void setTagZ(int);
     int getTagZ();
 
+    double getTagDistanceY(double y);
     void takeoff();
     void land();
     void emergency();
