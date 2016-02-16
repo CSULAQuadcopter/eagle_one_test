@@ -44,7 +44,7 @@ void Drone::print_tag_distance()
     std::cout << "Tag y distance: ";
     if (getTagCount() >= 1)
     {
-        std::cout << tag_y << "\n";
+        std::cout << tag_y << "m\n";
     }
     else
     {

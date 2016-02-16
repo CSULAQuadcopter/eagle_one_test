@@ -27,9 +27,16 @@ int main(int argc, char **argv)
     //ros::Subscriber altd = n.subscribe("/ardrone/navdata", 1000, &ARNavdata::callback, &navdata);
     ros::Subscriber tag_info = n.subscribe("/ardrone/navdata", 1000, &Drone::set_navdata, &qc);
 
-    qc.print_tag_distance();
 
-    ros::spin();
-    rate.sleep();
+    while(ros::ok())
+    {
+        qc.print_tag_distance();
+        ros::spinOnce();
+        rate.sleep();
+    }
+
+
+    //ros::spin();
+    //rate.sleep();
     return 0;
 }
