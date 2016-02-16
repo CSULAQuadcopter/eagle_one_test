@@ -10,7 +10,15 @@ Drone::Drone()
     setTagOrientation(0.0);
 }
 
-void Drone::navdata(const ardrone_autonomy::Navdata::ConstPtr&)
+//
+void Drone::set_navdata(const ardrone_autonomy::Navdata::ConstPtr& msg)
+{
+    setTagX(msg.tags_xc[0]);
+    setTagY(msg.tags_yc[0]);
+    setTagOrientation(msg.tags_orientation[0]);
+}
+
+void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
 {
 
 }

@@ -18,7 +18,8 @@ public:
     void setTagZ(int);
     int getTagZ();
 
-    void navdata(const ardrone_autonomy::Navdata::ConstPtr&);
+    void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
+    void set_odometry(const nav_msgs::Odometry::ConstPtr&);
 
     double getTagDistanceY(double y);
     void takeoff();
@@ -35,9 +36,9 @@ public:
 
 private:
     int mode_;
-    int tag_x_;
-    int tag_y_;
-    int tag_z_;
+    int tag_x_distance_;
+    int tag_y_distance_;
+    int tag_z_distance_;
 };
 
 #endif /* DRONE_H */
