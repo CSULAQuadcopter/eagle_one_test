@@ -1,5 +1,5 @@
 #include <eagle_one_test/ARNavdata.h>
-#include <ardrone_autonomy/Navdata.h>
+//#include <ardrone_autonomy/Navdata.h>
 #include <ros/ros.h>
 
 ARNavdata::ARNavdata()

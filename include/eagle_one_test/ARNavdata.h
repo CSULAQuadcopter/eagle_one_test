@@ -66,7 +66,7 @@ private:
     // int tags_width_;
     // int tags_height_;
     double tag_orientation_;
-    // float tags_distance_;
+    double tags_distance_;
 
     //time stamp
     double tm_;
