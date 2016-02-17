@@ -23,13 +23,16 @@ public:
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
-    void print_tag_distance();
 
-    void printTagDistanceY();
-    double calcTagDistanceY(double y);
-    double calcTagDistanceX(double x);
+    void print_tag_distance();                 // Prints (x, y) of tag (mm, mm)
+    void print_tag_x_distance();               // Prints x distance of tag (mm)
+    void print_tag_y_distance();               // Prints y distance of tag (mm)
 
+    double calcTagDistanceX(double x);         // tag z distance (mm)
+    double calcTagDistanceY(double y);         // tag y distance (mm)
+    double calcTagDistanceZ(double z);         // tag z distance (mm)
 
+    // Flight commands
     void takeoff();
     void land();
     void emergency();

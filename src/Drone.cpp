@@ -40,11 +40,40 @@ void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
 
 void Drone::print_tag_distance()
 {
+    double tag_x = calcTagDistanceX(getTagX());
+    double tag_y = calcTagDistanceY(getTagY());
+    std::cout << "Tag distance: ";
+    if (getTagCount() >= 1)
+    {
+        std::cout << "("<< tag_x << ", " << tag_y << ") mm\n";
+    }
+    else
+    {
+        std::cout << "Unknown\n";
+    }
+}
+
+void Drone::print_tag_x_distance()
+{
+    double tag_x = calcTagDistanceX(getTagX());
+    std::cout << "Tag y distance: ";
+    if (getTagCount() >= 1)
+    {
+        std::cout << tag_x << " mm\n";
+    }
+    else
+    {
+        std::cout << "Unknown\n";
+    }
+}
+
+void Drone::print_tag_y_distance()
+{
     double tag_y = calcTagDistanceY(getTagY());
     std::cout << "Tag y distance: ";
     if (getTagCount() >= 1)
     {
-        std::cout << tag_y << "m\n";
+        std::cout << tag_y << " mm\n";
     }
     else
     {
