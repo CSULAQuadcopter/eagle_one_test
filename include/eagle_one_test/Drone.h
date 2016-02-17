@@ -27,6 +27,9 @@ public:
 
     void printTagDistanceY();
     double calcTagDistanceY(double y);
+    double calcTagDistanceX(double x);
+
+
     void takeoff();
     void land();
     void emergency();

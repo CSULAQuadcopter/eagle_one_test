@@ -76,7 +76,29 @@ double Drone::calcTagDistanceY(double y)
 	return getAltd() * tan(ALPHA + beta);
 }
 
+/*
+ * Calculates the distance from the tag to the center of the quadcopter's
+ * downward facing camera. d = tan(alpha + beta)
+ * beta = z* atan(tan(gamma/2)(S' - T')/(S' - C1'))
+ * alpha = roll (rad)
+ * gamma = viewing angle of camera (rad)
+ * T' = x coordinate of tag in image (px)
+ * S' = center of image (500px)
+ * C1' = x coordinate of edge of image (0px)
+ * z = altitude (mm)
+*/
 
+double Drone::calcTagDistanceX(double x)
+{
+    double ALPHA = 0.0;
+    double C1_PRIME = 0;
+    double S_PRIME = 500;
+    double GAMMA_2 = 1.2743; // radians
+    double ZETA = tan(GAMMA_2);
+    double altd = getAltd();
+    double beta = atan(ZETA * ((S_PRIME - x)/(S_PRIME - C1_PRIME)));
+	return getAltd() * tan(ALPHA + beta);
+}
 
 void Drone::setMode(int m)
 {
