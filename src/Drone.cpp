@@ -55,12 +55,12 @@ void Drone::print_tag_distance()
 /*
  * Calculates the distance from the tag to the center of the quadcopter's
  * downward facing camera. d = tan(alpha + beta)
- * beta = z* atan(tan(gamma/2)(S' - T')/(S' - C1'))
+ * beta = z * atan(tan(gamma/2)(S' - T')/(S' - C1'))
  * alpha = pitch (rad)
  * gamma = viewing angle of camera (rad)
- * T' = tag position in image (px)
+ * T' = y coordinate of tag in image (px)
  * S' = center of image (500px)
- * C1' = edge of image (0px)
+ * C1' = y coordinate of edge of image (0px)
  * z = altitude (mm)
 */
 
@@ -79,7 +79,7 @@ double Drone::calcTagDistanceY(double y)
 /*
  * Calculates the distance from the tag to the center of the quadcopter's
  * downward facing camera. d = tan(alpha + beta)
- * beta = z* atan(tan(gamma/2)(S' - T')/(S' - C1'))
+ * beta = z * atan(tan(gamma/2)(S' - T')/(S' - C1'))
  * alpha = roll (rad)
  * gamma = viewing angle of camera (rad)
  * T' = x coordinate of tag in image (px)
