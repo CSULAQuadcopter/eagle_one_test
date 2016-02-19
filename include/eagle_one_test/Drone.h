@@ -8,8 +8,6 @@
 #include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
 
-#define TIMER_TIMEOUT (0.02F)   // (sec)
-
 class Drone: public ARNavdata
 {
 public:
