@@ -29,6 +29,9 @@ target_link_libraries(ARNavdata ${catkin_LIBRARIES})
 add_library(Drone src/Drone.cpp)
 target_link_libraries(Drone ${catkin_LIBRARIES})
 
+add_library(Odometry src/Odometry.cpp)
+target_link_libraries(Odometry ${catkin_LIBRARIES})
+
 add_executable(takeoff src/takeoff.cpp)
 target_link_libraries(takeoff ${catkin_LIBRARIES})
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
-// include tf?
+//#include <tf/Tf.h>
 
 /*
 Odometry
@@ -31,6 +31,8 @@ public:
                       double, double);
     void setLinear(double, double, double);   // linear velcoties: x, y, z (mm/s)
     void setAngular(double, double, double);  // angluar velcoties: x, y, z (rad/s)
+    void setFrameId(std::string);
+    void setChildId(std::string);
     double getPoseX();
     double getPoseY();
     double getPoseZ();
@@ -54,7 +56,7 @@ private:
     double linear_x_; double linear_y_; double linear_z_;
     double roll_; double pitch_; double yaw_;
 
-    string frame_id;            // necessary for /tf topic
-    string child_frame_id;      // necessary for /tf topic
+    std::string frame_id;            // necessary for /tf topic
+    std::string child_frame_id;      // necessary for /tf topic
 };
 #endif  /* ODOMETRY_H */
