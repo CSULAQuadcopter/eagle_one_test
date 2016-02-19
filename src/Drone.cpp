@@ -128,7 +128,6 @@ double Drone::calcTagDistanceX(double x)
     x *= 640.0/1000.0;
 
     double ZETA = tan(GAMMA_2);
-    //double altd = getAltd();
     double beta = atan(ZETA * ((WIDTH_2 - x) / WIDTH_2));
 	return getAltd() * tan(ALPHA + beta);
 }
@@ -158,7 +157,6 @@ double Drone::calcTagDistanceY(double y)
     y *= 360.0/1000.0;
 
     double ZETA = tan(GAMMA_2);
-    // double altd = getAltd();
     double beta = atan(ZETA * ((HEIGHT_2 - y) / HEIGHT_2));
 	return (getAltd() * tan(ALPHA + beta));
 }
