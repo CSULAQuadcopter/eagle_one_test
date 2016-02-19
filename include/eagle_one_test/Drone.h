@@ -38,7 +38,8 @@ public:
 
     double calcTagDistanceX(double x);         // tag z distance (mm)
     double calcTagDistanceY(double y);         // tag y distance (mm)
-    double calcTagDistanceZ(double z);         // tag z distance (mm)
+    double calcDistanceZ(double z);            // tag z distance (mm)
+    double calcYawDistance(double yaw);        // yaw (rad)
 
     // Flight commands
     void takeoff();

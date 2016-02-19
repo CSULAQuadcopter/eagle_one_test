@@ -30,12 +30,33 @@ int main(int argc, char **argv)
 
     while(ros::ok())
     {
-        twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 180;
-        twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagX()) / 320;
+        if (qc.getTagCount() >= 1)
+        {
+            twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 36;
+            twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagX()) / 64;
+
+            if ((qc.getYaw() > 0 ) && (qc.getYaw() <= 180))
+            {
+                twist_msg.angular.z = qc.calcYawDistance(qc.getYaw()) / -16;
+            }
+            else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 359.9999))
+            {
+                twist_msg.angular.z = qc.calcYawDistance(qc.getYaw()) / 16;
+            }
+        }
+        else
+        {
+            twist_msg.linear.x = 0.0;
+            twist_msg.linear.y = 0.0;
+            twist_msg.angular.z = 0.0;
+        }
+        std::cout << "Tag: (" << qc.getTagX() << ", " << qc.getTagX() << ")\n";
         std::cout << "Vel: (" << twist_msg.linear.x << ", " << twist_msg.linear.y << ")\n";
+        std::cout << "Yaw: (" << qc.getYaw() << ")\n";
+        std::cout << "Yaw Vel: (" << twist_msg.angular.z << ")\n";
         qc.print_tag_distance();
-        twist_msg.linear.x = qc.getTagX();
-        twist_msg.linear.y = qc.getTagY();
+        //twist_msg.linear.x = qc.getTagX();
+        //twist_msg.linear.y = qc.getTagY();
         follow.publish(twist_msg);
         ros::spinOnce();
         rate.sleep();

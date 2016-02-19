@@ -38,12 +38,11 @@ public:
     int getTagCount();
     int getTagX();
     int getTagY();
-    double getTagOrientation();
     int getTm();
     void setTagCount(int);
     void setTagX(int);
     void setTagY(int);
-    void setTagOrientation(double);
+    void setYaw(double);
     void setTm(int);
 
     void callback(const ardrone_autonomy::Navdata::ConstPtr&);
