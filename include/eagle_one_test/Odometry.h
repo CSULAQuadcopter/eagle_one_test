@@ -41,9 +41,9 @@ public:
     double getLinearX();
     double getLinearY();
     double getLinearZ();
-    double getAngularX();
-    double getAngularY();
-    double getAngularZ();
+    double getRoll();
+    double getPitch();
+    double getYaw();
 
     void callback(const nav_msgs::Odometry::ConstPtr&);
 
@@ -52,7 +52,7 @@ private:
     double oriention_w_; double oriention_x_;
     double oriention_y_; double oriention_z_;
     double linear_x_; double linear_y_; double linear_z_;
-    double angular_x_; double angular_y_; double angular_z_;
+    double roll_; double pitch_; double yaw_;
 
     string frame_id;            // necessary for /tf topic
     string child_frame_id;      // necessary for /tf topic
