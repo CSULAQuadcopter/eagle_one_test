@@ -1,8 +1,6 @@
 /*
 Name: sub_nav
-
 Testing how to subscribe to different topics that the QuadCopter publishes
-
 Written by: Josh Saunders (jay3ss)
 Date created: 1/26/2016
 Modified by: Josh Saunders (jay3ss)

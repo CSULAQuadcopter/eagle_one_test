@@ -13,13 +13,47 @@ Drone::Drone()
     setTagX(0);
     setTagY(0);
     setTagOrientation(0.0);
+    twist_msg.linear.x = 0.0;
+    twist_msg.linear.y = 0.0;
+    twist_msg.linear.z = 0.0;
+    twist_msg.angular.x = 0.0;
+    twist_msg.angular.y = 0.0;
+    twist_msg.angular.z = 0.0;
+}
+
+Drone::Drone(ros::NodeHandle nh)
+    :mode_(0),
+     node(nh)
+{
+    setTagCount(0);
+    setTagX(0);
+    setTagY(0);
+    setTagOrientation(0.0);
+    twist_msg.linear.x = 0.0;
+    twist_msg.linear.y = 0.0;
+    twist_msg.linear.z = 0.0;
+    twist_msg.angular.x = 0.0;
+    twist_msg.angular.y = 0.0;
+    twist_msg.angular.z = 0.0;
+    publish = node.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
+    timer = node.createTimer(ros::Duration(TIMER_TIMEOUT), boost::bind(&Drone::on_timer, this));
 }
 
 Drone::~Drone()
 {
 
 }
-
+/*
+void Drone::follow_tag_x_vel(const geometry_msgs::Twist::ConstPtr& msg)
+{
+    twist_msg.linear.x = calcTagDistanceX(getTagX()) / 180;
+    twist_msg.linear.y = calcTagDistanceY(getTagX()) / 320;
+    std::cout << "Vel: (" << twist_msg.linear.x << ", " << twist_msg.linear.y << ")\n";
+    //msg.linear.x = twist_msg.linear.x;
+    //msg.linear.y = twist_msg.linear.y;
+    publish.publish(twist_msg);
+}
+*/
 //
 void Drone::set_navdata(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {
@@ -31,6 +65,11 @@ void Drone::set_navdata(const ardrone_autonomy::Navdata::ConstPtr& msg)
         setAltd(msg->altd);
         setTagOrientation(msg->tags_orientation[0]);
     }
+}
+
+void Drone::on_timer()
+{
+    publish.publish(twist_msg);
 }
 
 void Drone::set_odometry(const nav_msgs::Odometry::ConstPtr& msg)
@@ -82,32 +121,9 @@ void Drone::print_tag_y_distance()
 }
 
 /*
- * Calculates the distance from the tag to the center of the quadcopter's
- * downward facing camera. d = z * tan(alpha + beta)
- * beta = atan(tan(gamma/2)(S' - T')/(S' - C1'))
- * alpha = pitch (rad)
- * gamma = viewing angle of camera (rad)
- * T' = y coordinate of tag in image (px)
- * S' = center of image (500px)
- * C1' = y coordinate of edge of image (0px)
- * z = altitude (mm)
-*/
-
-double Drone::calcTagDistanceY(double y)
-{
-    double ALPHA = 0.0;
-    double C1_PRIME = 0;
-    double S_PRIME = 500;
-    double GAMMA_2 = 1.2743; // radians
-    double ZETA = tan(GAMMA_2);
-    double altd = getAltd();
-    double beta = atan(ZETA * ((S_PRIME - y)/(S_PRIME - C1_PRIME)));
-	return getAltd() * tan(ALPHA + beta);
-}
-
-/*
- * Calculates the distance from the tag to the center of the quadcopter's
- * downward facing camera. d = z * tan(alpha + beta)
+ * Calculates the y distance from the tag to the center of the quadcopter's
+ * downward facing camera. Returns meters
+ * d = z * tan(alpha + beta)
  * beta = atan(tan(gamma/2)(S' - T')/(S' - C1'))
  * alpha = roll (rad)
  * gamma = viewing angle of camera (rad)
@@ -120,13 +136,47 @@ double Drone::calcTagDistanceY(double y)
 double Drone::calcTagDistanceX(double x)
 {
     double ALPHA = 0.0;
-    double C1_PRIME = 0;
-    double S_PRIME = 500;
-    double GAMMA_2 = 1.2743; // radians
+    double WIDTH_2 = 320.0;  // half the width of the image
+    double GAMMA_2 = 0.5585; // gamma/2 (radians)
+
+    // the coordinates are given in a 1000x1000 image but the camera is
+    // 640x360 therefore scaling must done
+    x *= 640.0/1000.0;
+
     double ZETA = tan(GAMMA_2);
     double altd = getAltd();
-    double beta = atan(ZETA * ((S_PRIME - x)/(S_PRIME - C1_PRIME)));
-	return getAltd() * tan(ALPHA + beta);
+    double beta = atan(ZETA * ((WIDTH_2 - x) / WIDTH_2));
+	return (getAltd() * tan(ALPHA + beta)) / 1000;
+}
+
+/*
+ * Calculates the y distance from the tag to the center of the quadcopter's
+ * downward facing camera. Returns meters
+ * d = z * tan(alpha + beta)
+ * beta = atan(tan(gamma/2)(S' - T')/(S' - C1'))
+ * alpha = pitch (rad)
+ * gamma = viewing angle of camera (rad)
+ * T' = y coordinate of tag in image (px)
+ * S' = center of image (500px)
+ * C1' = y coordinate of edge of image (0px)
+ * z = altitude (mm)
+*/
+
+double Drone::calcTagDistanceY(double y)
+{
+    double ALPHA = 0.0;
+    double C1_PRIME = 0.0;
+    double HEIGHT_2 = 180.0; // half the height of the image
+    double GAMMA_2 = 0.5585; // gamma/2 (radians)
+
+    // the coordinates are given in a 1000x1000 image but the camera is
+    // 640x360 therefore scaling must done
+    y *= 360.0/1000.0;
+
+    double ZETA = tan(GAMMA_2);
+    double altd = getAltd();
+    double beta = atan(ZETA * ((HEIGHT_2 - y) / HEIGHT_2));
+	return (getAltd() * tan(ALPHA + beta)) / 1000;
 }
 
 void Drone::setMode(int m)
