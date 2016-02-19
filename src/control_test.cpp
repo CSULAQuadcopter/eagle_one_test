@@ -32,16 +32,22 @@ int main(int argc, char **argv)
     {
         if (qc.getTagCount() >= 1)
         {
-            twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 36;
-            twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 64;
+            //twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 360;
+            //twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 640;
 
-            if ((qc.getYaw() > 0 ) && (qc.getYaw() <= 180))
+            if ((qc.getYaw() > 10 ) && (qc.getYaw() <= 180))
             {
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -16;
+                // angular.z < 0 => turn right
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -32;
             }
-            else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 359.9999))
+            else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 355))
             {
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 16;
+                // angular.z > 0 => turn left
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 32;
+            }
+            else
+            {
+                twist_msg.angular.z = 0;
             }
         }
         else
