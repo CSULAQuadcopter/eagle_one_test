@@ -20,7 +20,7 @@ Drone::Drone()
     twist_msg.angular.y = 0.0;
     twist_msg.angular.z = 0.0;
 }
-
+/*
 Drone::Drone(ros::NodeHandle nh)
     :mode_(0),
      node(nh)
@@ -38,7 +38,7 @@ Drone::Drone(ros::NodeHandle nh)
     //publish = node.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
     //timer = node.createTimer(ros::Duration(TIMER_TIMEOUT), boost::bind(&Drone::on_timer, this));
 }
-
+*/
 Drone::~Drone()
 {
 
