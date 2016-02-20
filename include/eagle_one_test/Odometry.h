@@ -19,13 +19,14 @@ class Odometry
 {
 public:
     Odometry();
+    /*
     Odometry(                       // all in cartesian
         double, double, double,     // poses: x, y, z (mm/s)
         double, double, double,     // quaternion: w, x, y, z
         double,
         double, double, double,     // linear velocities (mm/s)
         double, double, double);    // angular velocities (rad/s)
-
+    */
     void setPoses(double, double, double);    // poses: x, y, z (m)
     void setOriention(double, double,         // quaternion: w, x, y, z
                       double, double);
@@ -56,7 +57,7 @@ private:
     double linear_x_; double linear_y_; double linear_z_;
     double roll_; double pitch_; double yaw_;
 
-    std::string frame_id;            // necessary for /tf topic
-    std::string child_frame_id;      // necessary for /tf topic
+    std::string frame_id_;            // necessary for /tf topic
+    std::string child_frame_id_;      // necessary for /tf topic
 };
 #endif  /* ODOMETRY_H */

@@ -17,11 +17,11 @@ public:
     void setMode(int);
     int getMode();
     void setTagXDistance(int);
-    int getTagXDistance();                      // mm             
+    int getTagXDistance();                      // mm
     void setTagYDistance(int);
-    int getTagYDistance();                      // mm 
+    int getTagYDistance();                      // mm
     void setTagZDistance(int);
-    int getTagZDistance();                      // mm 
+    int getTagZDistance();                      // mm
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
@@ -49,9 +49,9 @@ public:
 
 private:
     int mode_;
-    int tag_x_distance_;                      // mm  
-    int tag_y_distance_;                      // mm  
-    int tag_z_distance_;                      // mm  
+    int tag_x_distance_;                      // mm
+    int tag_y_distance_;                      // mm
+    int tag_z_distance_;                      // mm
 };
 
 #endif /* DRONE_H */

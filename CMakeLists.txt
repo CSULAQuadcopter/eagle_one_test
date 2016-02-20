@@ -20,6 +20,7 @@ include_directories(
 
 set(AA_HEADERS
     include/eagle_one_test/ARNavdata.h
+    include/eagle_one_test/Odometry.h
     include/eagle_one_test/Drone.h
 )
 
