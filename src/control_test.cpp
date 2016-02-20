@@ -33,7 +33,7 @@ int main(int argc, char **argv)
         if (qc.getTagCount() >= 1)
         {
             twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 36;
-            twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagX()) / 64;
+            twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 64;
 
             if ((qc.getYaw() > 0 ) && (qc.getYaw() <= 180))
             {
