@@ -166,11 +166,9 @@ double Drone::calcTagDistanceZ(double z)
 
 }
 
-double Drone::calcYawDistance(double yaw)
+double Drone::degreesToRads(double deg)
 {
-    double reference = 270.0;
-    return (yaw * M_PI / 180.0);
-
+    return (deg * M_PI / 180.0);
 }
 
 void Drone::setMode(int m)
