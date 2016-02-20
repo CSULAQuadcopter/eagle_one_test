@@ -161,7 +161,7 @@ double Drone::calcTagDistanceY(double y)
 	return (getAltd() * tan(ALPHA + beta));
 }
 
-double Drone::calcDistanceZ(double z)
+double Drone::calcTagDistanceZ(double z)
 {
 
 }
