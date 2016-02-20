@@ -37,11 +37,11 @@ int main(int argc, char **argv)
 
             if ((qc.getYaw() > 0 ) && (qc.getYaw() <= 180))
             {
-                twist_msg.angular.z = qc.calcYawDistance(qc.getYaw()) / -16;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -16;
             }
             else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 359.9999))
             {
-                twist_msg.angular.z = qc.calcYawDistance(qc.getYaw()) / 16;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 16;
             }
         }
         else
