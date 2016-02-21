@@ -20,19 +20,17 @@ public:
     int getTagXDistance();                      // mm             
     void setTagYDistance(int);
     int getTagYDistance();                      // mm 
-    void setTagZDistance(int);
-    int getTagZDistance();                      // mm 
+
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
 
     void print_tag_distance();                 // Prints (x, y) of tag (mm, mm)
     void print_tag_x_distance();               // Prints x distance of tag (mm)
-    void print_tag_y_distance();               // Prints y distance of tag (mm)
+
 
     double calcTagDistanceX(double x);         // tag z distance (mm)
     double calcTagDistanceY(double y);         // tag y distance (mm)
-    double calcTagDistanceZ(double z);         // tag z distance (mm)
     double degreesToRads(double def);          // convert degrees to rads
 
 /*    // Flight commands
@@ -50,8 +48,7 @@ public:
 private:
     int mode_;
     int tag_x_distance_;                      // mm  
-    int tag_y_distance_;                      // mm  
-    int tag_z_distance_;                      // mm  
+    int tag_y_distance_;                      // mm   
 };
 
 #endif /* DRONE_H */
