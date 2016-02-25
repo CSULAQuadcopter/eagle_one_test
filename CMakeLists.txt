@@ -15,6 +15,11 @@ add_message_files(
     Test.msg
 )
 
+add_service_files(
+    FILES
+    Pid.srv
+)
+
 generate_messages(
     DEPENDENCIES
     std_msgs
@@ -81,3 +86,11 @@ target_link_libraries(takeoff_forward_land ${catkin_LIBRARIES})
 
 add_executable(takeoff_no_state src/takeoff_no_state.cpp)
 target_link_libraries(takeoff_no_state ${catkin_LIBRARIES})
+
+add_executable(pid_client src/pid_client.cpp)
+target_link_libraries(pid_client ${catkin_LIBRARIES})
+add_dependencies(pid_client eagle_one_test_gencpp)
+
+add_executable(pid_server src/pid_server.cpp)
+target_link_libraries(pid_server ${catkin_LIBRARIES})
+add_dependencies(pid_server eagle_one_test_gencpp)
