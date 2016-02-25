@@ -13,11 +13,13 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
     FILES
     Test.msg
+    Pid_send.msg
+    Pid_receive.msg
 )
 
 add_service_files(
     FILES
-    Pid.srv
+    Pid2.srv
 )
 
 generate_messages(

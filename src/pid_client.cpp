@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <eagle_one_test/Pid.h>
+#include <eagle_one_test/Pid2.h>
 #include <iostream>
 #include <cstdlib>
 
@@ -8,8 +8,8 @@ int main (int argc, char **argv)
     ros::init(argc, argv, "pid_client");
     ros::NodeHandle n;
 
-    ros::ServiceClient client = n.serviceClient<eagle_one_test::Pid>("pid", true);
-    eagle_one_test::Pid srv;
+    ros::ServiceClient client = n.serviceClient<eagle_one_test::Pid2>("pid", true);
+    eagle_one_test::Pid2 srv;
 
     std::cout << "\nEnter a value for the error: ";
     std::cin >> srv.request.error;
