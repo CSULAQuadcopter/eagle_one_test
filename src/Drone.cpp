@@ -3,7 +3,6 @@
 #include <ardrone_autonomy/Navdata.h>
 #include <nav_msgs/Odometry.h>
 #include <eagle_one_test/Drone.h>
-#include <ardrone_autonomy/Navdata.h>
 #include <iostream>
 
 Drone::Drone()
@@ -13,6 +12,7 @@ Drone::Drone()
     setTagX(0);
     setTagY(0);
     setYaw(0.0);
+    setVels(0.0, 0.0, 0.0);
 }
 /*
 Drone::Drone(ros::NodeHandle nh)

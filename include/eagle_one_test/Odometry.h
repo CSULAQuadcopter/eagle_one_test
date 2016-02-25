@@ -48,7 +48,7 @@ public:
     double getPitch();
     double getYaw();
 
-    void geOdomData(const nav_msgs::Odometry::ConstPtr&);
+    void getOdomData(const nav_msgs::Odometry::ConstPtr&);
 
 private:
     double pose_x_; double pose_y_; double pose_z_;

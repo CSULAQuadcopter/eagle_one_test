@@ -14,41 +14,71 @@ Date modified: 2/8/2016
 #include <nav_msgs/Odometry.h>
 #include <eagle_one_test/ARNavdata.h>
 #include <eagle_one_test/Drone.h>
+#include <eagle_one_test/Odometry.h>
+#include <string>
+#include <iostream>
+
+void Odometry::getOdomData(const nav_msgs::Odometry::ConstPtr& msg)
+{
+
+}
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
     ros::NodeHandle n;
-    ros::Rate rate(5);
+    ros::Rate rate(30);
+
+    // previous velocity
+    double prev_vx = 0;
+    double prev_vy = 0;
 
     geometry_msgs::Twist twist_msg;
 
     Drone qc;
+    Odometry od;
 
-    ros::Subscriber tag_info = n.subscribe("/ardrone/navdata", 1000, &Drone::set_navdata, &qc);
+    double start_time = (double) ros::Time::now().toSec();
+    double run_time;
+
+    ros::Subscriber vel_info = n.subscribe("/ardrone/navdata", 1000, &Drone::set_navdata, &qc);
+    ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &Odometry::getOdomData, &od);
     ros::Publisher follow = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
 
     while(ros::ok())
     {
+        run_time = (double) ros::Time::now().toSec() - start_time;
         if (qc.getTagCount() >= 1)
         {
-            //twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 360;
-            //twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 640;
 
+            twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 6400; //+ 0.25 * (qc.getVx() - qc.getPrevVx());
+            /*
+            if (twist_msg.linear.x > 1)
+            {
+                twist_msg.linear.x = 1;
+            }
+            else if(twist_msg.linear.x < -1)
+            {
+                twist_msg.linear.x = -1;
+            }
+            */
+            //twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 600 + 0.25 * (qc.getVx() - qc.getPrevVx());
+            /*
             if ((qc.getYaw() > 10 ) && (qc.getYaw() <= 180))
             {
                 // angular.z < 0 => turn right
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 16;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 4;
             }
             else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 350))
             {
                 // angular.z > 0 => turn left
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -16;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -2;
             }
             else
             {
                 twist_msg.angular.z = 0;
             }
+            */
         }
         else
         {
@@ -56,6 +86,7 @@ int main(int argc, char **argv)
             twist_msg.linear.y = 0.0;
             twist_msg.angular.z = 0.0;
         }
+        /*
         std::cout << "Tag: (" << qc.getTagX() << ", " << qc.getTagX() << ")\n";
         std::cout << "Vel: (" << twist_msg.linear.x << ", " << twist_msg.linear.y << ")\n";
         std::cout << "Yaw: (" << qc.getYaw() << ")\n";
@@ -63,6 +94,9 @@ int main(int argc, char **argv)
         qc.print_tag_distance();
         //twist_msg.linear.x = qc.getTagX();
         //twist_msg.linear.y = qc.getTagY();
+        qc.setPrevVels();
+        */
+        std::cout << run_time << "\t" << qc.getTagX() << "\n";
         follow.publish(twist_msg);
         ros::spinOnce();
         rate.sleep();

@@ -8,13 +8,15 @@ Odometry::Odometry()
     setOriention(0.0, 0.0, 0.0, 0.0);
     setLinear(0.0, 0.0, 0.0);
     setAngular(0.0, 0.0, 0.0);
+    setFrameId("");
+    setChildId("");
 }
-
-void geOdomData(const nav_msgs::Odometry::ConstPtr&)
+ /*
+void Odometry::getOdomData(const nav_msgs::Odometry::ConstPtr& msg)
 {
 
 }
-
+*/
 void Odometry::setPoses(double x, double y, double z)
 {
     pose_x_ = x;

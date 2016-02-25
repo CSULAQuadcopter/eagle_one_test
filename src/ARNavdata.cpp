@@ -41,6 +41,13 @@ void ARNavdata::setVels(double vx, double vy, double vz)
     vel_z_ = vz;
 }
 
+void ARNavdata::setPrevVels()
+{
+    prev_vel_x_ = getVx();
+    prev_vel_y_ = getVy();
+    prev_vel_z_ = getVz();
+}
+
 void ARNavdata::setAccels(double ax, double ay, double az)
 {
     acc_x_ = ax;
@@ -73,6 +80,21 @@ double ARNavdata::getVy()
 double ARNavdata::getVz()
 {
     return vel_z_;
+}
+
+double ARNavdata::getPrevVx()
+{
+    return prev_vel_x_;
+}
+
+double ARNavdata::getPrevVy()
+{
+    return prev_vel_y_;
+}
+
+double ARNavdata::getPrevVz()
+{
+    return prev_vel_z_;
 }
 
 double ARNavdata::getAx()
@@ -165,5 +187,5 @@ void ARNavdata::setTm(int t)
     tm_ = t;
 }
 
-void ARNavdata::callback(const ardrone_autonomy::Navdata::ConstPtr& msg)
+void ARNavdata::tag_x_pos(const ardrone_autonomy::Navdata::ConstPtr& msg)
 {}

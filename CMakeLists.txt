@@ -6,13 +6,25 @@ find_package(catkin REQUIRED COMPONENTS
   ardrone_tutorials
   roscpp
   rospy
+  std_msgs
+  message_generation
+)
+
+add_message_files(
+    FILES
+    Test.msg
+)
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
 )
 
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
+    CATKIN_DEPENDS message_runtime
 )
-
 
 include_directories(
   include ${catkin_INCLUDE_DIRS}
@@ -22,6 +34,7 @@ set(AA_HEADERS
     include/eagle_one_test/ARNavdata.h
     include/eagle_one_test/Odometry.h
     include/eagle_one_test/Drone.h
+    include/eagle_one_test/Tag.h
 )
 
 add_library(ARNavdata src/ARNavdata.cpp)
@@ -32,6 +45,9 @@ target_link_libraries(Drone ${catkin_LIBRARIES})
 
 add_library(Odometry src/Odometry.cpp)
 target_link_libraries(Odometry ${catkin_LIBRARIES})
+
+add_library(Tag src/Tag.cpp)
+target_link_libraries(Tag ${catkin_LIBRARIES})
 
 add_executable(takeoff src/takeoff.cpp)
 target_link_libraries(takeoff ${catkin_LIBRARIES})
@@ -54,7 +70,7 @@ target_link_libraries(tag_dist_test ${catkin_LIBRARIES} Drone ARNavdata)
 
 # Link the node and the library
 add_executable(control_test src/control_test.cpp)
-target_link_libraries(control_test ${catkin_LIBRARIES} Drone ARNavdata)
+target_link_libraries(control_test ${catkin_LIBRARIES} Drone ARNavdata Odometry)
 
 # Link the node and the library
 add_executable(sub_nav_class src/sub_nav_class.cpp)

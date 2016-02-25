@@ -22,6 +22,7 @@ public:
         double);                    // altd (mm)
 
     void setVels(double, double, double);       // velocities: x, y, z (mm/s)
+    void setPrevVels();                         // velocities: x, y, z (mm/s)
     void setAccels(double, double, double);     // accelerations: x, y, z in (g)
     void setRotations(double, double, double);  // rotations: roll, pitch, yaw (rads)
     void setAltd(double);                       // altitude: (mm)
@@ -31,6 +32,9 @@ public:
     double getAx();
     double getAy();
     double getAz();
+    double getPrevVx();
+    double getPrevVy();
+    double getPrevVz();
     double getRoll();    // Roll (degrees)
     double getPitch();   // Pitch (degrees)
     double getYaw();     // Yaw (degrees)
@@ -45,10 +49,11 @@ public:
     void setYaw(double);
     void setTm(int);
 
-    void callback(const ardrone_autonomy::Navdata::ConstPtr&);
+    void tag_x_pos(const ardrone_autonomy::Navdata::ConstPtr&);
 
 private:
     double vel_x_; double vel_y_; double vel_z_;
+    double prev_vel_x_; double prev_vel_y_; double prev_vel_z_;
     double acc_x_; double acc_y_; double acc_z_;
     double roll_; double pitch_; double yaw_;
     double altd_;
