@@ -6,6 +6,7 @@
 #include <eagle_one_test/ARNavdata.h>
 #include <std_msgs/Empty.h>
 #include <geometry_msgs/Twist.h>
+#include <eagle_one_test/Pid_receive.h>
 #include <ros/ros.h>
 
 class Drone: public ARNavdata
@@ -25,6 +26,7 @@ public:
 
     void set_navdata(const ardrone_autonomy::Navdata::ConstPtr&);
     void set_odometry(const nav_msgs::Odometry::ConstPtr&);
+    void get_pid_update(const eagle_one_test::Pid_receive::ConstPtr&);
 
     void print_tag_distance();                 // Prints (x, y) of tag (mm, mm)
     void print_tag_x_distance();               // Prints x distance of tag (mm)
@@ -34,6 +36,9 @@ public:
     double calcTagDistanceY(double y);         // tag y distance (mm)
     double calcTagDistanceZ(double z);         // tag z distance (mm)
     double degreesToRads(double def);          // convert degrees to rads
+
+    // remove this, it's for testing only!
+    double update;
 
 /*    // Flight commands
     void takeoff();

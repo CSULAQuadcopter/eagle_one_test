@@ -1,3 +1,3 @@
-float32 error
-int32 current_time
-int32 last_time
+float64 error
+int64 current_time
+int64 last_time

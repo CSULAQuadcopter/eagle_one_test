@@ -38,6 +38,7 @@ include_directories(
 )
 
 set(AA_HEADERS
+    include/eagle_one_test/PIDController.h
     include/eagle_one_test/ARNavdata.h
     include/eagle_one_test/Odometry.h
     include/eagle_one_test/Drone.h
@@ -55,6 +56,9 @@ target_link_libraries(Odometry ${catkin_LIBRARIES})
 
 add_library(Tag src/Tag.cpp)
 target_link_libraries(Tag ${catkin_LIBRARIES})
+
+add_library(PIDController src/PIDController.cpp)
+target_link_libraries(PIDController ${catkin_LIBRARIES})
 
 add_executable(takeoff src/takeoff.cpp)
 target_link_libraries(takeoff ${catkin_LIBRARIES})
@@ -96,3 +100,11 @@ add_dependencies(pid_client eagle_one_test_gencpp)
 add_executable(pid_server src/pid_server.cpp)
 target_link_libraries(pid_server ${catkin_LIBRARIES})
 add_dependencies(pid_server eagle_one_test_gencpp)
+
+add_executable(pid_node src/pid_node.cpp)
+target_link_libraries(pid_node ${catkin_LIBRARIES} PIDController)
+add_dependencies(pid_node eagle_one_test_gencpp)
+
+add_executable(qc_node src/qc_node.cpp)
+target_link_libraries(qc_node ${catkin_LIBRARIES} Drone ARNavdata)
+add_dependencies(qc_node eagle_one_test_gencpp)

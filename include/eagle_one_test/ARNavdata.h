@@ -6,9 +6,6 @@
 
 /*
 ARNavdata
-
-
-
 */
 class ARNavdata
 {
