@@ -2,6 +2,7 @@
 #include <eagle_one_test/Pid_send.h>
 #include <eagle_one_test/Pid_receive.h>
 #include <eagle_one_test/Drone.h>
+#include <geometry_msgs/Twist.h>
 
 void Drone::get_pid_update(const eagle_one_test::Pid_receive::ConstPtr& data)
 {
@@ -16,22 +17,34 @@ int main (int argc, char **argv)
     Drone qc;
     eagle_one_test::Pid_send pid;
     pid.error = 32;
-    pid.last_time = 1;
+    pid.last_time = 0;
     pid.current_time = 2;
 
-    ros::Publisher qc_publisher = n.advertise<eagle_one_test::Pid_send>("pid_send", 1000);
-    ros::Subscriber qc_subscriber = n.subscribe("pid_receive", 1000, &Drone::get_pid_update, &qc);
+    geometry_msgs::Twist twist_msg;
+
+    twist_msg.linear.x = 0.0;
+    twist_msg.linear.y = 0.0;
+    twist_msg.linear.z = 0.0;
+    twist_msg.angular.x = 0.0;
+    twist_msg.angular.y = 0.0;
+    twist_msg.angular.z = 0.0;
+
+    ros::Publisher qc_publisher = n.advertise<eagle_one_test::Pid_send>("pid_send", 5);
+    ros::Subscriber qc_subscriber = n.subscribe("pid_receive", 5, &Drone::get_pid_update, &qc);
+    ros::Subscriber tag_info = n.subscribe("/ardrone/navdata", 5, &Drone::set_navdata, &qc);
+    ros::Publisher follow = n.advertise<geometry_msgs::Twist>("/cmd_vel", 5);
 
     ros::Rate rate(10);
 
     while(ros::ok())
     {
-        ROS_INFO("\nSending data:\n\tError: %f \n\tCurrent Time: %i \n\tLast Time: %i",
-                  pid.error, pid.current_time, pid.last_time);
+        pid.error = qc.calcTagDistanceX(qc.getTagX());
+        pid.current_time = (double) ros::Time::now().toSec();
 
-        ROS_INFO("\nReceiving data:\n\tUpdate: %f", qc.update);
+        twist_msg.linear.x = qc.update;
 
         qc_publisher.publish(pid);
+        follow.publish(twist_msg);
 
         ros::spinOnce();
         rate.sleep();

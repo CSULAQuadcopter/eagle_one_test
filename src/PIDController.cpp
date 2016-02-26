@@ -1,149 +1,121 @@
+// Pid.cpp
 #include <eagle_one_test/PIDController.h>
 
-PIDController::PIDController()
-    :proportional_gain(0),
-     integral_gain(0),
-     derivative_gain(0),
-     prev_error(0),
-     int_error(0),
-     windup_guard(0),
-     control(0),
-     dt(0)
-     {}
-
-PIDController::~PIDController()
-{}
-
-void PIDController::pid_zeroize()
+Pid::Pid()
+    :last_time(0),
+     dt(0),
+     kp(0.5),
+     ki(0),
+     kd(0),
+     current_time(0),
+ 	 error(0),
+     update(0)
 {
-    // set prev and integrated error to zero
-    prev_error = 0;
-    int_error = 0;
+	// TODO Auto-generated constructor stub
 }
 
-double PIDController::pid_update(double curr_error, double dt)
-{
-    double diff;
-    double p_term;
-    double i_term;
-    double d_term;
-
-    // integration with windup guarding
-    int_error += (curr_error * dt);
-    if (int_error < -(windup_guard))
-        int_error = -(windup_guard);
-    else if (int_error > windup_guard)
-        int_error = windup_guard;
-
-    // differentiation
-    diff = ((curr_error - prev_error) / dt);
-
-    // scaling
-    p_term = (proportional_gain * curr_error);
-    i_term = (integral_gain     * int_error);
-    d_term = (derivative_gain   * diff);
-
-    // summation of terms
-    control = p_term + i_term + d_term;
-
-    // save current error as previous error for next iteration
-    prev_error = curr_error;
-
-    return p_term + i_term + d_term;
+Pid::~Pid() {
+	// TODO Auto-generated destructor stub
 }
 
-double PIDController::p_update()
+void Pid::calcDt(double ct)
 {
-    return 32;
+  	setDt(ct - getLastTime());
+  	setLastTime(ct);
 }
 
-double PIDController::i_update()
+void Pid::calcError(double e)
 {
-
+  	setError(e + getError());
 }
 
-double PIDController::d_update()
+double Pid::calcP()
 {
-
+  	return getKp() * getError();
 }
 
-
-void PIDController::setKp(double kp)
+double Pid::calcI()
 {
-    proportional_gain = kp;
+  	return getKi() * getError() * getDt();
 }
 
-void PIDController::setKi(double ki)
+double Pid::calcD(double ce)
 {
-    integral_gain = ki;
+  	return getKd() * (ce - getError()) / getDt();
 }
 
-void PIDController::setKd(double kd)
+double Pid::calcUpdate(double ce, double ct)
 {
-    derivative_gain = kd;
+  	calcDt(ct);
+  	float d_update = calcD(ce);
+  	calcError(ce);
+  	update = calcP()+ calcI() + d_update ;
 }
 
-void PIDController::setPrevError(double)
+void Pid::zeroize()
 {
-
+ 	setError(0);
 }
 
-void PIDController::setIntError(double)
-{
-
+double Pid::getCurrentTime() const {
+	return current_time;
 }
 
-void PIDController::setWindUp(double)
-{
-
+void Pid::setCurrentTime(double currentTime) {
+	current_time = currentTime;
 }
 
-// void PIDController::setControl(double)
-// {
-//
-// }
-
-void PIDController::setDt(double ct)
-{
-
+double Pid::getError() const {
+	return error;
 }
 
-
-double PIDController::getKp()
-{
-
+void Pid::setError(double error) {
+	this->error = error;
 }
 
-double PIDController::getKi()
-{
-
+double Pid::getKd() const {
+	return kd;
 }
 
-double PIDController::getKd()
-{
-
+void Pid::setKd(double kd) {
+	this->kd = kd;
 }
 
-double PIDController::getPrevError()
-{
-
+double Pid::getKi() const {
+	return ki;
 }
 
-double PIDController::getIntError()
-{
-
-}
-double PIDController::getWindUp()
-{
-
+void Pid::setKi(double ki) {
+	this->ki = ki;
 }
 
-// double PIDController::getControl()
-// {
-//
-// }
+double Pid::getKp() const {
+	return kp;
+}
 
-double PIDController::getDt()
+void Pid::setKp(double kp) {
+	this->kp = kp;
+}
+
+double Pid::getLastTime() const {
+	return last_time;
+}
+
+void Pid::setLastTime(double lastTime) {
+	last_time = lastTime;
+}
+
+void Pid::setDt(double t)
 {
+    dt = t;
+}
 
+double Pid::getDt()
+{
+    return (double) dt;
+}
+
+double Pid::getUpdate()
+{
+    return update;
 }
