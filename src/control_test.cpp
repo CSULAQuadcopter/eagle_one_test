@@ -27,11 +27,11 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
     ros::NodeHandle n;
-    ros::Rate rate(30);
+    ros::Rate rate(10);
 
     // previous velocity
-    double prev_vx = 0;
-    double prev_vy = 0;
+    double x_pos = 0;
+    double y_pos = 0;
 
     geometry_msgs::Twist twist_msg;
 
@@ -40,18 +40,46 @@ int main(int argc, char **argv)
 
     double start_time = (double) ros::Time::now().toSec();
     double run_time;
+    double theta = 10;
 
     ros::Subscriber vel_info = n.subscribe("/ardrone/navdata", 1000, &Drone::set_navdata, &qc);
     ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &Odometry::getOdomData, &od);
     ros::Publisher follow = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
 
+
+    twist_msg.linear.x = 1;
     while(ros::ok())
     {
         run_time = (double) ros::Time::now().toSec() - start_time;
+        //twist_msg.linear.x = 0.01;
         if (qc.getTagCount() >= 1)
         {
+            x_pos = qc.calcTagDistanceX(qc.getTagX());
 
-            twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 6400; //+ 0.25 * (qc.getVx() - qc.getPrevVx());
+            // CHECKING THE BOUNDING BOX
+            // is the QC too far ahead?
+            if(x_pos > (5.5 * qc.getAltd() * 0.001))
+            {
+                // slow down
+                twist_msg.linear.x /= 0.5;
+            }
+            // is the QC too far behind?
+            else if (x_pos < -(5.5 * qc.getAltd() * 0.001))
+            {
+                // speed up
+                twist_msg.linear.x *= 0.5;
+            }
+
+            // limit QC velocity to 1
+            if (twist_msg.linear.x > 1)
+            {
+                twist_msg.linear.x = 1;
+            }
+            else if (twist_msg.linear.x < 0.000001)
+            {
+                twist_msg.linear.x = 0.01;
+            }
+            //twist_msg.linear.x = qc.calcTagDistanceX(qc.getTagX()) / 6400; //+ 0.25 * (qc.getVx() - qc.getPrevVx());
             /*
             if (twist_msg.linear.x > 1)
             {
@@ -63,28 +91,30 @@ int main(int argc, char **argv)
             }
             */
             //twist_msg.linear.y = qc.calcTagDistanceY(qc.getTagY()) / 600 + 0.25 * (qc.getVx() - qc.getPrevVx());
-            /*
-            if ((qc.getYaw() > 10 ) && (qc.getYaw() <= 180))
+/*
+            if ((qc.getYaw() > theta ) && (qc.getYaw() <= 180))
             {
                 // angular.z < 0 => turn right
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / 4;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -4;
             }
-            else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= 350))
+            else if ((qc.getYaw() > 180 ) && (qc.getYaw() <= (360 - theta)))
             {
                 // angular.z > 0 => turn left
-                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -2;
+                twist_msg.angular.z = qc.degreesToRads(qc.getYaw()) / -4;
             }
             else
             {
                 twist_msg.angular.z = 0;
             }
-            */
+*/
         }
         else
         {
+            /*
             twist_msg.linear.x = 0.0;
             twist_msg.linear.y = 0.0;
             twist_msg.angular.z = 0.0;
+            */
         }
         /*
         std::cout << "Tag: (" << qc.getTagX() << ", " << qc.getTagX() << ")\n";
@@ -96,7 +126,7 @@ int main(int argc, char **argv)
         //twist_msg.linear.y = qc.getTagY();
         qc.setPrevVels();
         */
-        std::cout << run_time << "\t" << qc.getTagX() << "\n";
+        std::cout << "Time " << run_time << "\tVel " << twist_msg.linear.x << "\tBB " << (5.5 * qc.getAltd() * 0.001) << "\tTagDist " << x_pos << "\n";
         follow.publish(twist_msg);
         ros::spinOnce();
         rate.sleep();

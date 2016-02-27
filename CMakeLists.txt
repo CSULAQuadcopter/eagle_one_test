@@ -84,6 +84,10 @@ add_executable(control_test src/control_test.cpp)
 target_link_libraries(control_test ${catkin_LIBRARIES} Drone ARNavdata Odometry)
 
 # Link the node and the library
+add_executable(print_values src/print_values.cpp)
+target_link_libraries(print_values ${catkin_LIBRARIES} Drone ARNavdata Odometry)
+
+# Link the node and the library
 add_executable(sub_nav_class src/sub_nav_class.cpp)
 target_link_libraries(sub_nav_class ${catkin_LIBRARIES} ARNavdata)
 
