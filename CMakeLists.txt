@@ -50,6 +50,7 @@ target_link_libraries(ARNavdata ${catkin_LIBRARIES})
 
 add_library(Drone src/Drone.cpp)
 target_link_libraries(Drone ${catkin_LIBRARIES})
+add_dependencies(Drone eagle_one_test_gencpp)
 
 add_library(Odometry src/Odometry.cpp)
 target_link_libraries(Odometry ${catkin_LIBRARIES})
@@ -59,6 +60,7 @@ target_link_libraries(Tag ${catkin_LIBRARIES})
 
 add_library(PIDController src/PIDController.cpp)
 target_link_libraries(PIDController ${catkin_LIBRARIES})
+add_dependencies(PIDController eagle_one_test_gencpp)
 
 add_executable(takeoff src/takeoff.cpp)
 target_link_libraries(takeoff ${catkin_LIBRARIES})
