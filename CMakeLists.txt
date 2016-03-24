@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 project(eagle_one_test)
 
 find_package(catkin REQUIRED COMPONENTS
-  ardrone_autonomy
-  ardrone_tutorials
-  roscpp
-  rospy
-  std_msgs
-  message_generation
+    ardrone_autonomy
+    ardrone_tutorials
+    roscpp
+    rospy
+    std_msgs
+    message_generation
 )
 
 add_message_files(

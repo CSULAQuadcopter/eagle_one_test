@@ -1,8 +1,8 @@
 #include <ros/ros.h>
-#include <eagle_one_test/Pid.h>
+#include <eagle_one_test/Pid2.h>
 
-bool pid(eagle_one_test::Pid::Request &req,
-         eagle_one_test::Pid::Response &res)
+bool pid(eagle_one_test::Pid2::Request &req,
+         eagle_one_test::Pid2::Response &res)
 {
     if((req.error > 10) && (req.time > 10))
     {
