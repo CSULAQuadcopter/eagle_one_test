@@ -20,6 +20,7 @@ add_message_files(
 add_service_files(
     FILES
     Pid2.srv
+    State.srv
 )
 
 generate_messages(
