@@ -52,7 +52,7 @@ class Smach(Machine):
         elif((self.is_take_picture()) and (transition == 'PICTURE_TAKEN')):
             self.picture_taken()
         elif((self.is_land()) and (transition == 'LAND_ALT_REACHED')):
-            self.picture_taken()
+            self.land_alt_reached()
         elif(self.is_takeoff() or self.is_follow() or self.is_land()):
             if(transition == 'EMERGENCY_CONDITION'):
                 self.emergency_condition()
@@ -65,17 +65,3 @@ class Smach(Machine):
                 self.follow_tag_found()
             if(transition == 'LAND_TAG_FOUND'):
                 self.land_tag_found()
-
-
-# class TransitionAction:
-#     TAKEOFF_COMMAND =       0
-#     TAKEOFF_ALT_REACHED =   1
-#     PICTURE_COMMAND =       2
-#     PICTURE_TAKEN =         3
-#     LAND_ALT_REACHED =      4
-#     EMERGENCY_CONDITION =   5
-#     TAG_LOST =              6
-#     TAKEOFF_TAG_FOUND =     7
-#     FOLLOW_TAG_FOUND =      8
-#     LAND_TAG_FOUND =        9
-#     TIMED_OUT =             10
