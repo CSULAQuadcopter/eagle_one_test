@@ -42,7 +42,7 @@ class Reacquisition(object):
         self.altitude_command.angular.y = 0.5
 
         self.max_altitude = max_altitude
-	self.speed = speed
+        self.speed = speed
 
         self.start_time = rospy.Time.now().to_sec()
         self.max_time = max_time
@@ -69,16 +69,16 @@ class Reacquisition(object):
     # If we're above the max altitude don't increase the altitude, other go up!
     def change_altitude(self):
     	if(self.altitude < self.max_altitude):
-        	self.altitude_command.linear.z = self.speed
-		print "Increase altitude"
+            self.altitude_command.linear.z = self.speed
+            print "Increase altitude"
         else:
-        	self.altitude_command.linear.z = 0
-		print "Stay put"
-	self.pub_altitude.publish(self.altitude_command)
+            self.altitude_command.linear.z = 0
+            print "Stay put"
+	    self.pub_altitude.publish(self.altitude_command)
 
     # Hey 'Ol Timer
     def timer(self):
-	print rospy.Time.now().to_sec() - self.start_time
+        print rospy.Time.now().to_sec() - self.start_time
         return rospy.Time.now().to_sec() - self.start_time
 
 def main():
