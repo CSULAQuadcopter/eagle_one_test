@@ -7,7 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  sensor_msgs
   message_generation
+  OpenCV
+  cv_bridge
+  image_transport
+  dynamic_reconfigure
 )
 
 add_message_files(
@@ -35,6 +40,7 @@ catkin_package(
 
 include_directories(
   include ${catkin_INCLUDE_DIRS}
+          ${OpenCV_INCLUDE_DIRS}
 )
 
 set(AA_HEADERS
@@ -114,3 +120,6 @@ add_dependencies(pid_node eagle_one_test_gencpp)
 add_executable(qc_node src/qc_node.cpp)
 target_link_libraries(qc_node ${catkin_LIBRARIES} Drone ARNavdata)
 add_dependencies(qc_node eagle_one_test_gencpp)
+
+add_executable(takepicture_mode src/takepicture_mode.cpp)
+target_link_libraries(takepicture_mode ${OpenCV_LIBRARIES})
