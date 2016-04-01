@@ -15,7 +15,7 @@ class Reacquisition(object):
     # m/s	meters		seconds
     def __init__(self, speed, max_altitude, max_time):
         # Subscribers
-        self.sub_transition = rospy.Subscriber('qc_smach/transition', String, self.transCallback)
+        self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdataCallback)
         self.sub_previous_state = rospy.Subscriber('qc_smach/previous_state', String, self.previousStateCallback)
 
