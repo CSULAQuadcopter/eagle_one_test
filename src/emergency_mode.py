@@ -38,7 +38,7 @@ def main():
         if(emergency.transition == "EMERGENCY_CONDITION"):
             emergency.emergency_land()
         rate.sleep()
-        rospy.spin()
+        # rospy.spin()
 
 
 
