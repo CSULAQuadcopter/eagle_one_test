@@ -12,7 +12,7 @@ from std_msgs.msg import String, Empty
 class Emergency(object):
     def __init__(self):
         # Subscribe to the state machine transition topic
-        self.sub_transition = rospy.Subscriber('qc_smach/transition', String, self.transCallback)
+        self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
 
         # Allow the mode to publish a land command
         self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
