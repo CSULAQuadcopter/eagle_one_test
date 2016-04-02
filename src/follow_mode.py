@@ -48,6 +48,19 @@ class PositionControl(PID):
         self.set_point=0.0
         self.error=0.0
 
+    def avoid_drastic_corrections(self, controller_output):
+        '''
+            @input A float value
+            @return If the value was bigger than 1.0 or -1.0, it will return 1.0 or -1.0,
+            otherwise it returns the same value
+        '''
+        if math.fabs(controller_output) > 1.0:
+            if controller_output > 1.0:
+                controller_output = 1.0
+            elif controller_output < -1.0:
+                controller_output = -1.0
+        return controller_output
+
 
 tag_x = 0
 tag_y = 0
