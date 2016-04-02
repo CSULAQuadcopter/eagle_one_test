@@ -3,6 +3,7 @@ import rospy
 
 # We're using a thirdparty PID
 from pid_controller import PID
+import math
 
 from std_msgs.msg import String, Empty
 from geometry_msgs.msg import Twist
@@ -66,7 +67,7 @@ tag_x = 0
 tag_y = 0
 
 def navdata_callback(msg):
-    if(tags_count > 0):
+    if(msg.tags_count > 0):
         tag_x = msg.tags_xc[0]
         tag_y = msg.tags_yc[0]
 
@@ -76,14 +77,14 @@ def main():
     qc.angular.x = 0.5
     qc.angular.y = 0.5
 
-    follow_yaw = YawControl(350, 10, 0.5)
+    #follow_yaw = YawControl(350, 10, 0.5)
 
-    pid_x = PositionControl()
-    pid_y = PositionControl()
+    pid_x = PositionControl(0.1, 0.0, 0.001, 0, 0, 500, -500)
+    #pid_y = PositionControl(0.5, I=0.0, D=0.1, Derivator=0, Integrator=0, Integrator_max=500, Integrator_min=-500)
 
     # set the setpoints
     pid_x.setPoint(500)
-    pid_y.setPoint(500)
+    #pid_y.setPoint(500)
 
     x_update = 0
     y_update = 0
@@ -95,10 +96,11 @@ def main():
 
     while not rospy.is_shutdown():
         x_update = pid_x.update(tag_x)
-        y_update = pid_y.update(tag_y)
+        #y_update = pid_y.update(tag_y)
         qc.linear.x = pid_x.avoid_drastic_corrections(x_update)
-        qc.linear.y = pid_x.avoid_drastic_corrections(x_update)
-        qc.angular.z = follow_yaw.check_yaw()
+        #qc.linear.y = pid_x.avoid_drastic_corrections(x_update)
+        #qc.angular.z = follow_yaw.check_yaw()
+        print("x: %i y: %i" % (tag_x, tag_y))
         pub_qc.publish(qc)
         rate.sleep()
 
