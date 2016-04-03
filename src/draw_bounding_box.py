@@ -59,9 +59,9 @@ class image_converter:
     except CvBridgeError as e:
       print(e)
     if self.tag_acquired:
-      cv2.line(cv_image,(self.tag_x, self.tag_y + 25),(self.tag_x, self.tag_y - 25),(0,255,0),2)
-      cv2.line(cv_image,(self.tag_x - 25, self.tag_y),(self.tag_x + 25, self.tag_y),(0,255,0),2)
-      cv2.circle(cv_image, (self.tag_x, self.tag_y), 10, (0, 255, 0), 2)
+      cv2.line(cv_image,(self.tag_x, self.tag_y + 25),(self.tag_x, self.tag_y - 25),(0,255,0),1)
+      cv2.line(cv_image,(self.tag_x - 25, self.tag_y),(self.tag_x + 25, self.tag_y),(0,255,0),1)
+      cv2.circle(cv_image, (self.tag_x, self.tag_y), 10, (0, 255, 0), 1)
     cv2.imshow("Image window", cv_image)
     # Just had to add this line!
     cv2.imwrite('image_test.png', cv_image)
