@@ -42,23 +42,35 @@ class image_converter:
   def callback(self,data):
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-      if self.tag_acquired :
-        self.set_box_corners()
-        # Draw, in order: top, right, bottom, left side of bounding box
-        # cv2.line(cv_image,self.box_tl,self.box_tr,(0,0,255),5)
-        # cv2.line(cv_image,self.box_tr,self.box_br,(0,0,255),5)
-        # cv2.line(cv_image,self.box_bl,self.box_br,(0,0,255),5)
-        # cv2.line(cv_image,self.box_bl,self.box_tl,(0,0,255),5)
-        # Debug information
-        print("C:(%d, %d) TR:(%d, %d)" % (self.tag_x, self.tag_y, self.box_tr[0],self.box_tr[1]))
-        print("TH: %d TW: %d" % (self.tag_length, self.tag_width))
-        # pts = np.array([self.box_tr, self.box_tl, self.box_br, self.box_bl], np.int32)
-        # cv2.polylines(cv_image, [pts], False, (0, 255, 0))
-        # Draw a point over the center of the tag
-        # cv2.circle(cv_image, (self.tag_x, self.tag_y), 5, (0, 255, 0), 3)
     except CvBridgeError as e:
       print(e)
     if self.tag_acquired:
+      self.set_box_corners()
+
+    #   tl_x = int(self.tag_x - self.tag_length/2)
+    #   tl_y = int(self.tag_y - self.tag_width/2)
+    #   tl = (tl_x, tl_y)
+    #   br_x = int(self.tag_x + self.tag_length/2)
+    #   br_y = int(self.tag_y + self.tag_width/2)
+    #   br = (br_x, br_y)
+    #   cv2.rectangle(cv_image, tl, br,(255,255,0),1)
+      # Draw, in order: top, right, bottom, left side of bounding box
+      cv2.line(cv_image,self.box_tl,self.box_tr,(255,255,0),2)
+      cv2.line(cv_image,self.box_tr,self.box_br,(255,255,0),2)
+      cv2.line(cv_image,self.box_bl,self.box_br,(255,255,0),2)
+      cv2.line(cv_image,self.box_bl,self.box_tl,(255,255,0),2)
+      # Debug information
+    #   print("C:(%d, %d) TW&TH:(%d, %d)" % (self.tag_x, self.tag_y, self.tag_width, self.tag_length))
+    #   print("TL: (%d, %d) TR: (%d, %d)" % (self.box_tl[0],self.box_tl[1],self.box_tr[0],self.box_tr[1]))
+    #   pts = np.array([self.box_tr, self.box_tl, self.box_br, self.box_bl], np.int32)
+    #   cv2.polylines(cv_image, [pts], False, (0, 255, 0))
+      # Draw a point over the center of the tag
+      cv2.circle(cv_image, self.box_tr, 5, (255, 0, 0), 3)
+      cv2.circle(cv_image, self.box_tl, 5, (0, 255, 0), 3)
+      cv2.circle(cv_image, self.box_br, 5, (0, 0, 255), 3)
+      cv2.circle(cv_image, self.box_bl, 5, (0, 255, 255), 3)
+
+      # Drawing some crosshairs
       cv2.line(cv_image,(self.tag_x, self.tag_y + 25),(self.tag_x, self.tag_y - 25),(0,255,0),1)
       cv2.line(cv_image,(self.tag_x - 25, self.tag_y),(self.tag_x + 25, self.tag_y),(0,255,0),1)
       cv2.circle(cv_image, (self.tag_x, self.tag_y), 10, (0, 255, 0), 1)
@@ -81,14 +93,11 @@ class image_converter:
       self.tag_x = int(data.tags_xc[0] * 640/1000)
       self.tag_y = int(data.tags_yc[0] * 360/1000)
       self.tag_theta = data.tags_orientation[0]
-      self.tag_length = data.tags_height[0]
-      self.tag_width = data.tags_width[0]
+      self.tag_length = data.tags_height[0] * 360/1000
+      self.tag_width = data.tags_width[0] * 640/1000
 
     else:
       self.tag_acquired = False
-
-  # def set_center(self):
-  #   self.center = ((self.tag_x,self.tag_y), (self.tag_width,self.tag_length),self.tag_theta)
 
   def set_box_corners(self):
     self.find_box_tr()
@@ -97,37 +106,53 @@ class image_converter:
     self.find_box_bl()
 
   def find_box_tr(self):
-    #
     tr_x = self.tag_x + self.tag_width/2
     tr_y = self.tag_y + self.tag_length/2
-
-    # self.box_tr = self.rotate(tr_x, tr_y, self.tag_x, self.tag_y)
+    tr_x = self.rotate_x(tr_x, tr_y)
+    tr_y = self.rotate_y(tr_x, tr_y)
+    print("tr: (%d, %d)"%(tr_x, tr_y))
+    self.box_tr = (tr_x, tr_y)
 
   def find_box_tl(self):
-    #
     tl_x = self.tag_x - self.tag_width/2
     tl_y = self.tag_y + self.tag_length/2
-
-    # self.box_tl = self.rotate(tl_x, tl_y, self.tag_x, self.tag_y)
+    tl_x = self.rotate_x(tl_x, tl_y)
+    tl_y = self.rotate_y(tl_x, tl_y)
+    print("tl: (%d, %d)"%(tl_x, tl_y))
+    self.box_tl = (tl_x, tl_y)
 
   def find_box_br(self):
-    #
     br_x = self.tag_x + self.tag_width/2
     br_y = self.tag_y - self.tag_length/2
-
-    # self.box_br = self.rotate(br_x, br_y, self.tag_x, self.tag_y)
+    br_x = self.rotate_x(br_x, br_y)
+    br_y = self.rotate_y(br_x, br_y)
+    print("br: (%d, %d)"%(br_x, br_y))
+    self.box_br = (br_x, br_y)
 
   def find_box_bl(self):
-    #
     bl_x = self.tag_x - self.tag_width/2
     bl_y = self.tag_y - self.tag_length/2
+    bl_x = self.rotate_x(bl_x, bl_y)
+    bl_y = self.rotate_y(bl_x, bl_y)
+    print("bl: (%d, %d)"%(bl_x, bl_y))
+    self.box_bl = (bl_x, bl_y)
 
-    # self.box_tr = self.rotate(bl_x, bl_y, self.tag_x, self.tag_y)
+  def rotate_x(self, x, y):
+    theta = self.tag_theta * 3.14159 / 180
 
-  def rotate(self, x, y, width, length):
-    rx = (width) * cos(self.tag_theta) - (length) * sin(self.tag_theta)
-    ry = (width) * sin(self.tag_theta) + (length) * cos(self.tag_theta)
-    return (int(rx), int(ry))
+    x -= self.tag_x
+    y -= self.tag_y
+
+    xnew = x * cos(theta) - y * sin(theta)
+    return int(x + self.tag_x)
+
+  def rotate_y(self, x, y):
+    theta = self.tag_theta * 3.14159 / 180
+    x -= self.tag_x
+    y -= self.tag_y
+
+    ynew = x * sin(theta) + y * cos(theta)
+    return int(y + self.tag_y)
 
 
 def main(args):
