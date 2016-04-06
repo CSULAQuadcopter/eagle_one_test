@@ -13,7 +13,7 @@ from ardrone_autonomy.msg import Navdata
 from cv_bridge import CvBridge, CvBridgeError
 
 class HUD:
-  def __init__(self, camera):
+  def __init__(self, camera, box_top_left, box_bottom_right):
     self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
 
     self.bridge = CvBridge()
@@ -37,6 +37,11 @@ class HUD:
     self.twist = Twist()
     self.battery = 0
 
+    # Bounding box dimensions
+    # These are tuples
+    self.box_top_left = box_top_left
+    self.box_bottom_right = box_bottom_right
+
   def cv_callback(self,data):
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -48,12 +53,15 @@ class HUD:
 
     # Write the info
     self.hud_info(cv_image)
+    # Draw the bounding box
+    red = (0, 0, 255)
+    cv2.rectangle(cv_image, self.box_top_left, self.box_bottom_right, red, 1)
     cv2.imshow("QC HUD", cv_image)
     # Just had to add this line!
-    self.i += 1
-    im_frame = 'image_test_%d.png' % self.i
+    # self.i += 1
+    # im_frame = 'image_test_%d.png' % self.i
     # im_frame = "image_test.png"
-    cv2.imwrite(im_frame, cv_image)
+    # scv2.imwrite(im_frame, cv_image)
     cv2.waitKey(3)
 
     try:
@@ -140,8 +148,11 @@ class HUD:
 
 
 def main(args):
-  hud = HUD("bottom")
   rospy.init_node('hud', anonymous=True)
+  top_left = (300, 155)
+  bottom_right = (340, 205)
+  hud = HUD("bottom", top_left, bottom_right)
+
   try:
     rospy.spin()
   except KeyboardInterrupt:
