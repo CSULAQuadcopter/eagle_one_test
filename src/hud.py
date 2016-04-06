@@ -14,9 +14,12 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class HUD:
   def __init__(self, camera):
-    self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
+    self.image_pub = rospy.Publisher("heads_up_" + camera,Image, queue_size=1000)
 
     self.bridge = CvBridge()
+    # Initialize node
+    self.node = rospy.init_node('hud')
+
     # Subscribe to the correct topic
     self.image_sub = rospy.Subscriber("ardrone/" + camera + "/image_raw",Image,self.cv_callback)
     self.navdata_sub = rospy.Subscriber("ardrone/navdata",Navdata,self.navdata_callback)
@@ -50,9 +53,9 @@ class HUD:
     self.hud_info(cv_image)
     cv2.imshow("QC HUD", cv_image)
     # Just had to add this line!
-    self.i += 1
-    im_frame = 'image_test_%d.png' % self.i
-    # im_frame = "image_test.png"
+    # self.i += 1
+    # im_frame = 'image_test_%d.png' % self.i
+    im_frame = "image_test.png"
     cv2.imwrite(im_frame, cv_image)
     cv2.waitKey(3)
 
@@ -141,7 +144,7 @@ class HUD:
 
 def main(args):
   hud = HUD("bottom")
-  rospy.init_node('hud', anonymous=True)
+
   try:
     rospy.spin()
   except KeyboardInterrupt:
