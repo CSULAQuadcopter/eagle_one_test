@@ -86,12 +86,15 @@ class XControl(object):
 
     def check_x(self):
         if self.tag_acquired:
-            if ((self.x < self.max) and (self.x > self.min)):
-                return 0
-            elif self.x < self.min:
+            if self.x < self.min:
+                # Go forward
                 return self.translation_rate
-            else:
+            elif self.x > self.max:
+                # Go backward
                 return -self.translation_rate
+            else:
+                # Do nothing
+                return 0
         else:
             return 0
 
