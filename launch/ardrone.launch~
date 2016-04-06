@@ -19,7 +19,7 @@
         <param name="altitude_max" value="2500" />
         <param name="altitude_min" value="50" />
         <param name="euler_angle_max" value="0.21" />
-        <param name="control_vz_max" value="100" />
+        <param name="control_vz_max" value="1200" />
         <param name="control_yaw" value="1.75" />
         <param name="detect_type" value="10" />
         <param name="enemy_colors" value="3" />
