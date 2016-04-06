@@ -93,8 +93,8 @@ class image_converter:
       self.tag_x = int(data.tags_xc[0] * 640/1000)
       self.tag_y = int(data.tags_yc[0] * 360/1000)
       self.tag_theta = data.tags_orientation[0]
-      self.tag_length = data.tags_height[0] * 360/1000
-      self.tag_width = data.tags_width[0] * 640/1000
+      self.tag_length = data.tags_height[0] # * 360/1000
+      self.tag_width = data.tags_width[0] # * 640/1000
 
     else:
       self.tag_acquired = False

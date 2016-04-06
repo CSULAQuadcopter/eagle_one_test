@@ -17,12 +17,12 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class image_converter:
 
-  def __init__(self):
+  def __init__(self, camera):
     self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
 
     self.bridge = CvBridge()
     # Subscribe to the correct topic
-    self.image_sub = rospy.Subscriber("ardrone/bottom/image_raw",Image,self.cv_callback)
+    self.image_sub = rospy.Subscriber("ardrone/" + camera + "/image_raw",Image,self.cv_callback)
     self.navdata_sub = rospy.Subscriber("ardrone/navdata",Navdata,self.navdata_callback)
     self.twist_sub = rospy.Subscriber("cmd_vel", Twist, self.twist_callback)
 
@@ -126,7 +126,7 @@ class image_converter:
 
 
 def main(args):
-  ic = image_converter()
+  ic = image_converter("front")
   rospy.init_node('hud', anonymous=True)
   try:
     rospy.spin()
