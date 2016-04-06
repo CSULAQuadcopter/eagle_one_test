@@ -30,11 +30,10 @@ public:
 
     void print_tag_distance();                 // Prints (x, y) of tag (mm, mm)
     void print_tag_x_distance();               // Prints x distance of tag (mm)
-    void print_tag_y_distance();               // Prints y distance of tag (mm)
+
 
     double calcTagDistanceX(double x);         // tag z distance (mm)
     double calcTagDistanceY(double y);         // tag y distance (mm)
-    double calcTagDistanceZ(double z);         // tag z distance (mm)
     double degreesToRads(double def);          // convert degrees to rads
 
     // remove this, it's for testing only!
