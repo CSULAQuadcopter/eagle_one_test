@@ -49,6 +49,8 @@ class PositionControl(PID):
         self.set_point=0.0
         self.error=0.0
 
+        self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
+
     def avoid_drastic_corrections(self, controller_output):
         '''
             @input A float value
@@ -62,20 +64,29 @@ class PositionControl(PID):
                 controller_output = -1.0
         return controller_output
 
+    def navdata_callback(msg):
+        if(msg.tags_count > 0):
+            self.tag_x = msg.tags_xc[0]
+            self.tag_y = msg.tags_yc[0]
+
 
 tag_x = 0
 tag_y = 0
+tag_theta = 0
 
 def navdata_callback(msg):
     if(msg.tags_count > 0):
         tag_x = msg.tags_xc[0]
         tag_y = msg.tags_yc[0]
+        tag_theta = msg.tags_orientation[0]
 
 def main():
     qc = Twist()
     # Disable hover mode
     qc.angular.x = 0.5
     qc.angular.y = 0.5
+
+    navdata = Navdata()
 
     #follow_yaw = YawControl(350, 10, 0.5)
 
@@ -95,12 +106,13 @@ def main():
     sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
     while not rospy.is_shutdown():
-        x_update = pid_x.update(tag_x)
+        x_update = pid_x.update(pid_x.tag_x)
         #y_update = pid_y.update(tag_y)
         qc.linear.x = pid_x.avoid_drastic_corrections(x_update)
         #qc.linear.y = pid_x.avoid_drastic_corrections(x_update)
         #qc.angular.z = follow_yaw.check_yaw()
-        print("x: %i y: %i" % (tag_x, tag_y))
+        print("linear.x: %f" % qc.linear.x)
+        print("x: %i y: %i" % (pid_x.tag_x, pid_x.tag_y))
         pub_qc.publish(qc)
         rate.sleep()
 
