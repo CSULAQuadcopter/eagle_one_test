@@ -13,10 +13,20 @@ from ardrone_autonomy.msg import Navdata
 from cv_bridge import CvBridge, CvBridgeError
 
 class HUD:
+<<<<<<< HEAD
   def __init__(self, camera, box_top_left, box_bottom_right):
     self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
 
     self.bridge = CvBridge()
+=======
+  def __init__(self, camera):
+    self.image_pub = rospy.Publisher("heads_up_" + camera,Image, queue_size=1000)
+
+    self.bridge = CvBridge()
+    # Initialize node
+    self.node = rospy.init_node('hud')
+
+>>>>>>> edit_x_control
     # Subscribe to the correct topic
     self.image_sub = rospy.Subscriber("ardrone/" + camera + "/image_raw",Image,self.cv_callback)
     self.navdata_sub = rospy.Subscriber("ardrone/navdata",Navdata,self.navdata_callback)
@@ -37,11 +47,14 @@ class HUD:
     self.twist = Twist()
     self.battery = 0
 
+<<<<<<< HEAD
     # Bounding box dimensions
     # These are tuples
     self.box_top_left = box_top_left
     self.box_bottom_right = box_bottom_right
 
+=======
+>>>>>>> edit_x_control
   def cv_callback(self,data):
     try:
       cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -53,15 +66,23 @@ class HUD:
 
     # Write the info
     self.hud_info(cv_image)
+<<<<<<< HEAD
     # Draw the bounding box
     red = (0, 0, 255)
     cv2.rectangle(cv_image, self.box_top_left, self.box_bottom_right, red, 1)
+=======
+>>>>>>> edit_x_control
     cv2.imshow("QC HUD", cv_image)
     # Just had to add this line!
     # self.i += 1
     # im_frame = 'image_test_%d.png' % self.i
+<<<<<<< HEAD
     # im_frame = "image_test.png"
     # scv2.imwrite(im_frame, cv_image)
+=======
+    im_frame = "image_test.png"
+    cv2.imwrite(im_frame, cv_image)
+>>>>>>> edit_x_control
     cv2.waitKey(3)
 
     try:
@@ -148,10 +169,14 @@ class HUD:
 
 
 def main(args):
+<<<<<<< HEAD
   rospy.init_node('hud', anonymous=True)
   top_left = (300, 155)
   bottom_right = (340, 205)
   hud = HUD("bottom", top_left, bottom_right)
+=======
+  hud = HUD("bottom")
+>>>>>>> edit_x_control
 
   try:
     rospy.spin()
