@@ -17,6 +17,7 @@ Date modified: 2/8/2016
 #include <eagle_one_test/Odometry.h>
 #include <string>
 #include <iostream>
+#include <std_msgs/Float64.h>
 
 void Odometry::getOdomData(const nav_msgs::Odometry::ConstPtr& msg)
 {
@@ -27,7 +28,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "sub_nav");
     ros::NodeHandle n;
-    ros::Rate rate(10);
+    ros::Rate rate(50);
 
     // previous velocity
     double x_pos = 0;
@@ -37,6 +38,7 @@ int main(int argc, char **argv)
 
     Drone qc;
     Odometry od;
+    std_msgs::Float64 orient;
 
     double start_time = (double) ros::Time::now().toSec();
     double run_time;
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
     ros::Subscriber vel_info = n.subscribe("/ardrone/navdata", 1000, &Drone::set_navdata, &qc);
     ros::Subscriber odom = n.subscribe("/ardrone/odometry", 1000, &Odometry::getOdomData, &od);
     ros::Publisher follow = n.advertise<geometry_msgs::Twist>("/cmd_vel", 1000);
-
+    ros::Publisher tag_orient = n.advertise<std_msgs::Float64>("/tag_orient", 1000);
 
     twist_msg.linear.x = 1;
     while(ros::ok())
@@ -126,8 +128,11 @@ int main(int argc, char **argv)
         //twist_msg.linear.y = qc.getTagY();
         qc.setPrevVels();
         */
-        std::cout << "Time " << run_time << "\tVel " << twist_msg.linear.x << "\tBB " << (5.5 * qc.getAltd() * 0.001) << "\tTagDist " << x_pos << "\n";
+        orient.data = qc.getYaw();
+        //std::cout << "Time " << run_time << "\tVel " << twist_msg.linear.x << "\tBB " << (5.5 * qc.getAltd() * 0.001) << "\tTagDist " << x_pos << "\n";
+        std::cout << run_time << "\t" << orient.data <<"\n";
         follow.publish(twist_msg);
+        tag_orient.publish(orient);
         ros::spinOnce();
         rate.sleep();
     }
