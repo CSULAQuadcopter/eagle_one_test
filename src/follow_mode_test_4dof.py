@@ -217,8 +217,8 @@ def main():
 
     follow_yaw = YawControl(350, 10, 0.5)
 <<<<<<< HEAD
-    follow_x = XControl(205, 155, 0.10)
-    follow_y = YControl(340, 300, 0.10)
+    follow_x = XControl(205, 155, 0.1)
+    follow_y = YControl(340, 300, 0.1)
     follow_z = ZControl(1250, 1150, 0.15)
 =======
     follow_x = XControl(270, 90, 0.5)
