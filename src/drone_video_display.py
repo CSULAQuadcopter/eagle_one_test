@@ -46,7 +46,7 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		}
 	DisconnectedMessage = 'Disconnected'
 	UnknownMessage = 'Unknown Status'
-	
+
 	def __init__(self):
 		# Construct the parent class
 		super(DroneVideoDisplay, self).__init__()
@@ -57,18 +57,18 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.setCentralWidget(self.imageBox)
 
 		# Subscribe to the /ardrone/navdata topic, of message type navdata, and call self.ReceiveNavdata when a message is received
-		self.subNavdata = rospy.Subscriber('/ardrone/navdata',Navdata,self.ReceiveNavdata) 
-		
+		self.subNavdata = rospy.Subscriber('/ardrone/navdata',Navdata,self.ReceiveNavdata)
+
 		# Subscribe to the drone's video feed, calling self.ReceiveImage when a new frame is received
 		self.subVideo   = rospy.Subscriber('/ardrone/image_raw',Image,self.ReceiveImage)
-		
+
 		# Holds the image frame received from the drone and later processed by the GUI
 		self.image = None
 		self.imageLock = Lock()
 
 		self.tags = []
 		self.tagLock = Lock()
-		
+
 		# Holds the status message to be displayed on the next GUI update
 		self.statusMessage = ''
 
@@ -81,7 +81,7 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.connectionTimer = QtCore.QTimer(self)
 		self.connectionTimer.timeout.connect(self.ConnectionCallback)
 		self.connectionTimer.start(CONNECTION_CHECK_PERIOD)
-		
+
 		# A timer to redraw the GUI
 		self.redrawTimer = QtCore.QTimer(self)
 		self.redrawTimer.timeout.connect(self.RedrawCallback)
@@ -96,9 +96,11 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		if self.image is not None:
 			# We have some issues with locking between the display thread and the ros messaging thread due to the size of the image, so we need to lock the resources
 			self.imageLock.acquire()
-			try:			
+			try:
 					# Convert the ROS image into a QImage which we can display
 					image = QtGui.QPixmap.fromImage(QtGui.QImage(self.image.data, self.image.width, self.image.height, QtGui.QImage.Format_RGB888))
+					# Draw the bounding box for the controller
+					self.draw_bounding_box(image)
 					if len(self.tags) > 0:
 						self.tagLock.acquire()
 						try:
@@ -122,6 +124,23 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 
 		# Update the status bar to show the current drone status & battery level
 		self.statusBar().showMessage(self.statusMessage if self.connected else self.DisconnectedMessage)
+
+	def draw_bounding_box(self, image):
+		# Draw the bounding box for the controller
+		# x, y positions of bounding box
+		bbx = 160
+		bby = 90
+		# width, height of bounding box
+		bbw = 320
+		bbh = 180
+		# Bounding box color
+		red = QtGui.QColor(255, 0, 0)
+		bounding_box = QtGui.QPainter()
+		bounding_box.begin(image)
+		bounding_box.setPen(red)
+		bounding_box.setBrush(red)
+		bounding_box.drawRect(bbx, bby, bbw, bbh)
+		bounding_box.end()
 
 	def ReceiveImage(self,data):
 		# Indicate that new data has been received (thus we are connected)
