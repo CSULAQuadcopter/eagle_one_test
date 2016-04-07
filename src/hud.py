@@ -57,11 +57,6 @@ class HUD:
     red = (0, 0, 255)
     cv2.rectangle(cv_image, self.box_top_left, self.box_bottom_right, red, 1)
     cv2.imshow("QC HUD", cv_image)
-    # Just had to add this line!
-    # self.i += 1
-    # im_frame = 'image_test_%d.png' % self.i
-    # im_frame = "image_test.png"
-    # scv2.imwrite(im_frame, cv_image)
     cv2.waitKey(3)
 
     try:
@@ -92,6 +87,8 @@ class HUD:
     self.twist.linear.x = msg.linear.x
     self.twist.linear.y = msg.linear.y
     self.twist.linear.z = msg.linear.z
+    self.twist.angular.x = msg.angular.x
+    self.twist.angular.y = msg.angular.y
     self.twist.angular.z = msg.angular.z
 
   def hud_info(self, cv_image):
@@ -108,6 +105,8 @@ class HUD:
     linear_x = "Vx: %.3f mm/s" % self.twist.linear.x
     linear_y = "Vy: %.3f mm/s" % self.twist.linear.y
     linear_z = "Vz: %.3f mm/s" % self.twist.linear.z
+    angular_x = "Rx: %.3f rad/s" % self.twist.angular.x
+    angular_y = "Ry: %.3f rad/s" % self.twist.angular.y
     angular_z = "Rz: %.3f rad/s" % self.twist.angular.z
 
     battery = "Battery: %.1f%%" % self.battery
@@ -121,10 +120,14 @@ class HUD:
     cv2.putText(cv_image, vx,        (0, 64), font, 1.25, font_color)
     cv2.putText(cv_image, vy,        (0, 80), font, 1.25, font_color)
     # Bottom left
-    cv2.putText(cv_image, info,      (0, 295), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_x,  (0, 310), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_y,  (0, 325), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_z,  (0, 340), font, 1.25, font_color)
+    cv2.putText(cv_image, info,      (0, 235), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_x,  (0, 250), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_y,  (0, 265), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_z,  (0, 280), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_y,  (0, 295), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_z,  (0, 310), font, 1.25, font_color)
+    cv2.putText(cv_image, angular_x, (0, 325), font, 1.25, font_color)
+    cv2.putText(cv_image, angular_y, (0, 340), font, 1.25, font_color)
     cv2.putText(cv_image, angular_z, (0, 355), font, 1.25, font_color)
     # Bottom right
     cv2.putText(cv_image, battery, (480, 355), font, 1.25, battery_font_color)
@@ -149,8 +152,8 @@ class HUD:
 
 def main(args):
   rospy.init_node('hud', anonymous=True)
-  top_left = (300, 155)
-  bottom_right = (340, 205)
+  top_left = (160, 90)
+  bottom_right = (480, 270)
   hud = HUD("bottom", top_left, bottom_right)
 
   try:

@@ -24,7 +24,7 @@ class YawControl(object):
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.yaw_callback)
 
     def check_yaw(self):
-        if ((self.yaw > self.max_theta) and (self.yaw < self.min_theta)):
+        if ((self.yaw < self.max_theta) and (self.yaw > self.min_theta)):
             if ((self.yaw < self.max_theta) and (self.yaw > 180)):
                 return self.rotation_rate
             else:
@@ -176,19 +176,13 @@ def main():
     # sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
     follow_yaw = YawControl(350, 10, 0.5)
-
-    follow_x = XControl(205, 155, 0.1)
-    follow_y = YControl(340, 300, 0.1)
-    follow_z = ZControl(1250, 1150, 0.15)
-
-
-    while (not (w.state == 'go') or (w.state == '')):
-        print("Waiting...")
+    follow_x   = XControl(270, 90, 0.075)
+    follow_y   = YControl(480, 160, 0.075)
+    follow_z   = ZControl(1100, 1000, 0.25)
 
     # Hopefully this continues until we turn off the program in the control window
-    while (not rospy.is_shutdown() and (w.state == 'go')):
+    while not rospy.is_shutdown():
         # print("Yaw: %f" % follow_yaw.yaw)
-        print("Running...")
         qc.angular.z = follow_yaw.check_yaw()
         qc.linear.x = follow_x.check_x()
 

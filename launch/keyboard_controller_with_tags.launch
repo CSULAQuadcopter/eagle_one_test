@@ -42,7 +42,7 @@
 	<!-- Launches the keyboard controller -->
 	<node
 		name="keyboard_controller"
-		pkg="ardrone_tutorials"
+		pkg="eagle_one_test"
 		type="keyboard_controller.py"
 		required="true"/>
 </launch>
