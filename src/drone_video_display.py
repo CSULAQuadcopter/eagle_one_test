@@ -14,6 +14,7 @@ import rospy
 # Import the two types of messages we're interested in
 from sensor_msgs.msg import Image    	 # for receiving the video feed
 from ardrone_autonomy.msg import Navdata # for receiving navdata feedback
+from geometry_msgs.msg import Twist		 # for receiving velocity commands
 
 # We need to use resource locking to handle synchronization between GUI thread and ROS topic callbacks
 from threading import Lock
@@ -62,12 +63,21 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		# Subscribe to the drone's video feed, calling self.ReceiveImage when a new frame is received
 		self.subVideo   = rospy.Subscriber('/ardrone/image_raw',Image,self.ReceiveImage)
 
+		# Subscribe to the velocity commands
+		self.subVel 	= rospy.Subscriber('/cmd_vel',Twist, self.ReceiveVel)
+
 		# Holds the image frame received from the drone and later processed by the GUI
 		self.image = None
 		self.imageLock = Lock()
 
 		self.tags = []
 		self.tagLock = Lock()
+
+		# Holds the altitude
+		self.altitude
+
+		# Holds the twist commands
+		self.twist = Twist()
 
 		# Holds the status message to be displayed on the next GUI update
 		self.statusMessage = ''
@@ -146,6 +156,9 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		bounding_box.drawLine(bbx+bbw, bby, bbx+bbw, bby+bbh)
 		bounding_box.end()
 
+	def draw_qc_info(self, image):
+		# Write the navdata info to the display
+
 	def ReceiveImage(self,data):
 		# Indicate that new data has been received (thus we are connected)
 		self.communicationSinceTimer = True
@@ -173,6 +186,14 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 				self.tags = []
 		finally:
 			self.tagLock.release()
+
+	def ReceiveVel(self, twist):
+		self.twist.linear.x = twist.linear.x
+		self.twist.linear.y = twist.linear.y
+		self.twist.linear.z = twist.linear.z
+		self.twist.angular.x = twist.angular.x
+		self.twist.angular.y = twist.angular.y
+		self.twist.angular.z = twist.angular.z
 
 if __name__=='__main__':
 	import sys
