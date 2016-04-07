@@ -18,7 +18,7 @@ class HUD:
 
     self.bridge = CvBridge()
     # Subscribe to the correct topic
-    self.image_sub = rospy.Subscriber("ardrone/" + camera + "/image_raw",Image,self.cv_callback)
+    self.image_sub = rospy.Subscriber("ardrone/image_raw",Image,self.cv_callback)
     self.navdata_sub = rospy.Subscriber("ardrone/navdata",Navdata,self.navdata_callback)
     self.twist_sub = rospy.Subscriber("cmd_vel", Twist, self.twist_callback)
 
