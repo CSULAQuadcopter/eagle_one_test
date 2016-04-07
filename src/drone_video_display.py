@@ -147,6 +147,10 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.statusBar().showMessage(self.statusMessage if self.connected else self.DisconnectedMessage)
 
 	def draw_bounding_box(self, image, bbx, bby, bbw, bbh):
+		"""
+		This draws the bounding box of the QC to the Qt image
+		that is passed to it
+		"""
 		# Draw the bounding box for the controller
 		# Bounding box color
 		red = QtGui.QColor(255, 0, 0)
@@ -162,6 +166,10 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		bounding_box.end()
 
 	def draw_qc_info(self, image):
+		"""
+		This takes the generated messages and prints them to the Qt image
+		that is passed to it
+		"""
 		# Write the navdata info to the display
 		# Text color
 		blue_green = QtGui.QColor(0, 255, 255)
@@ -211,6 +219,10 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 			self.tagLock.release()
 
 	def ReceiveVel(self, twist):
+		"""
+		Callback function for the /cmd_vel topic. Populates HUD messages
+		with info received along this topic
+		"""
 		self.linear_xMessage  		= 'Linear x: {:.2f}'.format(twist.linear.x)
 		self.linear_yMessage  		= 'Linear y: {:.2f}'.format(twist.linear.y)
 		self.linear_zMessage  		= 'Linear z: {:.2f}'.format(twist.linear.z)
