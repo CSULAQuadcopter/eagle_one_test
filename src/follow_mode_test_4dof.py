@@ -110,9 +110,9 @@ class YControl(object):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             self.y = int(msg.tags_xc[0] * 640 / 1000)
-            if ((self.x < self.max) and (self.x > self.min)):
+            if ((self.y < self.max) and (self.y > self.min)):
                 return 0
-            elif self.x < self.min:
+            elif self.y < self.min:
                 return self.translation_rate
             else:
                 return -self.translation_rate
@@ -156,7 +156,7 @@ class ZControl(object):
 class Window(object):
     def __init__(self):
         self.state = 'stop'
-        self.sub_navdata = rospy.Subscriber('eagle_one/start', Strin, self.state_cb)
+        self.sub_navdata = rospy.Subscriber('eagle_one/start', String, self.state_cb)
 
     def state_cb(self, msg):
         self.state = msg.data
@@ -182,12 +182,13 @@ def main():
     follow_z = ZControl(1250, 1150, 0.15)
 
 
-    while not (w.state == 'go'):
-        pass
+    while (not (w.state == 'go') or (w.state == '')):
+        print("Waiting...")
 
     # Hopefully this continues until we turn off the program in the control window
     while (not rospy.is_shutdown() and (w.state == 'go')):
         # print("Yaw: %f" % follow_yaw.yaw)
+        print("Running...")
         qc.angular.z = follow_yaw.check_yaw()
         qc.linear.x = follow_x.check_x()
 
