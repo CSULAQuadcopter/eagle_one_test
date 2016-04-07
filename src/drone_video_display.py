@@ -100,7 +100,13 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 					# Convert the ROS image into a QImage which we can display
 					image = QtGui.QPixmap.fromImage(QtGui.QImage(self.image.data, self.image.width, self.image.height, QtGui.QImage.Format_RGB888))
 					# Draw the bounding box for the controller
-					self.draw_bounding_box(image)
+					# x, y positions of bounding box
+					bbx = 160
+					bby = 90
+					# width, height of bounding box
+					bbw = 320
+					bbh = 180
+					self.draw_bounding_box(image, bbx, bby, bbw, bbh)
 					if len(self.tags) > 0:
 						self.tagLock.acquire()
 						try:
@@ -125,21 +131,19 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		# Update the status bar to show the current drone status & battery level
 		self.statusBar().showMessage(self.statusMessage if self.connected else self.DisconnectedMessage)
 
-	def draw_bounding_box(self, image):
+	def draw_bounding_box(self, image, bbx, bby, bbw, bbh):
 		# Draw the bounding box for the controller
-		# x, y positions of bounding box
-		bbx = 160
-		bby = 90
-		# width, height of bounding box
-		bbw = 320
-		bbh = 180
 		# Bounding box color
 		red = QtGui.QColor(255, 0, 0)
 		bounding_box = QtGui.QPainter()
 		bounding_box.begin(image)
 		bounding_box.setPen(red)
 		bounding_box.setBrush(red)
-		bounding_box.drawRect(bbx, bby, bbw, bbh)
+		# Construct the box side by side: top, bottom, right, left
+		bounding_box.drawLine(bbx, bby, bbx+bbw, bby)
+		bounding_box.drawLine(bbx, bby+bbh, bbx+bbw, bby+bbh)
+		bounding_box.drawLine(bbx, bby, bbx, bby+bbh)
+		bounding_box.drawLine(bbx+bbw, bby, bbx+bbw, bby+bbh)
 		bounding_box.end()
 
 	def ReceiveImage(self,data):
