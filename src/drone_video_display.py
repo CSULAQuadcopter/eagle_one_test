@@ -81,6 +81,8 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.linear_xMessage  		= 'Linear x: '
 		self.linear_yMessage  		= 'Linear y: '
 		self.linear_zMessage  		= 'Linear z: '
+		self.angular_xMessage 		= 'Angular x: '
+		self.angular_yMessage 		= 'Angular y: '
 		self.angular_zMessage 		= 'Angular z: '
 		self.tag_orientationMessage = 'Tag Theta: '
 
@@ -170,10 +172,12 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		# Construct the box side by side: top, bottom, right, left
 		text.drawText(0, 15, self.altitudeMessage)
 		text.drawText(0, 30, self.tag_orientationMessage)
-		text.drawText(0, 300, self.linear_xMessage)
-		text.drawText(0, 315, self.linear_yMessage)
-		text.drawText(0, 330, self.linear_zMessage)
-		text.drawText(0, 345, self.angular_zMessage)
+		text.drawText(0, 275, self.linear_xMessage)
+		text.drawText(0, 290, self.linear_yMessage)
+		text.drawText(0, 305, self.linear_zMessage)
+		text.drawText(0, 320, self.angular_xMessage)
+		text.drawText(0, 335, self.angular_yMessage)
+		text.drawText(0, 350, self.angular_zMessage)
 		text.end()
 
 	def ReceiveImage(self,data):
@@ -210,6 +214,8 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.linear_xMessage  		= 'Linear x: {:.2f}'.format(twist.linear.x)
 		self.linear_yMessage  		= 'Linear y: {:.2f}'.format(twist.linear.y)
 		self.linear_zMessage  		= 'Linear z: {:.2f}'.format(twist.linear.z)
+		self.angular_xMessage 		= 'Angular x: {:.2f}'.format(twist.angular.x)
+		self.angular_yMessage 		= 'Angular y: {:.2f}'.format(twist.angular.y)
 		self.angular_zMessage 		= 'Angular z: {:.2f}'.format(twist.angular.z)
 
 if __name__=='__main__':
