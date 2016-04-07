@@ -28,18 +28,18 @@ class KeyMapping(object):
 	YawRight         = QtCore.Qt.Key.Key_E
 	IncreaseAltitude = QtCore.Qt.Key.Key_Plus
 	DecreaseAltitude = QtCore.Qt.Key.Key_Minus
-	Takeoff          = QtCore.Qt.Key.Key_Y
-	Land             = QtCore.Qt.Key.Key_H
+	Takeoff          = QtCore.Qt.Key.Key_T
+	Land             = QtCore.Qt.Key.Key_G
 	Emergency        = QtCore.Qt.Key.Key_Space
 
 # Our controller definition, note that we extend the DroneVideoDisplay class
 class KeyboardController(DroneVideoDisplay):
 	def __init__(self):
 		super(KeyboardController,self).__init__()
-		
+
 		self.pitch = 0
 		self.roll = 0
-		self.yaw_velocity = 0 
+		self.yaw_velocity = 0
 		self.z_velocity = 0
 
 # We add a keyboard handler to the DroneVideoDisplay to react to keypresses
