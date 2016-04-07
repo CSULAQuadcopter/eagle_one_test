@@ -13,6 +13,8 @@ import rospy
 from drone_controller import BasicDroneController
 from drone_video_display import DroneVideoDisplay
 
+from std_msgs.msg import String
+
 # Finally the GUI libraries
 from PySide import QtCore, QtGui
 
@@ -31,6 +33,8 @@ class KeyMapping(object):
 	Takeoff          = QtCore.Qt.Key.Key_T
 	Land             = QtCore.Qt.Key.Key_G
 	Emergency        = QtCore.Qt.Key.Key_Space
+	Start			 = QtCore.Qt.Key.Key_P
+	Stop			 = QtCore.Qt.Key.Key_L
 
 # Our controller definition, note that we extend the DroneVideoDisplay class
 class KeyboardController(DroneVideoDisplay):
@@ -41,6 +45,8 @@ class KeyboardController(DroneVideoDisplay):
 		self.roll = 0
 		self.yaw_velocity = 0
 		self.z_velocity = 0
+		self.start = String()
+		self.start_pub = rospy.Publisher("/eagle_one/start",String,queue_size=1)
 
 # We add a keyboard handler to the DroneVideoDisplay to react to keypresses
 	def keyPressEvent(self, event):
@@ -76,6 +82,16 @@ class KeyboardController(DroneVideoDisplay):
 					self.z_velocity += 1
 				elif key == KeyMapping.DecreaseAltitude:
 					self.z_velocity += -1
+					
+				elif key == KeyMapping.Start:
+					self.start.data = 'go'
+					self.start_pub.publish(self.start)
+					rospy.spin()
+				elif key == KeyMapping.Stop:
+					self.start.data = 'stop'
+					self.start_pub.publish(self.start)
+					rospy.spin()
+
 
 			# finally we set the command to be sent. The controller handles sending this at regular intervals
 			controller.SetCommand(self.roll, self.pitch, self.yaw_velocity, self.z_velocity)
