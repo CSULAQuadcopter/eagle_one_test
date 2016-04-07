@@ -73,14 +73,16 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		self.tags = []
 		self.tagLock = Lock()
 
-		# Holds the altitude
-		self.altitude
-
-		# Holds the twist commands
-		self.twist = Twist()
-
 		# Holds the status message to be displayed on the next GUI update
 		self.statusMessage = ''
+
+		# Holds the drone info messages to be displayed on the next GUI update
+		self.altitudeMessage  		= 'Altitude:'
+		self.linear_xMessage  		= 'Linear x: '
+		self.linear_yMessage  		= 'Linear y: '
+		self.linear_zMessage  		= 'Linear z: '
+		self.angular_zMessage 		= 'Angular z: '
+		self.tag_orientationMessage = 'Tag Theta: '
 
 		# Tracks whether we have received data since the last connection check
 		# This works because data comes in at 50Hz but we're checking for a connection at 4Hz
@@ -117,6 +119,7 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 					bbw = 320
 					bbh = 180
 					self.draw_bounding_box(image, bbx, bby, bbw, bbh)
+					self.draw_qc_info(image)
 					if len(self.tags) > 0:
 						self.tagLock.acquire()
 						try:
@@ -150,14 +153,28 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		bounding_box.setPen(red)
 		bounding_box.setBrush(red)
 		# Construct the box side by side: top, bottom, right, left
-		bounding_box.drawLine(bbx, bby, bbx+bbw, bby)
-		bounding_box.drawLine(bbx, bby+bbh, bbx+bbw, bby+bbh)
-		bounding_box.drawLine(bbx, bby, bbx, bby+bbh)
-		bounding_box.drawLine(bbx+bbw, bby, bbx+bbw, bby+bbh)
+		bounding_box.drawLine(bbx,	   bby, 	bbx+bbw, bby)
+		bounding_box.drawLine(bbx,	   bby+bbh, bbx+bbw, bby+bbh)
+		bounding_box.drawLine(bbx,	   bby, 	bbx, 	 bby+bbh)
+		bounding_box.drawLine(bbx+bbw, bby, 	bbx+bbw, bby+bbh)
 		bounding_box.end()
 
 	def draw_qc_info(self, image):
 		# Write the navdata info to the display
+		# Text color
+		blue_green = QtGui.QColor(0, 255, 255)
+		text = QtGui.QPainter()
+		text.begin(image)
+		text.setPen(blue_green)
+		text.setBrush(blue_green)
+		# Construct the box side by side: top, bottom, right, left
+		text.drawText(0, 15, self.altitudeMessage)
+		text.drawText(0, 30, self.tag_orientationMessage)
+		text.drawText(0, 300, self.linear_xMessage)
+		text.drawText(0, 315, self.linear_yMessage)
+		text.drawText(0, 330, self.linear_zMessage)
+		text.drawText(0, 345, self.angular_zMessage)
+		text.end()
 
 	def ReceiveImage(self,data):
 		# Indicate that new data has been received (thus we are connected)
@@ -177,23 +194,23 @@ class DroneVideoDisplay(QtGui.QMainWindow):
 		# Update the message to be displayed
 		msg = self.StatusMessages[navdata.state] if navdata.state in self.StatusMessages else self.UnknownMessage
 		self.statusMessage = '{} (Battery: {}%)'.format(msg,int(navdata.batteryPercent))
+		self.altitudeMessage = 'Altitude: {:.2f}m'.format(navdata.altd / 1000.0)
 
 		self.tagLock.acquire()
 		try:
 			if navdata.tags_count > 0:
 				self.tags = [(navdata.tags_xc[i],navdata.tags_yc[i],navdata.tags_distance[i]) for i in range(0,navdata.tags_count)]
+				self.tag_orientationMessage = 'Tag Theta: {:.2f}'.format(navdata.tags_orientation[0])
 			else:
 				self.tags = []
 		finally:
 			self.tagLock.release()
 
 	def ReceiveVel(self, twist):
-		self.twist.linear.x = twist.linear.x
-		self.twist.linear.y = twist.linear.y
-		self.twist.linear.z = twist.linear.z
-		self.twist.angular.x = twist.angular.x
-		self.twist.angular.y = twist.angular.y
-		self.twist.angular.z = twist.angular.z
+		self.linear_xMessage  		= 'Linear x: {:.2f}'.format(twist.linear.x)
+		self.linear_yMessage  		= 'Linear y: {:.2f}'.format(twist.linear.y)
+		self.linear_zMessage  		= 'Linear z: {:.2f}'.format(twist.linear.z)
+		self.angular_zMessage 		= 'Angular z: {:.2f}'.format(twist.angular.z)
 
 if __name__=='__main__':
 	import sys
