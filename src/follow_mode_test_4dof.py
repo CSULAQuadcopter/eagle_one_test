@@ -153,10 +153,19 @@ class ZControl(object):
     def z_callback(self, msg):
         self.z = msg.altd
 
+class Window(object):
+    def __init__(self):
+        self.state = 'stop'
+        self.sub_navdata = rospy.Subscriber('eagle_one/start', Strin, self.state_cb)
+
+    def state_cb(self, msg):
+        self.state = msg.data
+
 def main():
     rospy.init_node('follow_mode_test_4dof')
     rate = rospy.Rate(100) # 100Hz
 
+    w = Window()
     qc = Twist()
 
     # To disable hover mode
@@ -173,7 +182,11 @@ def main():
     follow_z = ZControl(1250, 1150, 0.15)
 
 
-    while not rospy.is_shutdown():
+    while not (w.state == 'go'):
+        pass
+
+    # Hopefully this continues until we turn off the program in the control window
+    while (not rospy.is_shutdown() and (w.state == 'go')):
         # print("Yaw: %f" % follow_yaw.yaw)
         qc.angular.z = follow_yaw.check_yaw()
         qc.linear.x = follow_x.check_x()
