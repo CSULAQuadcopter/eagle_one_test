@@ -1,39 +1,6 @@
 #! /usr/bin/env python
 import rospy
 
-from Controller import Controller
-from pid_controller import PID
-
-import math
-
-from std_msgs.msg import String, Empty
-from geometry_msgs.msg import Twist
-from ardrone_autonomy.msg import Navdata
-
-<<<<<<< HEAD
-=======
-# def main():
-#     rospy.init_node('follow_mode_test_4dof')
-#     rate = rospy.Rate(100) # 100Hz
-#     qc = Twist()
-#     # Disable hover mode
-#     qc.angular.x = 0.5
-#     qc.angular.y = 0.5
-#
-#     controller = Controller()
-#
-#     controller.set_goal("x", 500)
-#
-#     while not rospy.is_shutdown():
-#         print("Tag x: %d" % controller.tag_x)
-#         x_update = controller.pid_x.update(controller.tag_x)
-#         controller.publish_twist()
-#         rate.sleep()
-
->>>>>>> edit_x_control
-#! /usr/bin/env python
-import rospy
-
 # We're using a thirdparty PID
 from pid_controller import PID
 import math
@@ -57,11 +24,7 @@ class YawControl(object):
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.yaw_callback)
 
     def check_yaw(self):
-<<<<<<< HEAD
         if ((self.yaw > self.max_theta) and (self.yaw < self.min_theta)):
-=======
-        if ((self.yaw < self.max_theta) and (self.yaw > self.min_theta)):
->>>>>>> edit_x_control
             if ((self.yaw < self.max_theta) and (self.yaw > 180)):
                 return self.rotation_rate
             else:
@@ -77,11 +40,7 @@ class YawControl(object):
             # to stop the rotation of the qc when the tag is not acquired
             self.yaw = 0
 
-<<<<<<< HEAD
 # Simple proportional controller for the x translation
-=======
-# Simple proportional controller for the orientation
->>>>>>> edit_x_control
 class XControl(object):
     def __init__(self, max_x, min_x, translation_rate):
         self.max = max_x
@@ -97,7 +56,6 @@ class XControl(object):
 
     def check_x(self):
         if self.tag_acquired:
-<<<<<<< HEAD
             if(self.x < self.min):
                 # print("Below")
                 return self.translation_rate
@@ -152,7 +110,6 @@ class YControl(object):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             self.y = int(msg.tags_xc[0] * 640 / 1000)
-=======
             if ((self.x < self.max) and (self.x > self.min)):
                 return 0
             elif self.x < self.min:
@@ -166,12 +123,10 @@ class YControl(object):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             self.x = int(msg.tags_xc[0] * 360 / 1000)
->>>>>>> edit_x_control
         else:
             # to stop the translation of the qc when the tag is not acquired
             self.tag_acquired = False
 
-<<<<<<< HEAD
 # Simple proportional controller for the orientation
 class ZControl(object):
     def __init__(self, max_z, min_z, translation_rate):
@@ -198,41 +153,34 @@ class ZControl(object):
     def z_callback(self, msg):
         self.z = msg.altd
 
-=======
->>>>>>> edit_x_control
 def main():
     rospy.init_node('follow_mode_test_4dof')
     rate = rospy.Rate(100) # 100Hz
 
     qc = Twist()
-<<<<<<< HEAD
+
     # To disable hover mode
     qc.angular.x = 0.5
     qc.angular.y = 0.5
-=======
->>>>>>> edit_x_control
 
     pub_qc = rospy.Publisher('cmd_vel', Twist, queue_size=100)
     # sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
     follow_yaw = YawControl(350, 10, 0.5)
-<<<<<<< HEAD
+
     follow_x = XControl(205, 155, 0.1)
     follow_y = YControl(340, 300, 0.1)
     follow_z = ZControl(1250, 1150, 0.15)
-=======
-    follow_x = XControl(270, 90, 0.5)
->>>>>>> edit_x_control
+
 
     while not rospy.is_shutdown():
         # print("Yaw: %f" % follow_yaw.yaw)
         qc.angular.z = follow_yaw.check_yaw()
         qc.linear.x = follow_x.check_x()
-<<<<<<< HEAD
+
         qc.linear.y = follow_y.check_y()
         qc.linear.z = follow_z.check_z()
-=======
->>>>>>> edit_x_control
+
         pub_qc.publish(qc)
         rate.sleep()
 
