@@ -50,6 +50,7 @@ class XControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.x = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.x_callback)
@@ -58,16 +59,17 @@ class XControl(object):
         if self.tag_acquired:
             if(self.x < self.min):
                 # print("Below")
-                return self.translation_rate
+                self.command = self.translation_rate
             elif(self.x > self.max):
                 # print("Above")
-                return -self.translation_rate
+                self.command = -self.translation_rate
             else:
                 # print("Within")
-                return 0
+                self.command = 0
+            return self.command
         else:
             # print("No tag")
-            return 0
+            return self.command
 
     def x_callback(self, msg):
         if(msg.tags_count > 0):
@@ -87,6 +89,7 @@ class YControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.y = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.y_callback)
@@ -95,16 +98,17 @@ class YControl(object):
         if self.tag_acquired:
             if(self.y < self.min):
                 # print("Below")
-                return self.translation_rate
+                self.command = self.translation_rate
             elif(self.y > self.max):
                 # print("Above")
-                return -self.translation_rate
+                self.command = -self.translation_rate
             else:
                 # print("Within")
-                return 0
+                self.command = 0
+            return self.command
         else:
             # print("No tag")
-            return 0
+            return self.command
 
     def y_callback(self, msg):
         if(msg.tags_count > 0):
@@ -137,18 +141,20 @@ class ZControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.z = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.z_callback)
 
     def check_z(self):
         if(self.z > self.max):
-            return -self.translation_rate
+            self.command = -self.translation_rate
         elif(self.z < self.min):
-            return self.translation_rate
+             self.command = self.translation_rate
         else:
             # to stop the translation of the qc when the tag is not acquired
-            return 0
+            self.command = 0
+        return self.command
 
     def z_callback(self, msg):
         self.z = msg.altd
@@ -175,10 +181,10 @@ def main():
     pub_qc = rospy.Publisher('cmd_vel', Twist, queue_size=100)
     # sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
-    follow_yaw = YawControl(350, 10, 0.5)
+    follow_yaw = YawControl(350, 10, -0.5)
     follow_x   = XControl(270, 90, 0.075)
     follow_y   = YControl(480, 160, 0.075)
-    follow_z   = ZControl(1100, 1000, 0.25)
+    # follow_z   = ZControl(1100, 1000, 0.1)
 
     # Hopefully this continues until we turn off the program in the control window
     while not rospy.is_shutdown():
@@ -187,7 +193,7 @@ def main():
         qc.linear.x = follow_x.check_x()
 
         qc.linear.y = follow_y.check_y()
-        qc.linear.z = follow_z.check_z()
+        # qc.linear.z = follow_z.check_z()
 
         pub_qc.publish(qc)
         rate.sleep()
