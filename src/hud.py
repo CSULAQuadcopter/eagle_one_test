@@ -36,6 +36,7 @@ class HUD:
     self.i = 0
     self.twist = Twist()
     self.battery = 0
+    self.mode = 0
 
     # Bounding box dimensions
     # These are tuples
@@ -70,6 +71,7 @@ class HUD:
     self.vx = data.vx
     self.vy = data.vy
     self.battery = data.batteryPercent
+    self.mode = data.state
     if(data.tags_count > 0):
       self.tag_acquired = True
       # The positions need to be scaled due to the actual resolution
@@ -95,11 +97,13 @@ class HUD:
     font = cv2.FONT_HERSHEY_PLAIN
     font_color = (0, 255, 0)
     # Make the strings with the HUD info
+    mode = [
+        'Emergency', 'Inited', 'Landed', 'Flying', 'Hovering', 'Test',
+        'Taking Off', 'Flying', 'Landing', 'Looping'
+        ]
     altd = "Altitude: %.3f m" % self.altitude
     tag_pos = "Tag: (%d, %d) px" % (self.tag_x, self.tag_y)
     tag_theta = "Tag Theta: %.1f" % self.tag_theta
-    vx = "Vx: %d mm/s" % self.vx
-    vy = "Vy: %d mm/s" % self.vy
 
     info = "Sent Velocities"
     linear_x = "Vx: %.3f mm/s" % self.twist.linear.x
@@ -111,26 +115,24 @@ class HUD:
 
     battery = "Battery: %.1f%%" % self.battery
     battery_font_color = self.set_battery_font(60, 30)
+    state = "Mode: %s" % mode[self.mode]
 
     # Put the text on the image
     # Top left
     cv2.putText(cv_image, altd,      (0, 15), font, 1.25, font_color)
     cv2.putText(cv_image, tag_pos,   (0, 32), font, 1.25, font_color)
     cv2.putText(cv_image, tag_theta, (0, 48), font, 1.25, font_color)
-    cv2.putText(cv_image, vx,        (0, 64), font, 1.25, font_color)
-    cv2.putText(cv_image, vy,        (0, 80), font, 1.25, font_color)
     # Bottom left
-    cv2.putText(cv_image, info,      (0, 235), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_x,  (0, 250), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_y,  (0, 265), font, 1.25, font_color)
-    cv2.putText(cv_image, linear_z,  (0, 280), font, 1.25, font_color)
+    cv2.putText(cv_image, info,      (0, 265), font, 1.25, font_color)
+    cv2.putText(cv_image, linear_x,  (0, 280), font, 1.25, font_color)
     cv2.putText(cv_image, linear_y,  (0, 295), font, 1.25, font_color)
     cv2.putText(cv_image, linear_z,  (0, 310), font, 1.25, font_color)
     cv2.putText(cv_image, angular_x, (0, 325), font, 1.25, font_color)
     cv2.putText(cv_image, angular_y, (0, 340), font, 1.25, font_color)
     cv2.putText(cv_image, angular_z, (0, 355), font, 1.25, font_color)
     # Bottom right
-    cv2.putText(cv_image, battery, (480, 355), font, 1.25, battery_font_color)
+    cv2.putText(cv_image, battery, (480, 340), font, 1.25, battery_font_color)
+    cv2.putText(cv_image, state,   (480, 355), font, 1.25, font_color)
 
   def crosshair(self, cv_image):
     # Draw the vertical line, then the horizontal, then the circle
