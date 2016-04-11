@@ -33,10 +33,16 @@ class HUD:
     self.altitude = 0
     self.vx = 0
     self.vy = 0
+    self.vz = 0
     self.i = 0
     self.twist = Twist()
     self.battery = 0
     self.mode = 0
+    self.pwm1 = 0
+    self.pwm2 = 0
+    self.pwm3 = 0
+    self.pwm4 = 0
+    self.time = 0
 
     # Bounding box dimensions
     # These are tuples
@@ -70,8 +76,14 @@ class HUD:
     self.altitude = data.altd / 1000.0
     self.vx = data.vx
     self.vy = data.vy
+    self.vz = data.vz
+    self.time = data.tm / 1000000.0
     self.battery = data.batteryPercent
     self.mode = data.state
+    self.pwm1 = data.motor1
+    self.pwm2 = data.motor2
+    self.pwm3 = data.motor3
+    self.pwm4 = data.motor4
     if(data.tags_count > 0):
       self.tag_acquired = True
       # The positions need to be scaled due to the actual resolution
@@ -104,6 +116,10 @@ class HUD:
     altd = "Altitude: %.3f m" % self.altitude
     tag_pos = "Tag: (%d, %d) px" % (self.tag_x, self.tag_y)
     tag_theta = "Tag Theta: %.1f" % self.tag_theta
+    vx_est = "Vx: %.2f mm/s" % self.vx
+    vy_est = "Vy: %.2f mm/s" % self.vy
+    # vz_est = "Vz: %.2f mm/s" % self.vz
+    time = "Time: %f " % self.time
 
     info = "Sent Velocities"
     linear_x = "Vx: %.3f mm/s" % self.twist.linear.x
@@ -112,6 +128,11 @@ class HUD:
     angular_x = "Rx: %.3f rad/s" % self.twist.angular.x
     angular_y = "Ry: %.3f rad/s" % self.twist.angular.y
     angular_z = "Rz: %.3f rad/s" % self.twist.angular.z
+
+    pwm1 = "PWM1: %d" % self.pwm1
+    pwm2 = "PWM2: %d" % self.pwm2
+    pwm3 = "PWM3: %d" % self.pwm3
+    pwm4 = "PWM4: %d" % self.pwm4
 
     battery = "Battery: %.1f%%" % self.battery
     battery_font_color = self.set_battery_font(60, 30)
@@ -122,6 +143,10 @@ class HUD:
     cv2.putText(cv_image, altd,      (0, 15), font, 1.25, font_color)
     cv2.putText(cv_image, tag_pos,   (0, 32), font, 1.25, font_color)
     cv2.putText(cv_image, tag_theta, (0, 48), font, 1.25, font_color)
+    cv2.putText(cv_image, vx_est,    (0, 64), font, 1.25, font_color)
+    cv2.putText(cv_image, vy_est,    (0, 80), font, 1.25, font_color)
+    # cv2.putText(cv_image, vz_est,    (0, 96), font, 1.25, font_color)
+    cv2.putText(cv_image, time,      (0, 96), font, 1.25, font_color)
     # Bottom left
     cv2.putText(cv_image, info,      (0, 265), font, 1.25, font_color)
     cv2.putText(cv_image, linear_x,  (0, 280), font, 1.25, font_color)
@@ -130,9 +155,14 @@ class HUD:
     cv2.putText(cv_image, angular_x, (0, 325), font, 1.25, font_color)
     cv2.putText(cv_image, angular_y, (0, 340), font, 1.25, font_color)
     cv2.putText(cv_image, angular_z, (0, 355), font, 1.25, font_color)
+    # Top right
+    cv2.putText(cv_image, pwm1, (520, 15), font, 1.25, font_color)
+    cv2.putText(cv_image, pwm2, (520, 32), font, 1.25, font_color)
+    cv2.putText(cv_image, pwm3, (520, 48), font, 1.25, font_color)
+    cv2.putText(cv_image, pwm4, (520, 64), font, 1.25, font_color)
     # Bottom right
-    cv2.putText(cv_image, battery, (480, 340), font, 1.25, battery_font_color)
-    cv2.putText(cv_image, state,   (480, 355), font, 1.25, font_color)
+    cv2.putText(cv_image, battery, (440, 340), font, 1.25, battery_font_color)
+    cv2.putText(cv_image, state,   (440, 355), font, 1.25, font_color)
 
   def crosshair(self, cv_image):
     # Draw the vertical line, then the horizontal, then the circle
@@ -154,8 +184,8 @@ class HUD:
 
 def main(args):
   rospy.init_node('hud', anonymous=True)
-  top_left = (160, 90)
-  bottom_right = (480, 270)
+  top_left = (240, 135)
+  bottom_right = (400, 225)
   hud = HUD("bottom", top_left, bottom_right)
 
   try:

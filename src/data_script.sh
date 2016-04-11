@@ -1,5 +1,5 @@
-rqt_plot /ardrone/navdata/tags_xc[0]:tags_yc[0] &
+rosservice call /ardrone/togglecam &
 
-rqt_plot /ardrone/navdata/tags_orientation[0] &
+./hud.py &
 
-rqt_plot /ardrone/navdata/altd &
+./hud.py

@@ -91,7 +91,7 @@ class KeyboardController(DroneVideoDisplay):
 
 			# finally we set the command to be sent. The controller handles sending this at regular intervals
 			controller.SetCommand(self.roll, self.pitch, self.yaw_velocity, self.z_velocity)
-			controller.SetState(self.start)
+			# controller.SetState(self.start)
 
 
 	def keyReleaseEvent(self,event):
@@ -128,7 +128,7 @@ class KeyboardController(DroneVideoDisplay):
 
 			# finally we set the command to be sent. The controller handles sending this at regular intervals
 			controller.SetCommand(self.roll, self.pitch, self.yaw_velocity, self.z_velocity)
-			controller.SetState(self.start)
+			# controller.SetState(self.start)
 
 
 
