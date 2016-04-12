@@ -52,8 +52,8 @@ class Takeoff(object):
         self.transition = msg.data
 
     def navdataCallback(self, msg):
-        self.altitude = msg.altd
-        if(msg.tags_count > 1):
+        self.altitude = data.altd
+        if(msg.tags_count > 0):
         	self.tag_acquired = True
         else:
         	self.tag_acquired = False
@@ -70,7 +70,7 @@ class Takeoff(object):
     # If we're above the max altitude don't increase the altitude, other go up!
     def change_altitude(self):
     	if(self.altitude < self.max_altitudeGoal):
-            self.altitude_command.linear.z = self.speed
+            self.altitude_command.linear.z = +self.speed
             print "Increase altitude"
         else:
             self.altitude_command.linear.z = 0
@@ -78,8 +78,8 @@ class Takeoff(object):
 	    self.pub_altitude.publish(self.altitude_command)
 
 def main():
-    speed = 1 	 # m/s
-    max_altitudeGoal = 1000  # mm
+    speed = 3 	 # m/s
+    max_altitudeGoal = 2500  # mm
     #max_time = 20 	 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal)
 
