@@ -1,6 +1,6 @@
 #! /usr/bin/env python
-# This is the the code for the reacqusition mode
-#By: Amando A. Aranda and Josh Saunders
+# This is the the code for the landing
+#By: Amando A. Aranda
 #Date: March 31, 2016
 
 # We're using ROS here
@@ -51,7 +51,7 @@ class Landing(object):
 
     def navdataCallback(self, msg):
         self.altitude = msg.altd
-        if(msg.tags_count > 1):
+        if((msg.tags_count >= 1) or (msg.tags_count > 0)):
         	self.tag_acquired = True
         else:
         	self.tag_acquired = False
@@ -80,7 +80,7 @@ def main():
     speed = -0.3 	 # m/s
     min_altitude = 203  # mm, this  is 8 inches
 
-    landing = Landing(speed, dec_alt)
+    landing = Landing(speed, min_altitude)
 
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
