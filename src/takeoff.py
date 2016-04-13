@@ -78,7 +78,7 @@ class Takeoff(object):
         # rospy.spin()
 
 def main():
-    speed = 0.75	 # m/s
+    speed = 0.5	 # m/s
     max_altitudeGoal = 1500  # mm
     #max_time = 20 	 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal)
@@ -92,8 +92,8 @@ def main():
         if(takeoff.altitude < takeoff.max_altitudeGoal):
             print("Go up, mofo!")
             takeoff.change_altitude(speed)
-        elif(takeoff.altitude >= takeoff.max_altitudeGoal* 0.75):
-            speed = speed * 0.75
+        # elif(takeoff.altitude >= takeoff.max_altitudeGoal* 0.75):
+        #     speed = speed * 0.75
         elif(takeoff.altitude >= takeoff.max_altitudeGoal):
             speed = 0
             print("Stop, mofo!")
