@@ -31,6 +31,7 @@ class Takeoff(object):
         # Initialize member variables
         self.transition = ""
         self.altitude = 0
+        self.state = 0
 
         self.tag_acquired = True
 
@@ -52,7 +53,8 @@ class Takeoff(object):
         self.transition = msg.data
 
     def navdataCallback(self, msg):
-        self.altitude = data.altd
+        self.altitude = msg.altd
+        self.state = msg.state
         if(msg.tags_count > 0):
         	self.tag_acquired = True
         else:
@@ -64,29 +66,33 @@ class Takeoff(object):
     def launch(self):
         # Take off QC command
         self.pub_takeoff.publish(Empty())
+        # rospy.spin()
         print("Moving on up!")
 
 
     # If we're above the max altitude don't increase the altitude, other go up!
     def change_altitude(self):
-    	if(self.altitude < self.max_altitudeGoal):
-            self.altitude_command.linear.z = +self.speed
-            print "Increase altitude"
-        else:
-            self.altitude_command.linear.z = 0
-            print "Stay put"
-	    self.pub_altitude.publish(self.altitude_command)
+        self.altitude_command.linear.z = self.speed
+        self.pub_altitude.publish(self.altitude_command)
+        print("Change altitude")
+        # rospy.spin()
 
 def main():
     speed = 3 	 # m/s
-    max_altitudeGoal = 2500  # mm
+    max_altitudeGoal = 1500  # mm
     #max_time = 20 	 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal)
 
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
-        takeoff.launch()
-        takeoff.change_altitude()
+        print("%d" % takeoff.max_altitudeGoal)
+        # if landed, takeoff
+        if ((takeoff.state != 3) or (takeoff.state != 4)):
+            takeoff.launch()
+        if(takeoff.altitude < takeoff.max_altitudeGoal):
+            print("Go up, mofo!")
+            takeoff.change_altitude()
+            
         rate.sleep()
 
 
