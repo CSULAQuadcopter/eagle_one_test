@@ -66,27 +66,25 @@ class Landing(object):
 
     # THis is the algo for landing
     def change_altitude(self, min_altitude):
-    	if(self.altitude >= self.min_altitude):
-            self.altitude_command.linear.z = self.speed  #decrease alt here
-            print ("Decrease altitude")
-        else:
-            self.altitude_command.linear.z = 0
-            print ("Stay put")
-	    self.pub_altitude.publish(self.altitude_command)
+        self.altitude_command.linear.z = self.speed
+        self.pub_altitude.publish(self.altitude_command)
 
 
 
 def main():
-    speed = -0.3 	 # m/s
-    min_altitude = 203  # mm, this  is 8 inches
+    speed = -.5 	 # m/s
+    min_altitude = 500  # mm, this  is 8 inches
 
     landing = Landing(speed, min_altitude)
 
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
-        landing.change_altitude()
-        landing.land()
-        print ("Eagle one going down")
+        if(landing.altitude > min_altitude):
+            landing.change_altitude(speed)
+            print ("Go down!")
+        else:
+            landing.land()
+            print ("Eagle one going down")
         rate.sleep()
 
 
