@@ -19,11 +19,11 @@ class Takeoff(object):
         self.sub_previous_state = rospy.Subscriber('qc_smach/previous_state', String, self.previousStateCallback)
 
         # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
+        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=100)
+        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1)
         # TODO need to set this up as a client to the smach server
-        self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=100)
+        self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
 
         # Initialize the node and rate
         self.node = rospy.init_node('takeoff_mode')
@@ -62,7 +62,7 @@ class Takeoff(object):
 
     def previousStateCallback(self, msg):
     	self.previous_state = msg.data
-    	
+
     def launch(self):
         # Take off QC command
         self.pub_takeoff.publish(Empty())
@@ -71,14 +71,14 @@ class Takeoff(object):
 
 
     # If we're above the max altitude don't increase the altitude, other go up!
-    def change_altitude(self):
-        self.altitude_command.linear.z = self.speed
+    def change_altitude(self, speed):
+        self.altitude_command.linear.z = speed
         self.pub_altitude.publish(self.altitude_command)
         print("Change altitude")
         # rospy.spin()
 
 def main():
-    speed = 3 	 # m/s
+    speed = 0.75	 # m/s
     max_altitudeGoal = 1500  # mm
     #max_time = 20 	 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal)
@@ -91,8 +91,14 @@ def main():
             takeoff.launch()
         if(takeoff.altitude < takeoff.max_altitudeGoal):
             print("Go up, mofo!")
-            takeoff.change_altitude()
-            
+            takeoff.change_altitude(speed)
+        elif(takeoff.altitude >= takeoff.max_altitudeGoal* 0.75):
+            speed = speed * 0.75
+        elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+            speed = 0
+            print("Stop, mofo!")
+            takeoff.change_altitude(speed)
+
         rate.sleep()
 
 
