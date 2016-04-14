@@ -15,9 +15,11 @@ from Navdata import navdata_info
 # Python libraries
 from sys import argv
 
-filename1 = 'tag_x_test_x_gain_p_5000_d_7500.txt'
-filename2 = 'tag_y_test_x_gain_p_5000_d_7500.txt'
-filename3 = 'tag_theta_test_x_gain_p_5000_d_7500.txt'
+script, test_name = argv
+
+filename1 = 'tag_x_' + test_name + '.txt'
+filename2 = 'tag_y_' + test_name + '.txt'
+filename3 = 'tag_theta_' + test_name + '.txt'
 
 # The messages that we need
 from std_msgs.msg import String, Empty
@@ -35,13 +37,10 @@ target1.write('Time  Tag X Position\n')
 target2.write('Time  Tag Y Position\n')
 target3.write('Time  Tag Orientation\n')
 while not rospy.is_shutdown():
-    line1 = '{}  {}'.format(nd.navdata.tm, nd.tag_x)
-    line2 = '{}  {}'.format(nd.navdata.tm, nd.tag_y)
-    line3 = '{}  {}'.format(nd.navdata.tm, nd.theta)
+    line1 = '{}  {}\n'.format(nd.navdata.tm, nd.tag_x)
+    line2 = '{}  {}\n'.format(nd.navdata.tm, nd.tag_y)
+    line3 = '{}  {}\n'.format(nd.navdata.tm, nd.theta)
     target1.write(line1)
     target2.write(line2)
     target3.write(line3)
-    target1.write('\n')
-    target2.write('\n')
-    target3.write('\n')
     rate.sleep()
