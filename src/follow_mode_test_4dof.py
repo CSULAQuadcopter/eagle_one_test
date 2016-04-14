@@ -184,7 +184,7 @@ def main():
     follow_yaw = YawControl(350, 10, -0.5)
     follow_x   = XControl(225, 135, 0.075)
     follow_y   = YControl(400, 240, 0.075)
-    follow_z   = ZControl(3100, 3000, 0.25)
+    follow_z   = ZControl(1200, 1150, 0.25)
 
     # Hopefully this continues until we turn off the program in the control window
     while not rospy.is_shutdown():

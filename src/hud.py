@@ -170,6 +170,23 @@ class HUD:
     cv2.line(cv_image,   (self.tag_x - 25, self.tag_y),(self.tag_x + 25, self.tag_y),(255,255,0),2)
     cv2.circle(cv_image, (self.tag_x, self.tag_y), 10, (255, 255, 0), 2)
 
+  # work in progress
+  def direction_arrow(self, cv_image):
+    # Draw the arrow that show the direction in which the QC is moving
+    color = (0,255,255)
+    vx = self.vx
+    vy = self.vy
+    # find the angle between the velocities
+    if ((vx > 0) and (vy > 0)):
+        angle = math.atan(vy/vx)
+    elif ((vx < 0) and (vy > 0)):
+        angle = math.pi + math.atan(vy/vx)
+    elif ((vx < 0) and (vy < 0)):
+        angle = math.pi + math.atan(vy/vx)
+    else:
+        angle = 2 * math.pi + math.atan(vy/vx)
+    cv.line(cv_image)
+
   def set_battery_font(self, medium, low):
     # This is to color the battery font based on the battery level
     # green > medium, yellow > low, red < low
