@@ -8,6 +8,7 @@ Saves data from one file and creates an Excel file from it. This currently only
 works for a set of data with two columns
 
 NOTE: This can only create new files. It CANNOT read or modify existing files
+      It will happily overwrite any existing files though ;)
 
 Use: In the terminal type: ./to_excel.py [source]
 """
