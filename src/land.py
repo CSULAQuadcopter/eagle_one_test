@@ -1,6 +1,6 @@
 #! /usr/bin/env python
-# This is the the code for the reacqusition mode
-#By: Amando A. Aranda and Josh Saunders
+# This is the the code for the landing
+#By: Amando A. Aranda
 #Date: March 31, 2016
 
 # We're using ROS here
@@ -11,9 +11,9 @@ from std_msgs.msg import String, Empty
 from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
-class Reacquisition(object):
+class Landing(object):
     # m/s	mm		seconds
-    def __init__(self, speed, max_altitude, max_time):
+    def __init__(self, speed, min_altitude):
         # Subscribers
         self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdataCallback)
@@ -21,12 +21,12 @@ class Reacquisition(object):
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
-        self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
+        self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100) #this turns off the motors
         # TODO need to set this up as a client to the smach server
         self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=100)
 
         # Initialize the node and rate
-        self.node = rospy.init_node('reacquisition_mode')
+        self.node = rospy.init_node('land_mode_')
 
         # Initialize member variables
         self.transition = ""
@@ -41,58 +41,50 @@ class Reacquisition(object):
         self.altitude_command.angular.x = 0.5
         self.altitude_command.angular.y = 0.5
 
-        self.max_altitude = max_altitude
-	self.speed = speed
+        self.min_altitude = min_altitude
+        self.speed = speed
 
-        self.start_time = rospy.Time.now().to_sec()
-        self.max_time = max_time
-        self.previous_state = 0
+
 
     def transCallback(self, msg):
         self.transition = msg.data
 
     def navdataCallback(self, msg):
         self.altitude = msg.altd
-        if(msg.tags_count > 1):
+        if((msg.tags_count >= 1) or (msg.tags_count > 0)):
         	self.tag_acquired = True
         else:
         	self.tag_acquired = False
 
     def previousStateCallback(self, msg):
     	self.previous_state = msg.data
-
+#This is what makes the drone land
     def land(self):
         # Land!
         self.pub_land.publish(Empty())
         print("LAND HO!")
 
-    # If we're above the max altitude don't increase the altitude, other go up!
-    def change_altitude(self):
-    	if(self.altitude < self.max_altitude):
-        	self.altitude_command.linear.z = self.speed
-		print "Increase altitude"
-        else:
-        	self.altitude_command.linear.z = 0
-		print "Stay put"
-	self.pub_altitude.publish(self.altitude_command)
+    # THis is the algo for landing
+    def change_altitude(self, min_altitude):
+        self.altitude_command.linear.z = self.speed
+        self.pub_altitude.publish(self.altitude_command)
 
-    # Hey 'Ol Timer
-    def timer(self):
-	print rospy.Time.now().to_sec() - self.start_time
-        return rospy.Time.now().to_sec() - self.start_time
+
 
 def main():
-    speed = 0.3 	 # m/s
-    max_altitude = 3000  # mm
-    max_time = 20 	 # seconds
-    reacquisition = Reacquisition(speed, max_altitude, max_time)
+    speed = -.5 	 # m/s
+    min_altitude = 500  # mm, this  is 8 inches
+
+    landing = Landing(speed, min_altitude)
 
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
-        if(reacquisition.transition == "TAG_LOST"):
-            reacquisition.change_altitude()
-            if(reacquisition.timer() > reacquisition.max_time):
-                reacquisition.land()
+        if(landing.altitude > min_altitude):
+            landing.change_altitude(speed)
+            print ("Go down!")
+        else:
+            landing.land()
+            print ("Eagle one going down")
         rate.sleep()
 
 

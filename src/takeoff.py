@@ -45,7 +45,7 @@ class Takeoff(object):
         self.max_altitudeGoal = max_altitudeGoal
         self.speed = speed
 
-        self.start_time = rospy.Time.now().to_sec()
+        #self.start_time = rospy.Time.now().to_sec()
         #self.max_time = max_time
         self.previous_state = 0
 
@@ -66,7 +66,6 @@ class Takeoff(object):
     def launch(self):
         # Take off QC command
         self.pub_takeoff.publish(Empty())
-        # rospy.spin()
         print("Moving on up!")
 
 
@@ -75,11 +74,10 @@ class Takeoff(object):
         self.altitude_command.linear.z = speed
         self.pub_altitude.publish(self.altitude_command)
         print("Change altitude")
-        # rospy.spin()
 
 def main():
-    speed = 0.5	 # m/s
-    max_altitudeGoal = 1500  # mm
+    speed = 1	 # m/s
+    max_altitudeGoal = 2500  # mm
     #max_time = 20 	 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal)
 
@@ -87,18 +85,16 @@ def main():
     while not rospy.is_shutdown():
         print("%d" % takeoff.max_altitudeGoal)
         # if landed, takeoff
+        # TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
         if ((takeoff.state != 3) or (takeoff.state != 4)):
             takeoff.launch()
-        if(takeoff.altitude < takeoff.max_altitudeGoal):
-            print("Go up, mofo!")
-            takeoff.change_altitude(speed)
-        # elif(takeoff.altitude >= takeoff.max_altitudeGoal* 0.75):
-        #     speed = speed * 0.75
-        elif(takeoff.altitude >= takeoff.max_altitudeGoal):
-            speed = 0
-            print("Stop, mofo!")
-            takeoff.change_altitude(speed)
-
+            if (takeoff.altitude < takeoff.max_altitudeGoal):
+                print("Go up, mofo!")
+                takeoff.change_altitude(speed)
+            elif (takeoff.altitude > takeoff.max_altitudeGoal):
+                speed = 0
+                print("Stop, mofo!")
+                takeoff.change_altitude(speed)
         rate.sleep()
 
 
