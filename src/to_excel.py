@@ -2,7 +2,7 @@
 """
 Test Data
 Written by: Josh Saunders
-Date: 4/11/2016
+Date: 4/15/2016
 
 Saves data from one file and creates an Excel file from it. This currently only
 works for a set of data with two columns
