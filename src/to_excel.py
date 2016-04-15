@@ -12,10 +12,6 @@ NOTE: This can only create new files. It CANNOT read or modify existing files
 
 Use: In the terminal type: ./to_excel.py [source]
 """
-# Python libraries
-from __future__ import with_statement
-from sys import argv
-
 # We're using ROS
 import rospy
 
@@ -25,6 +21,9 @@ from ardrone_autonomy.msg import Navdata
 
 # custom classes
 from Navdata import navdata_info
+
+# Python libraries
+from sys import argv
 
 # This let's us write to an Excel file
 import xlsxwriter
