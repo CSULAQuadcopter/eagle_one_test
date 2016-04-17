@@ -137,7 +137,7 @@ class HUD:
     battery = "Battery: %.1f%%" % self.battery
     battery_font_color = self.set_battery_font(60, 30)
     state = "Mode: %s" % mode[self.mode]
-    
+
     # Put the text on the image
     # Top left
     cv2.putText(cv_image, altd,      (0, 15), font, 1.25, font_color)
@@ -178,6 +178,7 @@ class HUD:
     vx = self.twist.linear.x
     vy = self.twist.linear.y
     # find the angle between the velocities
+    # TODO check the math here
     if ((vx > 0) and (vy > 0)):
         angle = math.atan2(vx, vy)
         # print("1st")
