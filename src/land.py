@@ -11,6 +11,9 @@ from std_msgs.msg import String, Empty
 from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
+# For integration with the qc_smach_server
+import qc_smach_client as sc
+
 class Landing(object):
     # m/s	mm		seconds
     def __init__(self, speed, min_altitude):
@@ -38,6 +41,7 @@ class Landing(object):
         self.altitude_command.linear.z = speed
 
         # to disable hover mode
+        # HACK maybe we want to enable hover mode?
         self.altitude_command.angular.x = 0.5
         self.altitude_command.angular.y = 0.5
 
