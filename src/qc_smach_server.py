@@ -14,6 +14,7 @@ from eagle_one_test.srv import *
 # Initialize the state
 
 smach = Smach()
+rospy.loginfo("Hulk Smach!")
 
 if __name__=='__main__':
     smach.state_change_server()
