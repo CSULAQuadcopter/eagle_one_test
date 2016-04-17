@@ -1,19 +1,36 @@
 #!/usr/bin/env python
+"""
+QC Head's Up Display
+Created by: Josh Saunders
+
+Displays sensor information from and commands sent to the QC
+
+Date Created: 4/2/2016
+Date Modified: 4/14/2016
+"""
+# Import Python libraries
 from __future__ import print_function
-import roslib
+
 import sys
-import rospy
 import cv2
 import math
 import numpy as np
+
+# We're using ROS here
+import rospy
+import roslib
+
+# ROS messages
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 from ardrone_autonomy.msg import Navdata
+
+# To bridge OpenCV and ROS
 from cv_bridge import CvBridge, CvBridgeError
 
 class HUD:
-  def __init__(self, camera, box_top_left, box_bottom_right):
+  def __init__(self, box_top_left, box_bottom_right):
     self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
 
     self.bridge = CvBridge()
@@ -38,14 +55,13 @@ class HUD:
     self.twist = Twist()
     self.battery = 0
     self.mode = 0
-<<<<<<< HEAD
+
     self.pwm1 = 0
     self.pwm2 = 0
     self.pwm3 = 0
     self.pwm4 = 0
     self.time = 0
-=======
->>>>>>> add_window_control
+
 
     # Bounding box dimensions
     # These are tuples
@@ -83,13 +99,12 @@ class HUD:
     self.time = data.tm / 1000000.0
     self.battery = data.batteryPercent
     self.mode = data.state
-<<<<<<< HEAD
+
     self.pwm1 = data.motor1
     self.pwm2 = data.motor2
     self.pwm3 = data.motor3
     self.pwm4 = data.motor4
-=======
->>>>>>> add_window_control
+
     if(data.tags_count > 0):
       self.tag_acquired = True
       # The positions need to be scaled due to the actual resolution
@@ -122,13 +137,11 @@ class HUD:
     altd = "Altitude: %.3f m" % self.altitude
     tag_pos = "Tag: (%d, %d) px" % (self.tag_x, self.tag_y)
     tag_theta = "Tag Theta: %.1f" % self.tag_theta
-<<<<<<< HEAD
+
     vx_est = "Vx: %.2f mm/s" % self.vx
     vy_est = "Vy: %.2f mm/s" % self.vy
     # vz_est = "Vz: %.2f mm/s" % self.vz
     time = "Time: %f " % self.time
-=======
->>>>>>> add_window_control
 
     info = "Sent Velocities"
     linear_x = "Vx: %.3f mm/s" % self.twist.linear.x
@@ -152,13 +165,12 @@ class HUD:
     cv2.putText(cv_image, altd,      (0, 15), font, 1.25, font_color)
     cv2.putText(cv_image, tag_pos,   (0, 32), font, 1.25, font_color)
     cv2.putText(cv_image, tag_theta, (0, 48), font, 1.25, font_color)
-<<<<<<< HEAD
+
     cv2.putText(cv_image, vx_est,    (0, 64), font, 1.25, font_color)
     cv2.putText(cv_image, vy_est,    (0, 80), font, 1.25, font_color)
     # cv2.putText(cv_image, vz_est,    (0, 96), font, 1.25, font_color)
     cv2.putText(cv_image, time,      (0, 96), font, 1.25, font_color)
-=======
->>>>>>> add_window_control
+
     # Bottom left
     cv2.putText(cv_image, info,      (0, 265), font, 1.25, font_color)
     cv2.putText(cv_image, linear_x,  (0, 280), font, 1.25, font_color)
@@ -173,15 +185,15 @@ class HUD:
     cv2.putText(cv_image, pwm3, (520, 48), font, 1.25, font_color)
     cv2.putText(cv_image, pwm4, (520, 64), font, 1.25, font_color)
     # Bottom right
-<<<<<<< HEAD
+
     cv2.putText(cv_image, battery, (440, 340), font, 1.25, battery_font_color)
     cv2.putText(cv_image, state,   (440, 355), font, 1.25, font_color)
     # Draw velocity vector
     self.direction_arrow(cv_image)
-=======
+
     cv2.putText(cv_image, battery, (480, 340), font, 1.25, battery_font_color)
     cv2.putText(cv_image, state,   (480, 355), font, 1.25, font_color)
->>>>>>> add_window_control
+
 
   def crosshair(self, cv_image):
     # Draw the vertical line, then the horizontal, then the circle
@@ -235,14 +247,14 @@ class HUD:
 
 def main(args):
   rospy.init_node('hud', anonymous=True)
-<<<<<<< HEAD
+
   top_left = (240, 135)
   bottom_right = (400, 225)
-=======
+
   top_left = (160, 90)
   bottom_right = (480, 270)
->>>>>>> add_window_control
-  hud = HUD("bottom", top_left, bottom_right)
+
+  hud = HUD(top_left, bottom_right)
 
   try:
     rospy.spin()
