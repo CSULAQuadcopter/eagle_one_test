@@ -4,7 +4,7 @@ import roslib
 import sys
 import rospy
 import cv2
-from math import cos, sin
+import math
 import numpy as np
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
@@ -163,6 +163,8 @@ class HUD:
     # Bottom right
     cv2.putText(cv_image, battery, (440, 340), font, 1.25, battery_font_color)
     cv2.putText(cv_image, state,   (440, 355), font, 1.25, font_color)
+    # Draw velocity vector
+    self.direction_arrow(cv_image)
 
   def crosshair(self, cv_image):
     # Draw the vertical line, then the horizontal, then the circle
@@ -173,19 +175,34 @@ class HUD:
   # work in progress
   def direction_arrow(self, cv_image):
     # Draw the arrow that show the direction in which the QC is moving
-    color = (0,255,255)
-    vx = self.vx
-    vy = self.vy
+    vx = self.twist.linear.x
+    vy = self.twist.linear.y
     # find the angle between the velocities
     if ((vx > 0) and (vy > 0)):
-        angle = math.atan(vy/vx)
+        angle = math.atan2(vx, vy)
+        # print("1st")
     elif ((vx < 0) and (vy > 0)):
-        angle = math.pi + math.atan(vy/vx)
+        angle = math.pi - math.atan2(vx, vy)
+        # print("2nd")
     elif ((vx < 0) and (vy < 0)):
-        angle = math.pi + math.atan(vy/vx)
+        angle = math.pi + math.atan2(vx, vy)
+        # print("3rd")
     else:
-        angle = 2 * math.pi + math.atan(vy/vx)
-    cv.line(cv_image)
+        angle = 2 * math.pi - math.atan2(vx, vy)
+        # print("4th")
+
+    # print("%.3f" % angle)
+    color = (255, 2, 255)
+    center = (520, 270)
+    radius = 50
+    thickness = 1
+    vel_end = (center[0] + int(radius * math.cos(angle)), \
+               center[1] + int(radius * math.sin(angle)))
+
+    # Draw the circle and line
+    if not (vx == 0 or vy ==0):
+        cv2.line(cv_image,   center, vel_end, color, thickness)
+    cv2.circle(cv_image, center, radius,  color, thickness)
 
   def set_battery_font(self, medium, low):
     # This is to color the battery font based on the battery level
