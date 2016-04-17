@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 """
+This will save images streamed along the /ardrone/front/image_raw topic for
+a specified amount of time
 
+Created by: Josh Saunders and David Rojas
+Date Created: 4/1/2016
+
+Modified by: Josh Saunders
+Date Modified: 4/17/2016
 """
 from __future__ import print_function
 
