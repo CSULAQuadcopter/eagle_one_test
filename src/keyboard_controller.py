@@ -45,8 +45,7 @@ class KeyboardController(DroneVideoDisplay):
 		self.roll = 0
 		self.yaw_velocity = 0
 		self.z_velocity = 0
-		self.start = String()
-		self.start_pub = rospy.Publisher("/eagle_one/start",String,queue_size=1)
+		self.start = ''
 
 # We add a keyboard handler to the DroneVideoDisplay to react to keypresses
 	def keyPressEvent(self, event):
@@ -82,19 +81,17 @@ class KeyboardController(DroneVideoDisplay):
 					self.z_velocity += 1
 				elif key == KeyMapping.DecreaseAltitude:
 					self.z_velocity += -1
-					
+
 				elif key == KeyMapping.Start:
-					self.start.data = 'go'
-					self.start_pub.publish(self.start)
-					rospy.spin()
+					self.start = 'go'
 				elif key == KeyMapping.Stop:
-					self.start.data = 'stop'
-					self.start_pub.publish(self.start)
-					rospy.spin()
+					self.start = 'stop'
+
 
 
 			# finally we set the command to be sent. The controller handles sending this at regular intervals
 			controller.SetCommand(self.roll, self.pitch, self.yaw_velocity, self.z_velocity)
+			controller.SetState(self.start)
 
 
 	def keyReleaseEvent(self,event):
@@ -124,8 +121,14 @@ class KeyboardController(DroneVideoDisplay):
 			elif key == KeyMapping.DecreaseAltitude:
 				self.z_velocity -= -1
 
+			elif key == KeyMapping.Start:
+				self.start = 'go'
+			elif key == KeyMapping.Stop:
+				self.start = 'stop'
+
 			# finally we set the command to be sent. The controller handles sending this at regular intervals
 			controller.SetCommand(self.roll, self.pitch, self.yaw_velocity, self.z_velocity)
+			controller.SetState(self.start)
 
 
 

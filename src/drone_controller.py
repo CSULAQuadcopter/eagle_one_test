@@ -13,7 +13,7 @@ import rospy
 
 # Import the messages we're interested in sending and receiving
 from geometry_msgs.msg import Twist  	 # for sending commands to the drone
-from std_msgs.msg import Empty       	 # for land/takeoff/emergency
+from std_msgs.msg import Empty, String 	 # for land/takeoff/emergency
 from ardrone_autonomy.msg import Navdata # for receiving navdata feedback
 
 # An enumeration of Drone Statuses
@@ -30,25 +30,30 @@ class BasicDroneController(object):
 		self.status = -1
 
 		# Subscribe to the /ardrone/navdata topic, of message type navdata, and call self.ReceiveNavdata when a message is received
-		self.subNavdata = rospy.Subscriber('/ardrone/navdata',Navdata,self.ReceiveNavdata) 
-		
+		self.subNavdata = rospy.Subscriber('/ardrone/navdata',Navdata,self.ReceiveNavdata)
+
 		# Allow the controller to publish to the /ardrone/takeoff, land and reset topics
 		self.pubLand    = rospy.Publisher('/ardrone/land',Empty)
 		self.pubTakeoff = rospy.Publisher('/ardrone/takeoff',Empty)
 		self.pubReset   = rospy.Publisher('/ardrone/reset',Empty)
-		
+
 		# Allow the controller to publish to the /cmd_vel topic and thus control the drone
 		self.pubCommand = rospy.Publisher('/cmd_vel',Twist)
+		self.start_pub = rospy.Publisher("/eagle_one/start",String,queue_size=1)
 
 		# Setup regular publishing of control packets
 		self.command = Twist()
 		self.commandTimer = rospy.Timer(rospy.Duration(COMMAND_PERIOD/1000.0),self.SendCommand)
 
+		# Setup regular publishing of state packets
+		elf.stateTimer = rospy.Timer(rospy.Duration(COMMAND_PERIOD/1000.0),self.SendState)
+		self.state = String()
+
 		# Land the drone if we are shutting down
 		rospy.on_shutdown(self.SendLand)
 
 	def ReceiveNavdata(self,navdata):
-		# Although there is a lot of data in this packet, we're only interested in the state at the moment	
+		# Although there is a lot of data in this packet, we're only interested in the state at the moment
 		self.status = navdata.state
 
 	def SendTakeoff(self):
@@ -78,3 +83,8 @@ class BasicDroneController(object):
 		if self.status == DroneStatus.Flying or self.status == DroneStatus.GotoHover or self.status == DroneStatus.Hovering:
 			self.pubCommand.publish(self.command)
 
+	def SetState(self,state):
+		self.state.data = state
+
+	def SendState(self, event):
+		self.start_pub(self.state)
