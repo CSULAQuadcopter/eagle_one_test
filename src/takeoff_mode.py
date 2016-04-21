@@ -5,6 +5,9 @@
 # We're using ROS here
 import rospy
 
+# ROS message
+from std_msgs.msg import String
+
 # For integration with the qc_smach_server
 import qc_smach_client as sc
 
