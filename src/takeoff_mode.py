@@ -5,10 +5,6 @@
 # We're using ROS here
 import rospy
 
-# ROS messages
-from std_msgs.msg      import String, Empty
-from geometry_msgs.msg import Twist
-
 # For integration with the qc_smach_server
 import qc_smach_client as sc
 

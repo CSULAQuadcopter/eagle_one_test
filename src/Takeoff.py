@@ -1,5 +1,11 @@
+# We're using ROS here
 import rospy
+
+# ROS messages
 from ardrone_autonomy.msg import Navdata
+from std_msgs.msg         import String, Empty
+from geometry_msgs.msg    import Twist
+
 
 class Takeoff(object):
     # m/s	mm		seconds
