@@ -77,8 +77,8 @@ class Smach(Machine):
             if(transition == "EMERGENCY_CONDITION"):
                 self.emergency_condition()
                 rospy.loginfo("Emergency During Picture Attempt")
-        #this can be taken out, transition from taking picture to reacquisition if tag is lost
-        #during picture taking
+        # this can be taken out, transition from take picture to reacquisition 
+        # if tag is lost during picture taking
             if(transition == "TAKE_PICTURE_TAG_LOST"):
                 self.take_picture_tag_lost()
                 rospy.loginfo("Tag Lost After Picture Taking")
