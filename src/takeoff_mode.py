@@ -99,11 +99,11 @@ def main():
     while not rospy.is_shutdown():
             print("%d" % takeoff.max_altitudeGoal)
             if(takeoff.altitude < takeoff.max_altitudeGoal):
-                print("Go up, mofo!")
+                print("Go up!")
                 takeoff.change_altitude(speed)
             elif(takeoff.altitude > takeoff.max_altitudeGoal):
                 speed = 0
-                print("Stop, mofo!")
+                print("Stop!")
                 takeoff.change_altitude(speed)
             rate.sleep()
 
