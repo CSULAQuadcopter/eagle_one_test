@@ -24,7 +24,7 @@ class YawControl(object):
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.yaw_callback)
 
     def check_yaw(self):
-        if ((self.yaw > self.max_theta) and (self.yaw < self.min_theta)):
+        if ((self.yaw < self.max_theta) and (self.yaw > self.min_theta)):
             if ((self.yaw < self.max_theta) and (self.yaw > 180)):
                 return self.rotation_rate
             else:
@@ -50,6 +50,7 @@ class XControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.x = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.x_callback)
@@ -58,16 +59,17 @@ class XControl(object):
         if self.tag_acquired:
             if(self.x < self.min):
                 # print("Below")
-                return self.translation_rate
+                self.command = self.translation_rate
             elif(self.x > self.max):
                 # print("Above")
-                return -self.translation_rate
+                self.command = -self.translation_rate
             else:
                 # print("Within")
-                return 0
+                self.command = 0
+            return self.command
         else:
             # print("No tag")
-            return 0
+            return self.command
 
     def x_callback(self, msg):
         if(msg.tags_count > 0):
@@ -87,6 +89,7 @@ class YControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.y = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.y_callback)
@@ -95,24 +98,25 @@ class YControl(object):
         if self.tag_acquired:
             if(self.y < self.min):
                 # print("Below")
-                return self.translation_rate
+                self.command = self.translation_rate
             elif(self.y > self.max):
                 # print("Above")
-                return -self.translation_rate
+                self.command = -self.translation_rate
             else:
                 # print("Within")
-                return 0
+                self.command = 0
+            return self.command
         else:
             # print("No tag")
-            return 0
+            return self.command
 
     def y_callback(self, msg):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             self.y = int(msg.tags_xc[0] * 640 / 1000)
-            if ((self.x < self.max) and (self.x > self.min)):
+            if ((self.y < self.max) and (self.y > self.min)):
                 return 0
-            elif self.x < self.min:
+            elif self.y < self.min:
                 return self.translation_rate
             else:
                 return -self.translation_rate
@@ -137,26 +141,37 @@ class ZControl(object):
         self.translation_rate = translation_rate
         self.tag_acquired = False
         self.z = 0.0
+        self.command = 0.0
 
         # rosify
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.z_callback)
 
     def check_z(self):
         if(self.z > self.max):
-            return -self.translation_rate
+            self.command = -self.translation_rate
         elif(self.z < self.min):
-            return self.translation_rate
+             self.command = self.translation_rate
         else:
             # to stop the translation of the qc when the tag is not acquired
-            return 0
+            self.command = 0
+        return self.command
 
     def z_callback(self, msg):
         self.z = msg.altd
+
+class Window(object):
+    def __init__(self):
+        self.state = 'stop'
+        self.sub_navdata = rospy.Subscriber('eagle_one/start', String, self.state_cb)
+
+    def state_cb(self, msg):
+        self.state = msg.data
 
 def main():
     rospy.init_node('follow_mode_test_4dof')
     rate = rospy.Rate(100) # 100Hz
 
+    w = Window()
     qc = Twist()
 
     # To disable hover mode
@@ -166,20 +181,19 @@ def main():
     pub_qc = rospy.Publisher('cmd_vel', Twist, queue_size=100)
     # sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
-    follow_yaw = YawControl(350, 10, 0.5)
+    follow_yaw = YawControl(350, 10, -0.5)
+    follow_x   = XControl(270, 90, 0.075)
+    follow_y   = YControl(480, 160, 0.075)
+    # follow_z   = ZControl(1100, 1000, 0.1)
 
-    follow_x = XControl(205, 155, 0.1)
-    follow_y = YControl(340, 300, 0.1)
-    follow_z = ZControl(1250, 1150, 0.15)
-
-
+    # Hopefully this continues until we turn off the program in the control window
     while not rospy.is_shutdown():
         # print("Yaw: %f" % follow_yaw.yaw)
         qc.angular.z = follow_yaw.check_yaw()
         qc.linear.x = follow_x.check_x()
 
         qc.linear.y = follow_y.check_y()
-        qc.linear.z = follow_z.check_z()
+        # qc.linear.z = follow_z.check_z()
 
         pub_qc.publish(qc)
         rate.sleep()

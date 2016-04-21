@@ -1,3 +1,5 @@
-# Ignore *.pyc and files that end with a ~
+# Ignore *.pyc
 *.pyc
+
+# Ignore *~
 *~
