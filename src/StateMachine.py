@@ -1,4 +1,33 @@
 #1 /usr/bin/env python
+"""
+Server for the state machine ROS service. It uses the transitions
+library located at https://github.com/tyarkoni/transitions
+
+Important variables:
+    self.transitions:
+        FORMAT: ['trigger_event', 'source_state', 'destination_state']
+
+    self.states
+        Defines the different states of the state machine
+
+Request:
+    String current_state (not necessary, because the state machine keeps track
+           of this already so this may be removed)
+    String transition (this is sent to the server then the server decides what
+           the next state should be based on its current state and the trans-
+           ition)
+
+Response:
+    String next_state (what is returned by the state machine to the ROS service
+           client)
+
+
+Date Created: 3/30/2016
+Created by: Josh Saunders
+
+Date Modified: 4/21/2016
+Modified by: Josh Saunders
+"""
 
 # Import transitions library
 from transitions import Machine
@@ -10,7 +39,7 @@ from eagle_one_test.srv import State
 
 class Smach(Machine):
     def __init__(self):
-        # Define the different states of the machine
+        # Define the different states of the state machine
         states = ['secure', 'takeoff', 'follow', 'take_picture', \
                   'land', 'reacquisition', 'emergency']
 
@@ -77,7 +106,7 @@ class Smach(Machine):
             if(transition == "EMERGENCY_CONDITION"):
                 self.emergency_condition()
                 rospy.loginfo("Emergency During Picture Attempt")
-        # this can be taken out, transition from take picture to reacquisition 
+        # this can be taken out, transition from take picture to reacquisition
         # if tag is lost during picture taking
             if(transition == "TAKE_PICTURE_TAG_LOST"):
                 self.take_picture_tag_lost()
