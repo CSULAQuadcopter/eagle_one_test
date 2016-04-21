@@ -22,6 +22,7 @@ Response:
            client)
 
 
+
 Date Created: 3/30/2016
 Created by: Josh Saunders
 
@@ -67,14 +68,19 @@ class Smach(Machine):
         Machine.__init__(self, states=states, transitions=transitions, \
                          initial='secure')
 
+        # state_pub = rospy.Publisher('state', String, queue_size=100)
+
     def handle_state_change(self, req):
         self.change_state(req.transition)
         return self.state
 
-    def state_change_server(self):
-        rospy.init_node('qc_smach_server')
-        s = rospy.Service('qc_smach', State, self.handle_state_change)
-        rospy.spin()
+    # def state_change_server(self):
+    #     rospy.init_node('qc_smach_server')
+    #     s = rospy.Service('qc_smach', State, self.handle_state_change)
+    #     state = String()
+    #     state.data = self.state
+    #     self.state_pub.publish(state)
+    #     rospy.spin()
 
     def change_state(self, transition):
         if((self.is_secure()) and (transition == 'TAKEOFF_COMMAND')):
