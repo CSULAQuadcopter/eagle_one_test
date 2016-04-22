@@ -37,6 +37,7 @@ class Landing(object):
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
 
+
         #self.start_time = rospy.Time.now().to_sec()
         #self.max_time = max_time
 
