@@ -20,11 +20,15 @@ Servo servoright; // right servo
 
 
 // 0 < write_value < 90 -> foward
-// 90 < write_value < 180 -> backward
+// 90 < write_value < 180 -> SLOW_BACKWARD
 // write_value = 90 -> stop
 #define Deadzone 10 //PS2 analog joystick Deadzone
-#define BACKWARD 118
-#define FORWARD 65
+#define SLOW_BACKWARD 118
+#define SLOW_FORWARD 65
+
+#define FAST_BACKWARD 150 
+#define FAST_FORWARD 30
+
 #define STOP 90
 
 void setup(){
@@ -45,29 +49,53 @@ void loop(){
   ps2x.read_gamepad();          //read controller 
 
       // This code uses the colored buttons on the right side of the joystick
-      // Go forward
+      // Go SLOW_FORWARD
       if(ps2x.Button(PSB_GREEN)) {
-       servoleft.write(FORWARD);
-       servoright.write(FORWARD);
+       servoleft.write(SLOW_FORWARD);
+       servoright.write(SLOW_FORWARD);
 
       }
-      // Go backward
+      // Go SLOW_BACKWARD
       else if(ps2x.Button(PSB_BLUE)){
-       servoleft.write(BACKWARD);
-       servoright.write(BACKWARD);
+       servoleft.write(SLOW_BACKWARD);
+       servoright.write(SLOW_BACKWARD);
 
       }
       // Go left
       else if(ps2x.Button(PSB_PINK)) {
-       servoleft.write(BACKWARD);
-       servoright.write(FORWARD);
+       servoleft.write(SLOW_BACKWARD);
+       servoright.write(SLOW_FORWARD);
       }
       // Go right
       else if(ps2x.Button(PSB_RED)){
-       servoleft.write(FORWARD);
-       servoright.write(BACKWARD);
+       servoleft.write(SLOW_FORWARD);
+       servoright.write(SLOW_BACKWARD);
 
-      }   
+      } 
+      // This code uses the direction buttons on the left side of the joystick
+      // Go FORWARD
+      else if(ps2x.Button(PSB_PAD_UP)) {
+       servoleft.write(FAST_FORWARD);
+       servoright.write(FAST_FORWARD);
+
+      }
+      // Go BACKWARD
+      else if(ps2x.Button(PSB_PAD_DOWN)){
+       servoleft.write(FAST_BACKWARD);
+       servoright.write(FAST_BACKWARD);
+
+      }
+      // Go left
+      else if(ps2x.Button(PSB_PAD_LEFT)) {
+       servoleft.write(FAST_BACKWARD);
+       servoright.write(FAST_FORWARD);
+      }
+      // Go right
+      else if(ps2x.Button(PSB_PAD_RIGHT)){
+       servoleft.write(FAST_FORWARD);
+       servoright.write(FAST_BACKWARD);
+
+      }
       else {
        servoleft.write(STOP);    // Adjust these values if the servos still move slightly
        servoright.write(STOP);

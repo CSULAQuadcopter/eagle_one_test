@@ -18,12 +18,12 @@ from std_msgs.msg import String, Empty
 from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
-# For integration with the qc_smach_server
-import qc_smach_client as sc
-
 class Reacquisition(object):
-    # m/s	mm		seconds
+                       # m/s  mm		    seconds
     def __init__(self, speed, max_altitude, max_time):
+        # Initialize the node and rate
+        self.node = rospy.init_node('reacquisition_mode')
+
         # Subscribers
         self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdataCallback)
@@ -35,8 +35,7 @@ class Reacquisition(object):
         # TODO need to set this up as a client to the smach server
         self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=100)
 
-        # Initialize the node and rate
-        self.node = rospy.init_node('reacquisition_mode')
+
 
         # Initialize member variables
         self.transition = ""
