@@ -36,8 +36,9 @@ class Takeoff(object):
         self.transition = String()
         self.altitude = 0
         self.state = 0
+        self.timer = rospy.Timer(rospy.Duration(timeout), \
+                                 self.goto_reacquisition)
 
-        self.timeout = timeout
         self.tag_acquired = False
 
         self.altitude_command = Twist()
@@ -50,24 +51,25 @@ class Takeoff(object):
         self.max_altitudeGoal = max_altitudeGoal
         self.speed = speed
 
-        self.timer_start = rospy.Time.now().to_sec()
-
     def navdata_cb(self, msg):
         self.altitude = msg.altd
         # Mode of the QC NOT the state of the state machine
         self.mode = msg.state
         if(msg.tags_count > 0):
             self.tag_acquired = True
-            self.timer_start = 0
+            self.timer.shutdown()
         else:
             self.tag_acquired = False
-            self.timer_start = rospy.Time.now().to_sec()
+            self.timer.run()
 
     def state_cb(self, msg):
     	self.state = msg.data
 
     def launch(self):
         # Take off QC command
+        # if self.state == 'takeoff':
+        #     self.pub_takeoff.publish(Empty())
+        #     rospy.loginfo("Moving on up!")
         self.pub_takeoff.publish(Empty())
         rospy.loginfo("Moving on up!")
 
@@ -78,9 +80,13 @@ class Takeoff(object):
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
-    def timer(self):
-        return rospy.Time.now().to_sec() - self.timer_start
-
-    def state_transition(self, transition):
-        self.transition.data = transition
+    def goto_take_picture(self):
+        self.transition.data = 'TAKEOFF_ALT_REACHED'
         self.pub_transition.publish(self.transition)
+
+    def goto_reacquisition(self, event):
+        self.transition.data = 'TAKEOFF_TAG_LOST'
+        self.pub_transition.publish(self.transition)
+        rospy.loginfo("Transitioning to reacquisition mode")
+        # Stop the timer so that it doesn't keep going
+        self.timer.shutdown()
