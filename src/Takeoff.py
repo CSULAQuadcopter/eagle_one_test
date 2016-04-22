@@ -66,10 +66,6 @@ class Takeoff(object):
     	self.state = msg.data
 
     def launch(self):
-        # Take off QC command
-        # if self.state == 'takeoff':
-        #     self.pub_takeoff.publish(Empty())
-        #     rospy.loginfo("Moving on up!")
         self.pub_takeoff.publish(Empty())
         rospy.loginfo("Moving on up!")
 
