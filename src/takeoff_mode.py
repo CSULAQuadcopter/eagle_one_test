@@ -1,15 +1,24 @@
 #! /usr/bin/env python
-# This is the the code for the takeoff mode
-#Date: April 11, 2016
+"""
+Makes the QC takeoff and increase altitude until it reaches a specified
+altitude.
 
+If the tag is lost, a timer is started and if the tag cannot be recovered
+within a specified amount of time, it will enter the reacquisition mode. If the
+tag is recovered within the specified amount of time, it will continue on with
+its function (getting the QC to a specified height).
+
+Created by: David Rojas
+Date Created: April 11, 2016
+
+Modified by: Josh Saunders
+Date Modified: 4/21/2016
+"""
 # We're using ROS here
 import rospy
 
 # ROS message
 from std_msgs.msg import String
-
-# For integration with the qc_smach_server
-import qc_smach_client as sc
 
 # The Takeoff class
 from Takeoff import Takeoff
@@ -19,9 +28,10 @@ from Takeoff import Takeoff
 def main():
     speed = 1	 # m/s
     max_altitudeGoal = 1000  # mm
-    #max_time = 20 	 # seconds
-    takeoff = Takeoff(speed, max_altitudeGoal)
+    timeout = 10 # seconds
+    takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(100) # 100Hz
+    transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
 
     # To get this guy to take off!
     i = 0
@@ -31,14 +41,23 @@ def main():
         rate.sleep()
 
     while not rospy.is_shutdown():
-            print("%d" % takeoff.max_altitudeGoal)
-            if(takeoff.altitude < takeoff.max_altitudeGoal):
-                print("Go up!")
-                takeoff.change_altitude(speed)
-            elif(takeoff.altitude > takeoff.max_altitudeGoal):
-                speed = 0
-                print("Stop!")
-                takeoff.change_altitude(speed)
+            # rospy.loginfo("%d" % takeoff.max_altitudeGoal)
+            rospy.loginfo("%d" % takeoff.timer())
+            if(takeoff.tag_acquired):
+                if(takeoff.altitude < takeoff.max_altitudeGoal):
+                    rospy.loginfo("Go up!")
+                    takeoff.change_altitude(speed)
+                elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+                    speed = 0
+                    rospy.loginfo("Stop!")
+                    takeoff.change_altitude(speed)
+                    # To change states, we publish the fact that we've reached our
+                    # takeoff altitude
+                    rospy.loginfo("Going to follow mode")
+                    takeoff.transition(transitions[0])
+            elif((not takeoff.tag_acquired) and (takeoff.timer() > takeoff.timeout)):
+                    rospy.loginfo("Going to reacquisition mode")
+                    takeoff.state_transition(transitions[1])
             rate.sleep()
 
 

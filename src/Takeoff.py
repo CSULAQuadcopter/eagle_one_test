@@ -9,34 +9,36 @@ from geometry_msgs.msg    import Twist
 
 class Takeoff(object):
     # m/s	mm		seconds
-    def __init__(self, speed, max_altitudeGoal):
+    def __init__(self, speed, max_altitudeGoal, timeout):
         # Initialize the node and rate
         self.node = rospy.init_node('takeoff_mode')
 
         # Subscribers
-        self.sub_transition = rospy.Subscriber('smach/transitions', \
-                                    String, self.transCallback)
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', \
-                                    Navdata, self.navdataCallback)
-        self.sub_previous_state = rospy.Subscriber('smach/state', \
-                                    String, self.previousStateCallback)
+                                             Navdata, self.navdata_cb)
+        self.sub_state = rospy.Subscriber('smach/state', \
+                                       String, self.state_cb)
 
         # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.pub_altitude = rospy.Publisher('/cmd_vel', \
+                                             Twist, queue_size=1)
         #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1)
-        # TODO need to set this up as a client to the smach server
+        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', \
+                                            Empty, queue_size=1)
+
         # NOTE changed to passing transition and state info along
         # /smach/transition and /smach/state topics, respectively
         # self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
-
+        self.pub_transition = rospy.Publisher('smach/transition', \
+                                               String, queue_size=1)
 
         # Initialize member variables
-        self.transition = ""
+        self.transition = String()
         self.altitude = 0
         self.state = 0
 
-        self.tag_acquired = True
+        self.timeout = timeout
+        self.tag_acquired = False
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
@@ -48,33 +50,37 @@ class Takeoff(object):
         self.max_altitudeGoal = max_altitudeGoal
         self.speed = speed
 
-        #self.start_time = rospy.Time.now().to_sec()
-        #self.max_time = max_time
-        self.previous_state = 0
+        self.timer_start = rospy.Time.now().to_sec()
 
-    def transCallback(self, msg):
-        self.transition = msg.data
-
-    def navdataCallback(self, msg):
+    def navdata_cb(self, msg):
         self.altitude = msg.altd
-        self.state = msg.state
+        # Mode of the QC NOT the state of the state machine
+        self.mode = msg.state
         if(msg.tags_count > 0):
-        	self.tag_acquired = True
+            self.tag_acquired = True
+            self.timer_start = 0
         else:
-        	self.tag_acquired = False
+            self.tag_acquired = False
+            self.timer_start = rospy.Time.now().to_sec()
 
-    def previousStateCallback(self, msg):
-    	self.previous_state = msg.data
+    def state_cb(self, msg):
+    	self.state = msg.data
 
     def launch(self):
         # Take off QC command
         self.pub_takeoff.publish(Empty())
-        print("Moving on up!")
-
+        rospy.loginfo("Moving on up!")
 
     # If we're above the max altitude don't increase the altitude,
     # otherwise go up!
     def change_altitude(self, speed):
         self.altitude_command.linear.z = speed
         self.pub_altitude.publish(self.altitude_command)
-        print("Change altitude")
+        rospy.loginfo("Change altitude")
+
+    def timer(self):
+        return rospy.Time.now().to_sec() - self.timer_start
+
+    def state_transition(self, transition):
+        self.transition.data = transition
+        self.pub_transition.publish(self.transition)
