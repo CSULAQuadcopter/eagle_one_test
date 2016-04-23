@@ -27,11 +27,27 @@ from Takeoff import Takeoff
 # TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
 def main():
     speed = 1	 # m/s
-    max_altitudeGoal = 1000  # mm
-    timeout = 3 # seconds
+    max_altitudeGoal = 3000  # mm
+    timeout = 30 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
-    rate = rospy.Rate(100) # 100Hz
+    rate = rospy.Rate(10) # 100Hz
     transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
+
+    state = 'nada'
+
+    # def state_cb(msg):
+    #     state = msg.data
+
+    # sub_state = rospy.Subscriber('/smach/state', String, state_cb)
+
+    # wait for transition to takeoff
+    # while((takeoff.state != 'takeoff') or (takeoff.state != 'reaquisition')):
+    #     print takeoff.state
+    #     rate.sleep()
+
+    while((takeoff.state != 'takeoff')):
+        print takeoff.state
+        rate.sleep()
 
     # To get this guy to take off!
     i = 0

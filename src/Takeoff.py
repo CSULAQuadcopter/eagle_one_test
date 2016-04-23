@@ -43,7 +43,7 @@ class Takeoff(object):
         # Initialize member variables
         self.transition = String()
         self.altitude = 0
-        self.state = 0
+        self.state = 'nada'
         self.timer = rospy.Timer(rospy.Duration(timeout), \
                                  self.goto_reacquisition)
 
