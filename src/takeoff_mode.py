@@ -1,88 +1,34 @@
 #! /usr/bin/env python
-# This is the the code for the takeoff mode
-#Date: April 11, 2016
-
+"""
+Makes the QC takeoff and increase altitude until it reaches a specified
+altitude.
+If the tag is lost, a timer is started and if the tag cannot be recovered
+within a specified amount of time, it will enter the reacquisition mode. If the
+tag is recovered within the specified amount of time, it will continue on with
+its function (getting the QC to increase to a specified height).
+Created by: David Rojas
+Date Created: April 11, 2016
+Modified by: Josh Saunders
+Date Modified: 4/21/2016
+"""
 # We're using ROS here
-
 import rospy
 
-from std_msgs.msg import String, Empty
-from geometry_msgs.msg import Twist
-from ardrone_autonomy.msg import Navdata
+# ROS message
+from std_msgs.msg import String
 
-class Takeoff(object):
-    # m/s	mm		seconds
-    def __init__(self, speed, max_altitudeGoal):
-        # Subscribers
-        self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdataCallback)
-        self.sub_previous_state = rospy.Subscriber('qc_smach/previous_state', String, self.previousStateCallback)
-
-        # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
-        #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1)
-        # TODO need to set this up as a client to the smach server
-        self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
-
-        # Initialize the node and rate
-        self.node = rospy.init_node('takeoff_mode')
-
-        # Initialize member variables
-        self.transition = ""
-        self.altitude = 0
-        self.state = 0
-
-        self.tag_acquired = True
-
-        self.altitude_command = Twist()
-        self.altitude_command.linear.z = speed
-
-        # to disable hover mode
-        self.altitude_command.angular.x = 0.5
-        self.altitude_command.angular.y = 0.5
-
-        self.max_altitudeGoal = max_altitudeGoal
-        self.speed = speed
-
-        #self.start_time = rospy.Time.now().to_sec()
-        #self.max_time = max_time
-        self.previous_state = 0
-
-    def transCallback(self, msg):
-        self.transition = msg.data
-
-    def navdataCallback(self, msg):
-        self.altitude = msg.altd
-        self.state = msg.state
-        if(msg.tags_count > 0):
-        	self.tag_acquired = True
-        else:
-        	self.tag_acquired = False
-
-    def previousStateCallback(self, msg):
-    	self.previous_state = msg.data
-
-    def launch(self):
-        # Take off QC command
-        self.pub_takeoff.publish(Empty())
-        print("Moving on up!")
-
-
-    # If we're above the max altitude don't increase the altitude, other go up!
-    def change_altitude(self, speed):
-        self.altitude_command.linear.z = speed
-        self.pub_altitude.publish(self.altitude_command)
-        print("Change altitude")
+# The Takeoff class
+from Takeoff import Takeoff
 
 # if landed, takeoff
 # TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
 def main():
     speed = 1	 # m/s
     max_altitudeGoal = 1000  # mm
-    #max_time = 20 	 # seconds
-    takeoff = Takeoff(speed, max_altitudeGoal)
+    timeout = 3 # seconds
+    takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(100) # 100Hz
+    transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
 
     # To get this guy to take off!
     i = 0
@@ -92,15 +38,27 @@ def main():
         rate.sleep()
 
     while not rospy.is_shutdown():
-            print("%d" % takeoff.max_altitudeGoal)
-            if(takeoff.altitude < takeoff.max_altitudeGoal):
-                print("Go up, mofo!")
-                takeoff.change_altitude(speed)
-            elif(takeoff.altitude > takeoff.max_altitudeGoal):
-                speed = 0
-                print("Stop, mofo!")
-                takeoff.change_altitude(speed)
-            rate.sleep()
+            # rospy.loginfo("%d" % takeoff.max_altitudeGoal)
+            # We only want to execute these manuevers if we're in takeoff mode
+            # print takeoff.state
+            if takeoff.state == 'takeoff':
+                # rospy.loginfo("%d" % takeoff.timer())
+                if(takeoff.tag_acquired):
+                    if(takeoff.altitude < takeoff.max_altitudeGoal):
+                        rospy.loginfo("Go up!")
+                        takeoff.change_altitude(speed)
+                    elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+                        speed = 0
+                        rospy.loginfo("Stop!")
+                        takeoff.change_altitude(speed)
+                        # To change states, we publish the fact that we've reached our
+                        # takeoff altitude
+                        rospy.loginfo("Going to follow mode")
+                        takeoff.transition(transitions[0])
+                # elif((not takeoff.tag_acquired) and (takeoff.timer() > takeoff.timeout)):
+                #         rospy.loginfo("Going to reacquisition mode")
+                #         takeoff.state_transition(transitions[1])
+                rate.sleep()
 
 
 if __name__=='__main__':
