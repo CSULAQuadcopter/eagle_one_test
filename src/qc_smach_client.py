@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import sys
 import rospy
 from eagle_one_test.srv import *
