@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 """
 This mode will command the QC to automatically land.
-
 Created by: Josh Saunders
 Date Created: 3/31/2016
-Date Modified: 4/17/2016
+Modified by: David Rojas
+Date Modified: 4/27/2016
 """
 # Let's use ROS
 import rospy
@@ -15,25 +15,8 @@ from std_msgs.msg import String, Empty
 # For integration with the qc_smach_server
 import qc_smach_client as sc
 
-class Emergency(object):
-    def __init__(self):
-        # Subscribe to the state machine transition topic
-        # TODO remove this
-        self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
-
-        # Allow the mode to publish a land command
-        self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-
-        # Initialize the transition
-        self.transition = ""
-
-    def emergency_land(self):
-        # Land!
-        self.pub_land.publish(Empty())
-        print("DANGER WILL ROBINSON! DANGER!")
-
-    def transCallback(self, msg):
-        self.transition = msg.data
+# The emergency class
+from Emergency import Emergency
 
 def main():
     emergency = Emergency()
