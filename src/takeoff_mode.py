@@ -49,7 +49,8 @@ def main():
         print takeoff.state
         rate.sleep()
 
-    # To get this guy to take off!
+    # To get this guy to take off! For some reason just calling this function
+    # once does not work. This value (50) was determined experimentally
     i = 0
     while i < 50:
         takeoff.launch()
