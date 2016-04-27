@@ -46,11 +46,9 @@ def main():
         rate.sleep()
 
     while not rospy.is_shutdown():
-            # rospy.loginfo("%d" % takeoff.max_altitudeGoal)
             # We only want to execute these manuevers if we're in takeoff mode
             print takeoff.state
             if takeoff.state == 'takeoff':
-                # rospy.loginfo("%d" % takeoff.timer())
                 if(takeoff.tag_acquired):
                     if(takeoff.altitude < takeoff.max_altitudeGoal):
                         rospy.loginfo("Go up!")
@@ -59,13 +57,10 @@ def main():
                         speed = 0
                         rospy.loginfo("Stop!")
                         takeoff.change_altitude(speed)
-                        # To change states, we publish the fact that we've reached our
-                        # takeoff altitude
+                        # To change states, we publish the fact that we've
+                        # reached our takeoff altitude
                         rospy.loginfo("Going to follow mode")
                         takeoff.transition(transitions[0])
-                # elif((not takeoff.tag_acquired) and (takeoff.timer() > takeoff.timeout)):
-                #         rospy.loginfo("Going to reacquisition mode")
-                #         takeoff.state_transition(transitions[1])
                 rate.sleep()
 
 
