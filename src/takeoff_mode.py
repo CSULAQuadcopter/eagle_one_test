@@ -35,16 +35,6 @@ def main():
 
     state = 'nada'
 
-    # def state_cb(msg):
-    #     state = msg.data
-
-    # sub_state = rospy.Subscriber('/smach/state', String, state_cb)
-
-    # wait for transition to takeoff
-    # while((takeoff.state != 'takeoff') or (takeoff.state != 'reaquisition')):
-    #     print takeoff.state
-    #     rate.sleep()
-
     while((takeoff.state != 'takeoff')):
         print takeoff.state
         rate.sleep()
