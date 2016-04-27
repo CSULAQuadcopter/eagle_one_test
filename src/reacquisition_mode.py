@@ -5,8 +5,10 @@ altitude to a predetermined height then remain there for a predetermined
 time. If it reacquires the tag it goes back to the previous mode. Otherwise,
 it lands where ever it is.
 
-By: Amando A. Aranda and Josh Saunders
+Creatd By: Amando A. Aranda and Josh Saunders
 Date Created: March 31, 2016
+
+Modified by: Josh Saunders
 Date Modified: 4/17/2016
 """
 
