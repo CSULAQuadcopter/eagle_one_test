@@ -37,8 +37,6 @@ class Takeoff(Mode):
         self.timer = rospy.Timer(rospy.Duration(timeout), \
                                  self.goto_reacquisition)
 
-        self.tag_acquired = False
-
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
 
