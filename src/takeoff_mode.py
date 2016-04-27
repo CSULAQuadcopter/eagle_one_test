@@ -28,7 +28,7 @@ from Takeoff import Takeoff
 def main():
     speed = 1	 # m/s
     max_altitudeGoal = 3000  # mm
-    timeout = 30 # seconds
+    timeout = 5 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(10) # 100Hz
     transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
@@ -60,7 +60,7 @@ def main():
     while not rospy.is_shutdown():
             # rospy.loginfo("%d" % takeoff.max_altitudeGoal)
             # We only want to execute these manuevers if we're in takeoff mode
-            # print takeoff.state
+            print takeoff.state
             if takeoff.state == 'takeoff':
                 # rospy.loginfo("%d" % takeoff.timer())
                 if(takeoff.tag_acquired):
