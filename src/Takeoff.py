@@ -9,23 +9,22 @@ Date Modified:
 """
 import rospy
 
+from Mode import Mode
+
 # ROS messages
 from ardrone_autonomy.msg import Navdata
 from std_msgs.msg         import String, Empty
 from geometry_msgs.msg    import Twist
 
 
-class Takeoff(object):
+class Takeoff(Mode):
                        # m/s  mm		        seconds
     def __init__(self, speed, max_altitudeGoal, timeout):
         # Initialize the node and rate
         self.node = rospy.init_node('takeoff_mode')
 
         # Subscribers
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', \
-                                             Navdata, self.navdata_cb)
-        self.sub_state = rospy.Subscriber('smach/state', \
-                                       String, self.state_cb)
+        # None yet
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', \
@@ -34,16 +33,7 @@ class Takeoff(object):
         self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', \
                                             Empty, queue_size=1)
 
-        # NOTE changed to passing transition and state info along
-        # /smach/transition and /smach/state topics, respectively
-        # self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
-        self.pub_transition = rospy.Publisher('smach/transition', \
-                                               String, queue_size=1)
-
         # Initialize member variables
-        self.transition = String()
-        self.altitude = 0
-        self.state = 'nada'
         self.timer = rospy.Timer(rospy.Duration(timeout), \
                                  self.goto_reacquisition)
 
@@ -86,7 +76,7 @@ class Takeoff(object):
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
-    def goto_take_picture(self):
+    def goto_follow(self):
         self.transition.data = 'TAKEOFF_ALT_REACHED'
         self.pub_transition.publish(self.transition)
 
