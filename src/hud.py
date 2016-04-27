@@ -1,19 +1,31 @@
 #!/usr/bin/env python
+"""
+QC Heads Up Display (HUD)
+Displays sensor information from and commands sent to the QC
+Created by: Josh Saunders
+Date Created: 4/2/2016
+Date Modified: 4/16/2016
+"""
+# Python libraries
 from __future__ import print_function
-import roslib
 import sys
-import rospy
 import cv2
 import math
 import numpy as np
+
+# We're using ROS here
+import rospy
+import roslib
+from cv_bridge import CvBridge, CvBridgeError
+
+# ROS messages
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
 from ardrone_autonomy.msg import Navdata
-from cv_bridge import CvBridge, CvBridgeError
 
 class HUD:
-  def __init__(self, camera, box_top_left, box_bottom_right):
+  def __init__(self, box_top_left, box_bottom_right):
     self.image_pub = rospy.Publisher("heads_up",Image, queue_size=1000)
 
     self.bridge = CvBridge()
@@ -108,23 +120,27 @@ class HUD:
   def hud_info(self, cv_image):
     font = cv2.FONT_HERSHEY_PLAIN
     font_color = (0, 255, 0)
-    # Make the strings with the HUD info
+
+    # These are taken from Mike Hamer's ardrone_tutorials package and
+    # the ardrone_autonomy package documentation
     mode = [
         'Emergency', 'Inited', 'Landed', 'Flying', 'Hovering', 'Test',
         'Taking Off', 'Flying', 'Landing', 'Looping'
         ]
-    altd = "Altitude: %.3f m" % self.altitude
-    tag_pos = "Tag: (%d, %d) px" % (self.tag_x, self.tag_y)
-    tag_theta = "Tag Theta: %.1f" % self.tag_theta
-    vx_est = "Vx: %.2f mm/s" % self.vx
-    vy_est = "Vy: %.2f mm/s" % self.vy
+
+    # Make the strings with the HUD info
+    altd      = "Altitude: %.3f m" % self.altitude
+    tag_pos   = "Tag: (%d, %d) px" % (self.tag_x, self.tag_y)
+    tag_theta = "Tag Theta: %.1f"  % self.tag_theta
+    vx_est    = "Vx: %.2f mm/s"    % self.vx
+    vy_est    = "Vy: %.2f mm/s"    % self.vy
     # vz_est = "Vz: %.2f mm/s" % self.vz
-    time = "Time: %f " % self.time
+    time      = "Time: %f "        % self.time
 
     info = "Sent Velocities"
-    linear_x = "Vx: %.3f mm/s" % self.twist.linear.x
-    linear_y = "Vy: %.3f mm/s" % self.twist.linear.y
-    linear_z = "Vz: %.3f mm/s" % self.twist.linear.z
+    linear_x  = "Vx: %.3f mm/s"  % self.twist.linear.x
+    linear_y  = "Vy: %.3f mm/s"  % self.twist.linear.y
+    linear_z  = "Vz: %.3f mm/s"  % self.twist.linear.z
     angular_x = "Rx: %.3f rad/s" % self.twist.angular.x
     angular_y = "Ry: %.3f rad/s" % self.twist.angular.y
     angular_z = "Rz: %.3f rad/s" % self.twist.angular.z
@@ -135,8 +151,8 @@ class HUD:
     pwm4 = "PWM4: %d" % self.pwm4
 
     battery = "Battery: %.1f%%" % self.battery
+    state   = "Mode: %s"        % mode[self.mode]
     battery_font_color = self.set_battery_font(60, 30)
-    state = "Mode: %s" % mode[self.mode]
 
     # Put the text on the image
     # Top left
@@ -178,6 +194,7 @@ class HUD:
     vx = self.twist.linear.x
     vy = self.twist.linear.y
     # find the angle between the velocities
+    # TODO check the math here
     if ((vx > 0) and (vy > 0)):
         angle = math.atan2(vx, vy)
         # print("1st")
@@ -220,7 +237,7 @@ def main(args):
   rospy.init_node('hud', anonymous=True)
   top_left = (240, 135)
   bottom_right = (400, 225)
-  hud = HUD("bottom", top_left, bottom_right)
+  hud = HUD(top_left, bottom_right)
 
   try:
     rospy.spin()

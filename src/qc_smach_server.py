@@ -1,4 +1,3 @@
-
 #! /usr/bin/env python
 import rospy
 
@@ -6,11 +5,11 @@ import rospy
 from StateMachine import Smach
 
 # To graph the state machine diagram
-import pygraphviz
+# import pygraphviz
 
 # ROS messages and services
 from std_msgs.msg import String
-from eagle_one_test.msg import State
+# from eagle_one_test.msg import State
 
 # Initialize the state machine and variables
 smach      = Smach()

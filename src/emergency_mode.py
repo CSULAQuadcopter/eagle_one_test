@@ -1,17 +1,24 @@
 #! /usr/bin/env python
+"""
+This mode will command the QC to automatically land.
 
-# Josh Saunders
-# Created 3/31/2016
-
+Created by: Josh Saunders
+Date Created: 3/31/2016
+Date Modified: 4/17/2016
+"""
 # Let's use ROS
 import rospy
 
 # We're going to need to use String and Empty messages
 from std_msgs.msg import String, Empty
 
+# For integration with the qc_smach_server
+import qc_smach_client as sc
+
 class Emergency(object):
     def __init__(self):
         # Subscribe to the state machine transition topic
+        # TODO remove this
         self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
 
         # Allow the mode to publish a land command
@@ -35,11 +42,10 @@ def main():
     rospy.init_node('emergency_mode')
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
+        # TODO add integration with the smach server
         if(emergency.transition == "EMERGENCY_CONDITION"):
             emergency.emergency_land()
         rate.sleep()
-        # rospy.spin()
-
 
 
 if __name__=='__main__':

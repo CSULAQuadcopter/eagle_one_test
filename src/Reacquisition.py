@@ -1,4 +1,3 @@
-# We're using ROS here
 """
 
 Created by: Josh Saunders
@@ -7,6 +6,7 @@ Date Created: 4/21/2016
 Modified by:
 Date Modified:
 """
+# We're using ROS here
 import rospy
 
 # ROS messages
@@ -15,23 +15,24 @@ from std_msgs.msg         import String, Empty
 from geometry_msgs.msg    import Twist
 
 
-class Takeoff(object):
-                       # m/s  mm		        seconds
-    def __init__(self, speed, max_altitudeGoal, timeout):
+class Reacquisition(object):
+    #                  m/s   mm		  seconds
+    def __init__(self, vels, ceiling, timeout):
         # Initialize the node and rate
-        self.node = rospy.init_node('takeoff_mode')
+        self.node = rospy.init_node('reacquisition_mode')
 
         # Subscribers
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', \
                                              Navdata, self.navdata_cb)
         self.sub_state = rospy.Subscriber('smach/state', \
                                        String, self.state_cb)
+        self.sub_transition = rospy.Subscriber('smach/transition', \
+                                       String, self.transition_cb)
 
         # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', \
+        self.pub_twist = rospy.Publisher('/cmd_vel', \
                                              Twist, queue_size=1)
-        #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', \
+        self.pub_land = rospy.Publisher('/ardrone/land', \
                                             Empty, queue_size=1)
 
         # NOTE changed to passing transition and state info along
@@ -43,21 +44,25 @@ class Takeoff(object):
         # Initialize member variables
         self.transition = String()
         self.altitude = 0
-        self.state = 'nada'
+        self.state = 0
         self.timer = rospy.Timer(rospy.Duration(timeout), \
-                                 self.goto_reacquisition)
+                                 self.land)
 
+        self.transition_in = ''
         self.tag_acquired = False
 
-        self.altitude_command = Twist()
-        self.altitude_command.linear.z = speed
+        self.vels = vels
+
+        self.twist = Twist()
+        self.twist.linear.x = self.vels[0]
+        self.twist.linear.y = self.vels[1]
+        self.twist.linear.z = self.vels[2]
 
         # to disable hover mode
-        self.altitude_command.angular.x = 0.5
-        self.altitude_command.angular.y = 0.5
+        self.twist.angular.x = 0.5
+        self.twist.angular.y = 0.5
 
-        self.max_altitudeGoal = max_altitudeGoal
-        self.speed = speed
+        self.ceiling = ceiling
 
     def navdata_cb(self, msg):
         self.altitude = msg.altd
@@ -75,24 +80,30 @@ class Takeoff(object):
     def state_cb(self, msg):
     	self.state = msg.data
 
-    def launch(self):
-        self.pub_takeoff.publish(Empty())
-        rospy.loginfo("Moving on up!")
+    def land(self, event):
+        self.pub_land.publish(Empty())
+        rospy.loginfo("LAND HO!")
 
     # If we're above the max altitude don't increase the altitude,
     # otherwise go up!
-    def change_altitude(self, speed):
-        self.altitude_command.linear.z = speed
-        self.pub_altitude.publish(self.altitude_command)
-        rospy.loginfo("Change altitude")
+    def check_altitude(self):
+        if self.altitude < self.ceiling:
+            self.twist.linear.z = 0
+        else:
+            self.twist.linear.z = self.vels[2]
 
-    def goto_follow(self):
-        self.transition.data = 'TAKEOFF_ALT_REACHED'
-        self.pub_transition.publish(self.transition)
+    def move(self, speed):
+        self.check_altitude()
+        self.pub_twist.publish(self.twist)
+        rospy.loginfo("Gitty up!")
 
-    def goto_reacquisition(self, event):
+
+    def goto_previous_state(self, event):
         self.transition.data = 'TAKEOFF_TAG_LOST'
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
         self.timer.shutdown()
+
+    def transition_cb(self, msg):
+        self.transition_in = msg.data

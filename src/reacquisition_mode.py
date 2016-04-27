@@ -1,7 +1,16 @@
 #! /usr/bin/env python
-# This is the the code for the reacqusition mode
-#By: Amando A. Aranda and Josh Saunders
-#Date: March 31, 2016
+"""
+This attempts to reacquire the tag if it is lost. The QC will increase its
+altitude to a predetermined height then remain there for a predetermined
+time. If it reacquires the tag it goes back to the previous mode. Otherwise,
+it lands where ever it is.
+
+Creatd By: Amando A. Aranda and Josh Saunders
+Date Created: March 31, 2016
+
+Modified by: Josh Saunders
+Date Modified: 4/17/2016
+"""
 
 # We're using ROS here
 import rospy
@@ -12,8 +21,11 @@ from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
 class Reacquisition(object):
-    # m/s	mm		seconds
+                       # m/s  mm		    seconds
     def __init__(self, speed, max_altitude, max_time):
+        # Initialize the node and rate
+        self.node = rospy.init_node('reacquisition_mode')
+
         # Subscribers
         self.sub_transition = rospy.Subscriber('qc_smach/transitions', String, self.transCallback)
         self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdataCallback)
@@ -25,8 +37,7 @@ class Reacquisition(object):
         # TODO need to set this up as a client to the smach server
         self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=100)
 
-        # Initialize the node and rate
-        self.node = rospy.init_node('reacquisition_mode')
+
 
         # Initialize member variables
         self.transition = ""
@@ -88,6 +99,8 @@ def main():
     reacquisition = Reacquisition(speed, max_altitude, max_time)
 
     rate = rospy.Rate(100) # 100Hz
+    # TODO add integration with the smach server
+    # TODO add a way to go back to the previous state
     while not rospy.is_shutdown():
         if(reacquisition.transition == "TAG_LOST"):
             reacquisition.change_altitude()

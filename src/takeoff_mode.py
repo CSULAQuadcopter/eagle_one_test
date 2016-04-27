@@ -5,7 +5,7 @@ altitude.
 If the tag is lost, a timer is started and if the tag cannot be recovered
 within a specified amount of time, it will enter the reacquisition mode. If the
 tag is recovered within the specified amount of time, it will continue on with
-its function (getting the QC to increase to a specified height).
+its function (getting the QC to a specified height).
 Created by: David Rojas
 Date Created: April 11, 2016
 Modified by: Josh Saunders
@@ -24,13 +24,30 @@ from Takeoff import Takeoff
 # TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
 def main():
     speed = 1	 # m/s
-    max_altitudeGoal = 1000  # mm
-    timeout = 3 # seconds
+    max_altitudeGoal = 3000  # mm
+    timeout = 30 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
-    rate = rospy.Rate(100) # 100Hz
+    rate = rospy.Rate(10) # 100Hz
     transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
 
-    # To get this guy to take off!
+    state = 'nada'
+
+    # def state_cb(msg):
+    #     state = msg.data
+
+    # sub_state = rospy.Subscriber('/smach/state', String, state_cb)
+
+    # wait for transition to takeoff
+    # while((takeoff.state != 'takeoff') or (takeoff.state != 'reaquisition')):
+    #     print takeoff.state
+    #     rate.sleep()
+
+    while((takeoff.state != 'takeoff')):
+        print takeoff.state
+        rate.sleep()
+
+    # To get this guy to take off! For some reason just calling this function
+    # once does not work. This value (50) was determined experimentally
     i = 0
     while i < 50:
         takeoff.launch()

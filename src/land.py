@@ -11,6 +11,9 @@ from std_msgs.msg import String, Empty
 from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
+# For integration with the qc_smach_server
+import qc_smach_client as sc
+
 class Landing(object):
     # m/s	mm		seconds
     def __init__(self, speed, min_altitude):
@@ -20,7 +23,7 @@ class Landing(object):
         self.sub_previous_state = rospy.Subscriber('qc_smach/previous_state', String, self.previousStateCallback)
 
         # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
         self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100) #this turns off the motors
         # TODO need to set this up as a client to the smach server
         self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=100)
@@ -32,21 +35,19 @@ class Landing(object):
         self.transition = ""
         self.altitude = 0
 
-        self.tag_acquired = True
+        self.tag_acquired = False
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
 
-
-        #self.start_time = rospy.Time.now().to_sec()
-        #self.max_time = max_time
-
         # to disable hover mode
+        # HACK maybe we want to enable hover mode?
         self.altitude_command.angular.x = 0.5
         self.altitude_command.angular.y = 0.5
 
         self.min_altitude = min_altitude
         self.speed = speed
+
 
 
     def transCallback(self, msg):
@@ -63,6 +64,7 @@ class Landing(object):
     	self.previous_state = msg.data
 #This is what makes the drone land
     def land(self):
+        # Land!
         self.pub_land.publish(Empty())
         print("LAND HO!")
 
@@ -72,23 +74,23 @@ class Landing(object):
         self.pub_altitude.publish(self.altitude_command)
 
 
-def main():
-    speed = -1	 # m/s
-    min_altitude = 500  # mm, this  is 8 inches
-    #max_time = 5 	 # seconds
-    landing = Landing(speed, min_altitude)
-    rate = rospy.Rate(100) # 100Hz
 
+def main():
+    speed = -.5 	 # m/s
+    min_altitude = 500  # mm, this  is 8 inches
+
+    landing = Landing(speed, min_altitude)
+
+    rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
-            print("%d" % landing.altitude)
-#if(landing.tag_acquired == True):
-            if(landing.altitude > landing.min_altitude):
-                print("Go down, mofo!")
-                landing.change_altitude(speed)
-            elif(landing.altitude < landing.min_altitude):
-                print("Eagle one has descended!")
-                landing.land()
-            rate.sleep()
+        if(landing.altitude > min_altitude):
+            landing.change_altitude(speed)
+            print ("Go down!")
+        else:
+            landing.land()
+            print ("Eagle one going down")
+        rate.sleep()
+
 
 if __name__=='__main__':
     main()
