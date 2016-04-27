@@ -33,8 +33,6 @@ def main():
     rate = rospy.Rate(10) # 100Hz
     transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
 
-    state = 'nada'
-
     while((takeoff.state != 'takeoff')):
         print takeoff.state
         rate.sleep()
