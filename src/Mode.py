@@ -54,12 +54,8 @@ class Mode(object):
         self.mode = msg.state
         if(msg.tags_count > 0):
             self.tag_acquired = True
-            # If we do have the tag we need to stop the timer
-            self.timer.shutdown()
         else:
             self.tag_acquired = False
-            # If we don't have the tag we need to start the timer
-            self.timer.run()
 
     def state_cb(self, msg):
     	self.state = msg.data
