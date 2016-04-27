@@ -20,8 +20,8 @@ from geometry_msgs.msg    import Twist
 class Takeoff(Mode):
                        # m/s  mm		        seconds
     def __init__(self, speed, max_altitudeGoal, timeout):
-        # Initialize the node and rate
-        self.node = rospy.init_node('takeoff_mode')
+        # Initialize the node which is inherited fromt the Mode super class
+        super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
         # None yet
@@ -62,8 +62,6 @@ class Takeoff(Mode):
             # If we don't have the tag we need to start the timer
             self.timer.run()
 
-    def state_cb(self, msg):
-    	self.state = msg.data
 
     def launch(self):
         self.pub_takeoff.publish(Empty())
