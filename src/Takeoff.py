@@ -20,7 +20,7 @@ from geometry_msgs.msg    import Twist
 class Takeoff(Mode):
                        # m/s  mm		        seconds
     def __init__(self, speed, max_altitudeGoal, timeout):
-        # Initialize the node which is inherited fromt the Mode super class
+        # Initialize the node which is inherited from the Mode super class
         super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
