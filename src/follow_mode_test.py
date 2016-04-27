@@ -3,7 +3,6 @@
 Follow Mode Test
 Written by: Josh Saunders
 Date: 4/11/2016
-
 This is to test the PID that controls the 4 Degrees Of Freedom (DOF) of the QC
 """
 # We're using ROS
