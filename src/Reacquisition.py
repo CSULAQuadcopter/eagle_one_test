@@ -9,25 +9,21 @@ Date Modified:
 # We're using ROS here
 import rospy
 
+from Mode import Mode
+
 # ROS messages
 from ardrone_autonomy.msg import Navdata
 from std_msgs.msg         import String, Empty
 from geometry_msgs.msg    import Twist
 
-
-class Reacquisition(object):
+class Reacquisition(Mode):
     #                  m/s   mm		  seconds
     def __init__(self, vels, ceiling, timeout):
-        # Initialize the node and rate
-        self.node = rospy.init_node('reacquisition_mode')
+        # Initialize the node which is inherited fromt the Mode super class
+        super(self.__class__, self).__init__('reacquisition_mode')
 
         # Subscribers
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', \
-                                             Navdata, self.navdata_cb)
-        self.sub_state = rospy.Subscriber('smach/state', \
-                                       String, self.state_cb)
-        self.sub_transition = rospy.Subscriber('smach/transition', \
-                                       String, self.transition_cb)
+        # None yet
 
         # Publishers
         self.pub_twist = rospy.Publisher('/cmd_vel', \
@@ -35,16 +31,8 @@ class Reacquisition(object):
         self.pub_land = rospy.Publisher('/ardrone/land', \
                                             Empty, queue_size=1)
 
-        # NOTE changed to passing transition and state info along
-        # /smach/transition and /smach/state topics, respectively
-        # self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
-        self.pub_transition = rospy.Publisher('smach/transition', \
-                                               String, queue_size=1)
-
         # Initialize member variables
-        self.transition = String()
         self.altitude = 0
-        self.state = 0
         self.timer = rospy.Timer(rospy.Duration(timeout), \
                                  self.land)
 
@@ -76,9 +64,6 @@ class Reacquisition(object):
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
             self.timer.run()
-
-    def state_cb(self, msg):
-    	self.state = msg.data
 
     def land(self, event):
         self.pub_land.publish(Empty())
