@@ -30,10 +30,6 @@ def main():
 
     rate = rospy.Rate(10) # 10 Hz
 
-    # while((reacquisition.state != 'reacquisition')):
-    #     print reacquisition.state
-    #     rate.sleep()
-
     rospy.loginfo("Entered Reacquisition Mode")
 
     while not rospy.is_shutdown():
