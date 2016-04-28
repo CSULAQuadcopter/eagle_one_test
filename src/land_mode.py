@@ -28,8 +28,8 @@ def main():
     rate = rospy.Rate(100) # 100Hz
 
     while not rospy.is_shutdown():
-            print("%d" % landing.altitude)
             if land.state == 'land':
+                print("%d" % landing.altitude)
                 if(land.tag_acquired):
                     if(landing.altitude > landing.min_altitude):
                         print("Go down, mofo!")
