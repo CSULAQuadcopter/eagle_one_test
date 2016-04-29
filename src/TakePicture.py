@@ -42,7 +42,8 @@ class TakePicture(Mode):
         self.transition = String()
         self.altitude = 0
         self.state = 0
-        self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
+        # We don't go to reacquisition from here
+        # self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
 
         self.picture_time = picture_time
         self.counter = 0
