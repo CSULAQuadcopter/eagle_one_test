@@ -16,13 +16,13 @@ from std_msgs.msg import String
 from TakePicture import TakePicture
 
 def main(args):
-    picture_time = 3     # seconds
-    takepicture = TakePicture(picture_time)
+    max_time = 3     # seconds
+    takepicture = TakePicture(max_time)
     rate = rospy.Rate(10)
     # TODO add a way to go to the next state, probably after the while loop
     while not rospy.is_shutdown():
         if TakePicture.state == 'Take a Picture':
-            if(takepicture.timer() > takepicture.picture_time):
+            if(takepicture.timer() > takepicture.max_time):
                 takepicture.goto_land()
             rate.sleep()
 
