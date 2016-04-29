@@ -6,7 +6,11 @@ certain amount of time, otherwise it lands the QC.
 This inherits from the Mode class.
 
 Subscribers:
-    Look to the Mode class
+    /smach/state to check state and turn on timers if we're in reacquisition
+    and turn off if we'er not
+    /smach/transition stores the transition to the state so that if the tag is
+    reacquired within the specified amount of time, we know which state to go
+    back to
 
 Publishers:
     /cmd_vel to control the altitude of the QC
@@ -40,7 +44,11 @@ class Reacquisition(Mode):
         super(self.__class__, self).__init__('reacquisition_mode')
 
         # Subscribers
-        # None yet
+        self.sub_state = rospy.Subscriber('/smach/state', \
+                                             String, self.handle_timer_cb)
+
+        self.sub_transition = rospy.Subscriber('/smach/transition', \
+                                             String, self.transition_cb)
 
         # Publishers
         self.pub_twist = rospy.Publisher('/cmd_vel', \
@@ -48,14 +56,19 @@ class Reacquisition(Mode):
         self.pub_land = rospy.Publisher('/ardrone/land', \
                                             Empty, queue_size=1)
 
-        # Initialize member variables
+        # Initialize the timers
         self.altitude = 0
-        self.prev_state_timeout = rospy.Timer(rospy.Duration(prev_state_timeout), \
+        self.prev_state_timer = rospy.Timer(rospy.Duration(prev_state_timeout), \
                                  self.goto_previous_state)
 
-        self.tag_timer = rospy.Timer(rospy.Duration(tag_timeout), \
+        self.land_timer = rospy.Timer(rospy.Duration(tag_timeout), \
                                  self.land)
 
+        # We don't want the timers to run while we're not in this mode
+        self.prev_state_timer.shutdown()
+        self.land_timer.shutdown()
+
+        # Initialize member variables
         self.transition_in = ''
         self.tag_acquired = False
 
@@ -82,14 +95,16 @@ class Reacquisition(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the tag timer
-            self.tag_timer.shutdown()
+            self.land_timer.shutdown()
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the tag timer
-            self.tag_timer.run()
+            self.land_timer.run()
 
     def land(self, event):
+        self.transition = 'TIMED_OUT'
         self.pub_land.publish(Empty())
+        self.pub_transition.publish(self.transition)
         rospy.loginfo("LAND HO!")
 
     # If we're above the max altitude don't increase the altitude,
@@ -100,7 +115,7 @@ class Reacquisition(Mode):
         else:
             self.twist.linear.z = self.vels[2]
 
-    def move(self, speed):
+    def move(self):
         self.check_altitude()
         self.pub_twist.publish(self.twist)
         rospy.loginfo("Gitty up!")
@@ -113,13 +128,23 @@ class Reacquisition(Mode):
         elif(self.transition_in == 'LAND_TAG_LOST'):
             self.transition.data = 'LAND_TAG_FOUND'
         self.pub_transition.publish(self.transition)
-        rospy.loginfo("Transitioning to reacquisition mode")
+        rospy.loginfo("Transitioning to back to the previous mode")
         # Stop the previous state timer so that it doesn't keep going
-        self.timer.shutdown()
+        self.prev_state_timer.shutdown()
 
-    def land(self):
+    def land(self, event):
         rospy.loginfo("Tag could not be reacquired. Landing.")
-        self.pub_land.publish(land_msg)
+        self.pub_land.publish(self.land_msg)
 
     def transition_cb(self, msg):
         self.transition_in = msg.data
+
+    def handle_timer_cb(self, msg):
+        if(self.state == 'reacquisition'):
+            self.prev_state_timer.run()
+            self.land_timer.run()
+            # rospy.loginfo("Timers turned on.")
+        else:
+            self.prev_state_timer.shutdown()
+            self.land_timer.shutdown()
+            # rospy.loginfo("Timers turned off.")

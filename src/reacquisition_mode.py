@@ -24,21 +24,21 @@ from ardrone_autonomy.msg import Navdata
 
 def main():
     velocities = (0.3, 0.3, 0.3) 	 # m/s
-    max_altitude = 3000  # mm
-    max_time = 5 	 # seconds
-    reacquisition = Reacquisition(velocities, max_altitude, max_time)
+    max_alt = 3000  # mm
+    tag_timeout = 10 	 # seconds
+    prev_state_timeout = 5 # seconds
+    reacquisition = Reacquisition(velocities, max_alt, tag_timeout, prev_state_timeout)
 
     rate = rospy.Rate(10) # 10 Hz
 
     rospy.loginfo("Entered Reacquisition Mode")
 
     while not rospy.is_shutdown():
-        print reacquisition.state
+        # print reacquisition.transition_in
         if(reacquisition.state == 'reacquisition'):
-            if(reacquisition.transition == "TAG_LOST"):
-                reacquisition.change_altitude()
-                if(reacquisition.timer() > reacquisition.max_time):
-                    reacquisition.land()
+            reacquisition.move()
+            # if(reacquisition.timer() > reacquisition.max_time):
+            #     reacquisition.land()
         rate.sleep()
 
 

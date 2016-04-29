@@ -2,15 +2,19 @@
 """
 This will save images streamed along the /ardrone/front/image_raw topic for
 a specified amount of time
+
 Created by: Josh Saunders and David Rojas
 Date Created: 4/1/2016
+
 Modified by: Josh Saunders
-Date Modified: 4/17/2016
+Date Modified: 4/28/2016
 """
 from __future__ import print_function
 
 import sys
 import cv2
+
+from Mode import Mode
 
 # We're using ROS here
 import rospy
@@ -19,44 +23,46 @@ from cv_bridge import CvBridge, CvBridgeError
 
 # ROS messages
 from sensor_msgs.msg import Image
+from std_msgs.msg    import String
 
-# For integration with the qc_smach_server
-import qc_smach_client as sc
-
-class TakePicture(object):
+class TakePicture(Mode):
         #seconds
-    def __init__(self, max_time):
-        self.node = rospy.init_node('take_picture_mode')
+    def __init__(self, picture_time):
+        # Initialize the node which is inherited fromt the Mode super class
+        super(self.__class__, self).__init__('take_picture_mode')
 
-        self.sub_state = rospy.Subscriber('smach/state', String, self.state_cb)
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdata_cb)
-
-        # NOTE changed to passing transition and state info along
-        # /smach/transition and /smach/state topics, respectively
-        # self.pub_return_to_state = rospy.Publisher('qc_smach/transitions', String, queue_size=1)
-        self.pub_transition = rospy.Publisher('smach/transition', String, queue_size=1)
+        self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
+        self.image_sub = rospy.Subscriber("/ardrone/image_raw",Image,self.img_cb)
 
         #OpenCV stuff
         self.bridge = CvBridge()
-        self.image_sub = rospy.Subscriber("/ardrone/front/image_raw",Image,self.callback)
+
 
         self.transition = String()
         self.altitude = 0
         self.state = 0
         self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
 
-        self.max_time = max_time
+        self.picture_time = picture_time
         self.counter = 0
 
-    def callback(self,data):
+        # Initialize the the cv_image variable
+        self.cv_image = None
+
+        # Initialize timer
+        self.pict_cmd_timer = rospy.Timer(rospy.Duration(picture_timer), \
+                                 self.pic_cmd)
+
+    def img_cb(self,data):
         try:
-            cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+            self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
             print(e)
 
+    def save_image(self):
         self.counter += 1
         filename = "recon_%d.png" % self.counter
-        cv2.imwrite(filename, cv_image)
+        cv2.imwrite(filename, self.cv_image)
 
     # Hey 'Ol Timer
     def timer(self):
@@ -65,3 +71,6 @@ class TakePicture(object):
     def goto_land(self):
         self.transition.data = 'PICTURE_TAKEN'
         self.pub_transition.publish(self.transition)
+
+    def pic_cmd(self, event):
+        self.transition.data = 'PICTURE_COMMAND'

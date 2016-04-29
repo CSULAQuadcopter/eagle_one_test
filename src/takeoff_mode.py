@@ -6,8 +6,10 @@ If the tag is lost, a timer is started and if the tag cannot be recovered
 within a specified amount of time, it will enter the reacquisition mode. If the
 tag is recovered within the specified amount of time, it will continue on with
 its function (getting the QC to a specified height).
+
 Created by: David Rojas
 Date Created: April 11, 2016
+
 Modified by: Josh Saunders
 Date Modified: 4/21/2016
 """
