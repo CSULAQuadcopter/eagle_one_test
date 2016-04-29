@@ -74,3 +74,4 @@ class TakePicture(Mode):
 
     def pic_cmd(self, event):
         self.transition.data = 'PICTURE_COMMAND'
+        self.pub_transition.publish(self.transition)
