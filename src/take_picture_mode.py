@@ -9,6 +9,8 @@ Date Modified: 4/25/2016
 # We're using ROS here
 import rospy
 
+import sys
+
 # ROS message
 from std_msgs.msg import String
 
@@ -16,14 +18,15 @@ from std_msgs.msg import String
 from TakePicture import TakePicture
 
 def main(args):
-    max_time = 3     # seconds
-    takepicture = TakePicture(max_time)
+    picture_time = 3 # seconds
+    max_time     = 3 # seconds
+    takepicture = TakePicture(picture_time)
     rate = rospy.Rate(10)
     # TODO add a way to go to the next state, probably after the while loop
     while not rospy.is_shutdown():
-        if TakePicture.state == 'Take a Picture':
-            if(takepicture.timer() > takepicture.max_time):
-                takepicture.goto_land()
+        if takepicture.state == 'take_picture':
+            if(takepicture.finished()):
+                break
             rate.sleep()
 
 if __name__ == '__main__':
