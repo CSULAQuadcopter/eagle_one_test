@@ -34,9 +34,10 @@ class TakePicture(Mode):
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         self.image_sub = rospy.Subscriber("/ardrone/image_raw",Image,self.img_cb)
 
+        self.rate = rospy.rate(10)
+
         #OpenCV stuff
         self.bridge = CvBridge()
-
 
         self.transition = String()
         self.altitude = 0
@@ -61,8 +62,10 @@ class TakePicture(Mode):
 
     def save_image(self):
         self.counter += 1
-        filename = "recon_%d.png" % self.counter
-        cv2.imwrite(filename, self.cv_image)
+        while counter =< 50:
+            filename = "recon_%d.png" % self.counter
+            cv2.imwrite(filename, self.cv_image)
+            self.rate.sleep()
 
     # Hey 'Ol Timer
     def timer(self):
