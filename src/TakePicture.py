@@ -50,7 +50,7 @@ class TakePicture(Mode):
         self.cv_image = None
 
         # Initialize timer
-        self.pict_cmd_timer = rospy.Timer(rospy.Duration(picture_timer), \
+        self.pic_cmd_timer = rospy.Timer(rospy.Duration(picture_timer), \
                                  self.pic_cmd)
 
     def img_cb(self,data):
