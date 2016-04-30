@@ -9,11 +9,14 @@ from std_msgs.msg import String, Empty
 
 class Emergency(Mode):
     def __init__(self):
-        # Subscribe to the state machine transition topic
-        self.sub_transition = rospy.Subscriber('/qc_smach/transition', String, self.transition_cb)
+        # Subscribe to the state machine state topic
+        self.sub_state = rospy.Subscriber('/smach/state', \
+                                       String, self.state_cb)
 
         # Allow the mode to publish a land command
         self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
+
+        self.state = 'nada'
 
     def emergency_land(self):
         # Land!
@@ -22,6 +25,9 @@ class Emergency(Mode):
 
     def transition_cb(self, msg):
         self.transition = msg.data
+
+    def state_cb(self, msg):
+    	self.state = msg.data
 
     def goto_secure(self):
         self.transition.data = 'RESET'

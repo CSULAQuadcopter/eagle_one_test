@@ -26,11 +26,10 @@ from Takeoff import Takeoff
 # TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
 def main():
     speed = 1	 # m/s
-    max_altitudeGoal = 3000  # mm
-    timeout = 5 # seconds
+    max_altitudeGoal = 2000  # mm
+    timeout = 15 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(10) # 100Hz
-    transitions = ['TAKEOFF_ALT_REACHED', 'TAKEOFF_TAG_LOST']
 
     while((takeoff.state != 'takeoff')):
         print takeoff.state
@@ -46,20 +45,19 @@ def main():
 
     while not rospy.is_shutdown():
             # We only want to execute these manuevers if we're in takeoff mode
-            print takeoff.state
+            # print takeoff.state
             if takeoff.state == 'takeoff':
-                if(takeoff.tag_acquired):
-                    if(takeoff.altitude < takeoff.max_altitudeGoal):
-                        rospy.loginfo("Go up!")
-                        takeoff.change_altitude(speed)
-                    elif(takeoff.altitude >= takeoff.max_altitudeGoal):
-                        speed = 0
-                        rospy.loginfo("Stop!")
-                        takeoff.change_altitude(speed)
-                        # To change states, we publish the fact that we've
-                        # reached our takeoff altitude
-                        rospy.loginfo("Going to follow mode")
-                        takeoff.transition(transitions[0])
+                if(takeoff.altitude < takeoff.max_altitudeGoal):
+                    rospy.loginfo("Go up!")
+                    takeoff.change_altitude(speed)
+                elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+                    speed = 0
+                    rospy.loginfo("Stop!")
+                    takeoff.change_altitude(speed)
+                    # To change states, we publish the fact that we've
+                    # reached our takeoff altitude
+                    rospy.loginfo("Going to follow mode")
+                    takeoff.goto_follow()
                 rate.sleep()
 
 
