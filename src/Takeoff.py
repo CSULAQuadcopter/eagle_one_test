@@ -22,7 +22,8 @@ class Takeoff(Mode):
         super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
-        # None yet
+        self.sub_state = rospy.Subscriber('/smach/state', \
+                                             String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', \
@@ -80,3 +81,11 @@ class Takeoff(Mode):
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
         self.timer.shutdown()
+
+    def handle_timer_cb(self, msg):
+        if(self.state == 'takeoff'):
+            self.timer.run()
+            # rospy.loginfo("Timers turned on.")
+        else:
+            self.timer.shutdown()
+            # rospy.loginfo("Timers turned off.")

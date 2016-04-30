@@ -16,8 +16,10 @@ Request:
 Response:
     String next_state (what is returned by the state machine to the ROS service
            client)
+
 Date Created: 3/30/2016
 Created by: Josh Saunders
+
 Date Modified: 4/21/2016
 Modified by: Josh Saunders
 """
@@ -137,4 +139,4 @@ class Smach(Machine):
                 rospy.loginfo("Tag Found, Returning to Take Picture Mode")
             if(transition == 'TIMED_OUT'):
                 self.timed_out()
-                rospy.loginfo("Reacquisition Timer Expired, Entering Emergency Mode")
+                rospy.loginfo("Reacquisition Timer Expired, Landing")
