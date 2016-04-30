@@ -1,5 +1,4 @@
 
-<?xml version="1.0"?>
 
 <launch>
 
@@ -55,13 +54,6 @@
         />
 
     <node
-        name="Reacquisition"
-        pkg="eagle_one_test"
-        type="reacquisition_mode.py"
-        required="true"
-      />
-
-    <node
         name="HUD"
         pkg="eagle_one_test"
         type="hud.py"
@@ -76,7 +68,7 @@
         />
 
     <include
-       file="$(keyboard_controller_with_tags)/eagle_one_test/launch/keyboard_controller_with_tags.launch"
+       file="$(find ardrone_tutorials)/launch/keyboard_controller_with_tags.launch"
         />
 
 </launch>
