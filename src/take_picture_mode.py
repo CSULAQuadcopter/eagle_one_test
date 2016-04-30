@@ -18,7 +18,7 @@ from std_msgs.msg import String
 from TakePicture import TakePicture
 
 def main(args):
-    picture_time = 3 # seconds
+    picture_time = 30 # seconds
     max_time     = 3 # seconds
     takepicture = TakePicture(picture_time)
     rate = rospy.Rate(10)

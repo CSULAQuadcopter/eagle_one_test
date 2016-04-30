@@ -25,20 +25,21 @@ from Land import Landing
 def main():
     speed = -1	 # m/s
     min_altitude = 500  # mm, this  is 8 inches
+    timeout = 3 # seconds
     #max_time = 5 	 # seconds
-    landing = Landing(speed, min_altitude)
+    landing = Landing(speed, min_altitude, timeout)
     rate = rospy.Rate(100) # 100Hz
 
     while not rospy.is_shutdown():
-        if land.state == 'land':
+        if landing.state == 'land':
             print("%d" % landing.altitude)
-            if(land.tag_acquired):
-                if(landing.altitude > landing.min_altitude):
-                    print("Go down")
-                    landing.change_altitude(speed)
-                elif(landing.altitude < landing.min_altitude):
-                    print("Eagle one has descended!")
-                    landing.land()
+            # if(landing.tag_acquired):
+            if(landing.altitude > landing.min_altitude):
+                print("Go down")
+                landing.change_altitude(speed)
+            elif(landing.altitude < landing.min_altitude):
+                print("Eagle one has descended!")
+                landing.land()
             rate.sleep()
 
 if __name__=='__main__':

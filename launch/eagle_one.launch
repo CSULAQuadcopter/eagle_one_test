@@ -21,7 +21,7 @@
     <node
        name="Follow"
        pkg="eagle_one_test"
-       type="follow_mode.py"
+       type="follow_mode_test.py"
        required="true"
       />
 ​

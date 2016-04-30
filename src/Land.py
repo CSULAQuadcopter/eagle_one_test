@@ -8,13 +8,15 @@ from ardrone_autonomy.msg   import Navdata
 
 class Landing(object):
     # m/s	mm		seconds
-    def __init__(self, speed, min_altitude):
+    def __init__(self, speed, min_altitude, timeout):
         # Initialize the node and rate
         self.node = rospy.init_node('land_mode')
 
         # Subscribers
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.navdata_cb)
-        self.sub_state = rospy.Subscriber('smach/state', String, self.state_cb)
+        self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
+        self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
+        self.sub_state = rospy.Subscriber('/smach/state', \
+                                             String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -78,3 +80,11 @@ class Landing(object):
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
         self.timer.shutdown()
+
+    def handle_timer_cb(self, msg):
+        if(self.state == 'takeoff'):
+            self.timer.run()
+            # rospy.loginfo("Timers turned on.")
+        else:
+            self.timer.shutdown()
+            # rospy.loginfo("Timers turned off.")
