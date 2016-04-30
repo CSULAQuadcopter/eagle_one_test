@@ -1,8 +1,6 @@
-
-<?xml version="1.0"?>
-
+​
 <launch>
-
+​
     <!-- don't need a secure mode, listed here for completeness
       <node
       name="secure"
@@ -11,72 +9,65 @@
       required="true"
       />
     -->
-
+​
     <node
       name="Takeoff"
       pkg="eagle_one_test"
       type="takeoff_mode.py"
       required="true"
       />
-
+​
     <node
        name="Follow"
        pkg="eagle_one_test"
        type="follow_mode.py"
        required="true"
       />
-
+​
     <node
        name="TakePicture"
        pkg="eagle_one_test"
        type="take_picture_mode.py"
        required="true"
       />
-
+​
     <node
 		   name="Land"
 		   pkg="eagle_one_test"
 		   type="land_mode.py"
 		   required="true"
        />
-
+​
     <node
  		   name="Emergency"
  		   pkg="eagle_one_test"
  		   type="emergency_mode.py"
  		   required="true"
         />
-
+​
     <node
   		  name="Reacquisition"
   		  pkg="eagle_one_test"
   		  type="reacquisition_mode.py"
   		  required="true"
         />
-
-    <node
-        name="Reacquisition"
-        pkg="eagle_one_test"
-        type="reacquisition_mode.py"
-        required="true"
-      />
-
+​
     <node
         name="HUD"
         pkg="eagle_one_test"
         type="hud.py"
         required="true"
         />
-
+​
     <node
          name="QC State Machine Server"
          pkg="eagle_one_test"
          type="qc_smach_server.py"
          required="true"
         />
-
+​
     <include
-       file="$(keyboard_controller_with_tags)/eagle_one_test/launch/keyboard_controller_with_tags.launch"
+       file="$(find ardrone_tutorials)/launch/keyboard_controller_with_tags.launch"
         />
-
+​
 </launch>
