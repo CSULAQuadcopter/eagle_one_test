@@ -8,15 +8,14 @@ from ardrone_autonomy.msg   import Navdata
 
 class Landing(object):
     # m/s	mm		seconds
-    def __init__(self, speed, min_altitude, timeout):
+    def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, timeout):
         # Initialize the node and rate
         self.node = rospy.init_node('land_mode')
 
         # Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
-        self.sub_state = rospy.Subscriber('/smach/state', \
-                                             String, self.handle_timer_cb)
+        self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -44,7 +43,8 @@ class Landing(object):
 
         self.min_altitude = min_altitude
         self.speed = speed
-
+        self.max_altitudeGoal = max_altitudeGoal
+        self.height_diff = height_diff
 
     def navdata_cb(self, msg):
         self.altitude = msg.altd
@@ -60,10 +60,13 @@ class Landing(object):
     def state_cb(self, msg):
         self.state = msg.data
 
+    def height_diff(self, max_altitudeGoal, altitude):
+        self.height_diff = self.max_altitudeGoal - self.altitude
+
 #This is what makes the drone land
     def land(self):
         self.pub_land.publish(Empty())
-        print("LAND HO!")
+        print("LAND!")
 
     # THis is the algo for landing
     def change_altitude(self, min_altitude):
