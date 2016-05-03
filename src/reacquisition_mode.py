@@ -25,7 +25,7 @@ from ardrone_autonomy.msg import Navdata
 def main():
     velocities = (0.3, 0.3, 0.3) 	 # m/s
     max_alt = 3000  # mm
-    tag_timeout = 10 	 # seconds
+    tag_timeout = 5 	 # seconds
     prev_state_timeout = 5 # seconds
     reacquisition = Reacquisition(velocities, max_alt, tag_timeout, prev_state_timeout)
 

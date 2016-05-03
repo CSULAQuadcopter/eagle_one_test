@@ -64,10 +64,6 @@ class Reacquisition(Mode):
         self.land_timer = rospy.Timer(rospy.Duration(tag_timeout), \
                                  self.land)
 
-        # We don't want the timers to run while we're not in this mode
-        self.prev_state_timer.shutdown()
-        self.land_timer.shutdown()
-
         # Initialize member variables
         self.transition_in = ''
         self.tag_acquired = False
@@ -89,20 +85,31 @@ class Reacquisition(Mode):
         self.land_msg = Empty()
 
     def navdata_cb(self, msg):
+        """
+        Saves the QC's altitude, state (NOT the system state), and whether or
+        not the tag has been acquired. If the tag is acquired (and the system
+        is in reacquisition mode) the land_timer is shutoff. If the tag is not
+        acquired (and the system is in reacquisition mode) the land_timer is
+        turned on.
+        """
         self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
-        if(msg.tags_count > 0):
+        if((msg.tags_count > 0) and (self.state == 'reacquisition')):
             self.tag_acquired = True
             # If we do have the tag we need to stop the tag timer
-            self.land_timer.shutdown()
-        else:
+            self.turn_off_timer(self.land_timer.)
+        elif((msg.tags_count < 1) and (self.state == 'reacquisition')):
             self.tag_acquired = False
             # If we don't have the tag we need to start the tag timer
-            self.land_timer.run()
+            self.turn_on_timer(self.land_timer)
 
     def land(self, event):
-        self.transition = 'TIMED_OUT'
+        """
+        Executed when the land_timer runs out. If the tag has not been
+        reacquired within the stated time, this lands the QC
+        """
+        self.transition.data = 'TIMED_OUT'
         self.pub_land.publish(Empty())
         self.pub_transition.publish(self.transition)
         rospy.loginfo("LAND HO!")
@@ -110,6 +117,9 @@ class Reacquisition(Mode):
     # If we're above the max altitude don't increase the altitude,
     # otherwise go up!
     def check_altitude(self):
+        """
+        Makes sure that the QC is at the stated ceiling (max altitude)
+        """
         if self.altitude < self.ceiling:
             self.twist.linear.z = 0
         else:
@@ -121,6 +131,10 @@ class Reacquisition(Mode):
         rospy.loginfo("Gitty up!")
 
     def goto_previous_state(self, event):
+        """
+        Goes to the previous state if the tag has been reacquired for the
+        stated time
+        """
         if(self.transition_in == 'TAKEOFF_TAG_LOST'):
             self.transition.data = 'TAKEOFF_TAG_FOUND'
         elif(self.transition_in == 'FOLLOW_TAG_LOST'):
@@ -130,21 +144,26 @@ class Reacquisition(Mode):
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to back to the previous mode")
         # Stop the previous state timer so that it doesn't keep going
-        self.prev_state_timer.shutdown()
-
-    def land(self, event):
-        rospy.loginfo("Tag could not be reacquired. Landing.")
-        self.pub_land.publish(self.land_msg)
+        # NOTE may not be necessary
+        # self.turn_off_timer(self.prev_state_timer)
 
     def transition_cb(self, msg):
+        """
+        Listens in on the /smach/transition topic and saves the transition so
+        that we know which state to go back to if the tag has been reacquired
+        """
         self.transition_in = msg.data
 
     def handle_timer_cb(self, msg):
+        """
+        Turns off the timers if the system is not in reacquisition mode. Turns
+        on the timers if the system is in the reacquisition mode
+        """
         if(self.state == 'reacquisition'):
-            self.prev_state_timer.run()
-            self.land_timer.run()
+            self.turn_on_timer(self.prev_state_timer)
+            self.turn_on_timer(self.land_timer)
             # rospy.loginfo("Timers turned on.")
         else:
-            self.prev_state_timer.shutdown()
-            self.land_timer.shutdown()
+            self.turn_off_timer(self.prev_state_timer)
+            self.turn_off_timer(self.land_timer)
             # rospy.loginfo("Timers turned off.")
