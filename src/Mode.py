@@ -65,13 +65,15 @@ class Mode(object):
         Checks if a timer is running. If it is, it turns it off. If it isn't
         running, then it leaves it alone.
         """
-        if not timer._shutdown():
+        if not timer._shutdown:
             timer.shutdown()
+            rospy.loginfo("Timer turned off")
 
     def turn_on_timer(self, timer):
         """
         Checks if a timer is running. If it isn't running, it turns it on. If
         it is, then it leaves it alone.
         """
-        if timer._shutdown():
+        if timer._shutdown:
             timer.run()
+            rospy.loginfo("Timer turned on")
