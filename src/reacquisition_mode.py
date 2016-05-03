@@ -31,7 +31,7 @@ def main():
 
     rate = rospy.Rate(10) # 10 Hz
 
-    rospy.loginfo("Entered Reacquisition Mode")
+    rospy.loginfo("Started Reacquisition Mode")
 
     while not rospy.is_shutdown():
         # print reacquisition.transition_in
