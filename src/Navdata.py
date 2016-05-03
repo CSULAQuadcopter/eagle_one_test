@@ -8,6 +8,8 @@ This is to hold the navdata transmitted by the QC
 import rospy
 from ardrone_autonomy.msg import Navdata
 
+import math
+
 class navdata_info(object):
     def __init__(self):
         self.navdata = Navdata()
@@ -17,6 +19,8 @@ class navdata_info(object):
         # These are actually switched for the controller purposes
         self.tag_x = 0
         self.tag_y = 0
+        # For the polar controller
+        self.r     = 0
 
     def callback(self, data):
         self.navdata = data
@@ -26,5 +30,6 @@ class navdata_info(object):
             # These are actually switched for the controller purposes
             self.tag_x = self.navdata.tags_yc[0]
             self.tag_y = self.navdata.tags_xc[0]
+            self.r     = math.hypot(self.tag_x, self.tag_y)
         else:
             self.tag_acquired = False
