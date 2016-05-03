@@ -50,6 +50,10 @@ class Mode(object):
         self.tag_acquired = False
 
     def navdata_cb(self, msg):
+        """
+        Retrieves necessary information about the QC from the /ardrone/navdata
+        topic.
+        """
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
         if(msg.tags_count > 0):
@@ -58,6 +62,9 @@ class Mode(object):
             self.tag_acquired = False
 
     def state_cb(self, msg):
+        """
+        Sets the state of the system
+        """
     	self.state = msg.data
 
     def turn_off_timer(self, timer):
