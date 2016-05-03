@@ -59,3 +59,19 @@ class Mode(object):
 
     def state_cb(self, msg):
     	self.state = msg.data
+
+    def turn_off_timer(self, timer):
+        """
+        Checks if a timer is running. If it is, it turns it off. If it isn't
+        running, then it leaves it alone.
+        """
+        if not timer._shutdown():
+            timer.shutdown()
+
+    def turn_on_timer(self, timer):
+        """
+        Checks if a timer is running. If it isn't running, it turns it on. If
+        it is, then it leaves it alone.
+        """
+        if timer._shutdown():
+            timer.run()
