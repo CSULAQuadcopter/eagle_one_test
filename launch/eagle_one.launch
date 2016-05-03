@@ -61,7 +61,7 @@
         />
 ​
     <node
-         name="QC State Machine Server"
+         name="QC_State_Machine_Server"
          pkg="eagle_one_test"
          type="qc_smach_server.py"
          required="true"
