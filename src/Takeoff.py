@@ -45,6 +45,7 @@ class Takeoff(Mode):
 
         self.max_altitudeGoal = max_altitudeGoal
         self.speed = speed
+        self.altitude = 0
 
     def navdata_cb(self, msg):
         self.altitude = msg.altd

@@ -27,7 +27,7 @@ from Takeoff import Takeoff
 def main():
     speed = 1	 # m/s
     max_altitudeGoal = 2000  # mm
-    timeout = 15 # seconds
+    timeout = 5 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(10) # 100Hz
 
