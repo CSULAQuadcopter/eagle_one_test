@@ -13,7 +13,7 @@ import math
 class navdata_info(object):
     def __init__(self):
         self.navdata = Navdata()
-        self.sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, self.callback)
+        self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.callback)
         self.tag_acquired = False
         self.theta = 0
         # These are actually switched for the controller purposes
