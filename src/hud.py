@@ -197,18 +197,19 @@ class HUD:
     vy = self.twist.linear.y
     # find the angle between the velocities
     # TODO check the math here
-    if ((vx > 0) and (vy > 0)):
-        angle = math.atan2(vx, vy)
-        # print("1st")
-    elif ((vx < 0) and (vy > 0)):
-        angle = math.pi - math.atan2(vx, vy)
-        # print("2nd")
-    elif ((vx < 0) and (vy < 0)):
-        angle = math.pi + math.atan2(vx, vy)
-        # print("3rd")
-    else:
-        angle = 2 * math.pi - math.atan2(vx, vy)
-        # print("4th")
+    angle = math.atan2(vx, vy)
+    # if ((vx > 0) and (vy > 0)):
+    #     angle = math.atan2(vx, vy)
+    #     # print("1st")
+    # elif ((vx < 0) and (vy > 0)):
+    #     angle = math.pi - math.atan2(vx, vy)
+    #     # print("2nd")
+    # elif ((vx < 0) and (vy < 0)):
+    #     angle = math.pi + math.atan2(vx, vy)
+    #     # print("3rd")
+    # else:
+    #     angle = 2 * math.pi - math.atan2(vx, vy)
+    #     # print("4th")
 
     # print("%.3f" % angle)
     color = (255, 2, 255)
