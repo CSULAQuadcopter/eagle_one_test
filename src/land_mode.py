@@ -24,7 +24,7 @@ from Land import Landing
 
 def main():
     speed = -1	 # m/s
-    min_altitude = 500  # mm
+    min_altitude = 1000  # mm
     max_altitudeGoal = 2000 # mm
     height_diff = 0 #mm
     timeout = 3 # seconds

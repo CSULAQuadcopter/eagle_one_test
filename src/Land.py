@@ -6,7 +6,9 @@ from std_msgs.msg           import String, Empty
 from geometry_msgs.msg      import Twist
 from ardrone_autonomy.msg   import Navdata
 
-class Landing(object):
+from Mode import Mode
+
+class Landing(Mode):
     # m/s	mm		seconds
     def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, timeout):
         # Initialize the node and rate

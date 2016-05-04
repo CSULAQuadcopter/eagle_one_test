@@ -98,7 +98,7 @@ class Reacquisition(Mode):
         if((msg.tags_count > 0) and (self.state == 'reacquisition')):
             self.tag_acquired = True
             # If we do have the tag we need to stop the tag timer
-            self.turn_off_timer(self.land_timer.)
+            self.turn_off_timer(self.land_timer)
         elif((msg.tags_count < 1) and (self.state == 'reacquisition')):
             self.tag_acquired = False
             # If we don't have the tag we need to start the tag timer

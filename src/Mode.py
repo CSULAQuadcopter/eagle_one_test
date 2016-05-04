@@ -49,17 +49,17 @@ class Mode(object):
 
         self.tag_acquired = False
 
-    def navdata_cb(self, msg):
-        """
-        Retrieves necessary information about the QC from the /ardrone/navdata
-        topic.
-        """
-        # Mode of the QC, NOT the state of the state machine
-        self.mode = msg.state
-        if(msg.tags_count > 0):
-            self.tag_acquired = True
-        else:
-            self.tag_acquired = False
+    # def navdata_cb(self, msg):
+    #     """
+    #     Retrieves necessary information about the QC from the /ardrone/navdata
+    #     topic.
+    #     """
+    #     # Mode of the QC, NOT the state of the state machine
+    #     self.mode = msg.state
+    #     if(msg.tags_count > 0):
+    #         self.tag_acquired = True
+    #     else:
+    #         self.tag_acquired = False
 
     def state_cb(self, msg):
         """
@@ -72,8 +72,9 @@ class Mode(object):
         Checks if a timer is running. If it is, it turns it off. If it isn't
         running, then it leaves it alone.
         """
-        if not timer._shutdown:
+        if not (timer._shutdown == True):
             timer.shutdown()
+            timer._shutdown = True
             rospy.loginfo("Timer turned off")
 
     def turn_on_timer(self, timer):
@@ -82,5 +83,6 @@ class Mode(object):
         it is, then it leaves it alone.
         """
         if timer._shutdown:
+            timer._shutdown = False
             timer.run()
             rospy.loginfo("Timer turned on")

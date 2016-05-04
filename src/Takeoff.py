@@ -51,14 +51,16 @@ class Takeoff(Mode):
         self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
-        if(msg.tags_count > 0):
-            self.tag_acquired = True
-            # If we do have the tag we need to stop the timer
-            self.turn_off_timer(self.timer)
-        else:
-            self.tag_acquired = False
-            # If we don't have the tag we need to start the timer
-            self.turn_on_timer(self.timer)
+        if(self.state == 'takeoff'):
+            if(msg.tags_count > 0):
+                self.tag_acquired = True
+                # If we do have the tag we need to stop the timer
+                self.turn_off_timer(self.timer)
+            # elif(msg.tags_count == 0):
+            else:
+                self.tag_acquired = False
+                # If we don't have the tag we need to start the timer
+                self.turn_on_timer(self.timer)
 
 
     def launch(self):
