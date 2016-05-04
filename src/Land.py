@@ -48,14 +48,16 @@ class Landing(object):
 
     def navdata_cb(self, msg):
         self.altitude = msg.altd
-        # Mode of the QC NOT the state of the state machine
+        # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
         if(msg.tags_count > 0):
             self.tag_acquired = True
-            self.timer.shutdown()
+            # If we do have the tag we need to stop the timer
+            self.turn_off_timer(self.timer)
         else:
             self.tag_acquired = False
-            self.timer.run()
+            # If we don't have the tag we need to start the timer
+            self.turn_on_timer(self.timer)
 
     def state_cb(self, msg):
         self.state = msg.data
@@ -85,11 +87,9 @@ class Landing(object):
         self.timer.shutdown()
 
     def handle_timer_cb(self, msg):
-        if(self.state == 'land'):
-            self.turn_on_timer(self.prev_state_timer)
-            self.turn_on_timer(self.land_timer)
+        if(self.state == 'takeoff'):
+            self.turn_on_timer(self.timer)
             # rospy.loginfo("Timers turned on.")
         else:
-            self.turn_off_timer(self.prev_state_timer)
-            self.turn_off_timer(self.land_timer)
+            self.turn_off_timer(self.timer)
             # rospy.loginfo("Timers turned off.")
