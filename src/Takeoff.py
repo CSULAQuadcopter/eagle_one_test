@@ -54,11 +54,11 @@ class Takeoff(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
-            self.timer.shutdown()
+            self.turn_off_timer(self.timer)
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
-            self.timer.run()
+            self.turn_on_timer(self.timer)
 
 
     def launch(self):
@@ -85,10 +85,8 @@ class Takeoff(Mode):
 
     def handle_timer_cb(self, msg):
         if(self.state == 'takeoff'):
-            self.turn_on_timer(self.prev_state_timer)
-            self.turn_on_timer(self.land_timer)
+            self.turn_on_timer(self.timer)
             # rospy.loginfo("Timers turned on.")
         else:
-            self.turn_off_timer(self.prev_state_timer)
-            self.turn_off_timer(self.land_timer)
+            self.turn_off_timer(self.timer)
             # rospy.loginfo("Timers turned off.")
