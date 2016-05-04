@@ -85,9 +85,11 @@ class Landing(object):
         self.timer.shutdown()
 
     def handle_timer_cb(self, msg):
-        if(self.state == 'takeoff'):
-            self.timer.run()
+        if(self.state == 'land'):
+            self.turn_on_timer(self.prev_state_timer)
+            self.turn_on_timer(self.land_timer)
             # rospy.loginfo("Timers turned on.")
         else:
-            self.timer.shutdown()
+            self.turn_off_timer(self.prev_state_timer)
+            self.turn_off_timer(self.land_timer)
             # rospy.loginfo("Timers turned off.")
