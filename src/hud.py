@@ -196,7 +196,7 @@ class HUD:
     vx = self.twist.linear.x
     vy = self.twist.linear.y
     # find the angle between the velocities
-    angle = math.atan2(vx, vy)
+    angle = math.atan2(-vx, -vy)
     color = (255, 2, 255)
     center = (520, 270)
     radius = 50
