@@ -4,7 +4,7 @@ QC Heads Up Display (HUD)
 Displays sensor information from and commands sent to the QC
 Created by: Josh Saunders
 Date Created: 4/2/2016
-Date Modified: 4/16/2016
+Date Modified: 5/2/2016
 """
 # Python libraries
 from __future__ import print_function
@@ -62,6 +62,10 @@ class HUD:
         self.box_bottom_right = box_bottom_right
 
     def cv_callback(self,data):
+        """
+        CAllback for the images streamed from the QC. Also, draws the HUD
+        information.
+        """
         try:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
         except CvBridgeError as e:
@@ -84,11 +88,16 @@ class HUD:
             print(e)
 
     def navdata_callback(self,data):
+        """
+        Callback for the navdata subscriber.
+        """
         # HUD information
+        # Converts the altitude from mm to m
         self.altitude = data.altd / 1000.0
         self.vx = data.vx
         self.vy = data.vy
         self.vz = data.vz
+        # Converts the time running from us to s
         self.time = data.tm / 1000000.0
         self.battery = data.batteryPercent
         self.mode = data.state
@@ -110,6 +119,9 @@ class HUD:
             self.tag_acquired = False
 
     def twist_callback(self, msg):
+        """
+        Callback for the twist command subscriber.
+        """
         self.twist.linear.x = msg.linear.x
         self.twist.linear.y = msg.linear.y
         self.twist.linear.z = msg.linear.z
@@ -118,6 +130,11 @@ class HUD:
         self.twist.angular.z = msg.angular.z
 
     def hud_info(self, cv_image):
+        """
+        Displays current info (direction of travel, altitude, PWM values, tag
+        crosshair, tag position, velocity commands, mode, time running) about
+        the QC onto the HUD
+        """
         font = cv2.FONT_HERSHEY_PLAIN
         font_color = (0, 255, 0)
 
@@ -183,6 +200,9 @@ class HUD:
         self.direction_arrow(cv_image)
 
     def crosshair(self, cv_image):
+        """
+        Draws a crosshair over the center of the bounding of the tag
+        """
         # Draw the vertical line, then the horizontal, then the circle
         cv2.line(cv_image,     (self.tag_x, self.tag_y + 25),(self.tag_x, self.tag_y - 25),(255,255,0),2)
         cv2.line(cv_image,     (self.tag_x - 25, self.tag_y),(self.tag_x + 25, self.tag_y),(255,255,0),2)
@@ -190,6 +210,10 @@ class HUD:
 
     # work in progress
     def direction_arrow(self, cv_image):
+        """
+        Draws an arrow in the direction that the QC is being told to go. This
+        is deteremined by doing some math on the Twist commands
+        """
         # Draw the arrow that show the direction in which the QC is moving
         vx = self.twist.linear.x
         vy = self.twist.linear.y
