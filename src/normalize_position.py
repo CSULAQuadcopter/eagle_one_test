@@ -21,8 +21,8 @@ NOTE:
     position_actual: the calculated distance in mm
 
     Formulas used:
-    cvt_alt         = altitude * tan(32 degrees/500px)
-    position_mm     = position * cvt_alt
+    cvt_alt         = altitude * tan(32 degrees/500px) / 1000
+    position_m      = position * cvt_alt
     position_actual = position_mm / cos(tilt) - altitude * tan(tilt)
 
 Created by: Josh Saunders and Amando Aranda
@@ -36,7 +36,9 @@ import math
 alpha   = math.radians(32)
 
 def real_position(position, altitude, tilt):
-    cvt_alt         = altitude * tan(32 degrees/500px)
-    position_mm     = position * cvt_alt
+    cvt_alt    = altitude * tan(alpha) / 500
+    # Division by 1000 converts the altitude from mm to m
+    cvt_alt   /= 1000
+    position_m = position * cvt_alt
     # position_actual
-    return position_mm / cos(tilt) - altitude * tan(tilt)
+    return position_m / cos(tilt) - altitude * tan(tilt)
