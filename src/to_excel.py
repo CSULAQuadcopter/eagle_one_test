@@ -35,32 +35,52 @@ script, test_name = argv
 tag_x_filename     = 'tag_x_'     + test_name + '.xlsx'
 tag_y_filename     = 'tag_y_'     + test_name + '.xlsx'
 tag_theta_filename = 'tag_theta_' + test_name + '.xlsx'
+tag_x_norm_filename     = 'tag_x_norm_'     + test_name + '.xlsx'
+tag_y_norm_filename     = 'tag_y_norm_'     + test_name + '.xlsx'
 
 # Create the Excel files with the given file name
 tag_x_workbook     = xlsxwriter.Workbook(tag_x_filename)
 tag_y_workbook     = xlsxwriter.Workbook(tag_y_filename)
 tag_theta_workbook = xlsxwriter.Workbook(tag_theta_filename)
+tag_x_norm_workbook     = xlsxwriter.Workbook(tag_x_norm_filename)
+tag_y_norm_workbook     = xlsxwriter.Workbook(tag_y_norm_filename)
 
 tag_x_workbook_sheet     = tag_x_workbook.add_worksheet()
 tag_y_workbook_sheet     = tag_y_workbook.add_worksheet()
 tag_theta_workbook_sheet = tag_theta_workbook.add_worksheet()
+tag_x_norm_workbook_sheet     = tag_x_norm_workbook.add_worksheet()
+tag_y_norm_workbook_sheet     = tag_y_norm_workbook.add_worksheet()
 
 # Widen the first column to make the text clearer.
 tag_x_workbook_sheet.set_column('A:A', 20)
 tag_y_workbook_sheet.set_column('A:A', 20)
 tag_theta_workbook_sheet.set_column('A:A', 20)
+tag_x_norm_workbook_sheet.set_column('A:A', 20)
+tag_y_norm_workbook_sheet.set_column('A:A', 20)
 
 # Write the titles of each column
 # Horizontal of graph, then vertical
-horizontal = 'Time (us)'
+horizontal = 'Time (s)'
 vertical   = 'Tag '
 tag_x_workbook_sheet.write('A1', horizontal)
 tag_y_workbook_sheet.write('A1', horizontal)
 tag_theta_workbook_sheet.write('A1', horizontal)
+tag_x_norm_workbook_sheet.write('A1', horizontal)
+tag_y_norm_workbook_sheet.write('A1', horizontal)
 
 tag_x_workbook_sheet.write('B1', vertical + 'X')
 tag_y_workbook_sheet.write('B1', vertical + 'Y')
 tag_theta_workbook_sheet.write('B1', vertical + 'Theta')
+tag_x_norm_workbook_sheet.write('B1', vertical + 'X')
+tag_y_norm_workbook_sheet.write('B1', vertical + 'Y')
+
+tag_x_workbook_sheet.write('C1', 'Altitude')
+tag_x_workbook_sheet.write('D1', 'Roll')
+tag_x_workbook_sheet.write('E1', 'Pitch')
+
+tag_y_workbook_sheet.write('C1', 'Altitude')
+tag_y_workbook_sheet.write('D1', 'Roll')
+tag_y_workbook_sheet.write('E1', 'Pitch')
 
 # ROS initializations
 rospy.init_node('test_data_saver')
@@ -74,14 +94,27 @@ i = 2
 
 while not rospy.is_shutdown():
     # Write to each Excel file
-    tag_x_workbook_sheet.write('A{}'.format(i), nd.navdata.tm)
+    # Division by 1000000 to convert from microseconds to seconds
+    tag_x_workbook_sheet.write('A{}'.format(i), nd.navdata.tm/1000000)
     tag_x_workbook_sheet.write('B{}'.format(i), nd.tag_x)
+    tag_y_workbook_sheet.write('C{}'.format(i), nd.altd)
+    tag_y_workbook_sheet.write('D{}'.format(i), nd.roll)
+    tag_y_workbook_sheet.write('E{}'.format(i), nd.pitch)
 
-    tag_y_workbook_sheet.write('A{}'.format(i), nd.navdata.tm)
+    tag_y_workbook_sheet.write('A{}'.format(i), nd.navdata.tm/1000000)
     tag_y_workbook_sheet.write('B{}'.format(i), nd.tag_y)
+    tag_y_workbook_sheet.write('C{}'.format(i), nd.altd)
+    tag_y_workbook_sheet.write('D{}'.format(i), nd.roll)
+    tag_y_workbook_sheet.write('E{}'.format(i), nd.pitch)
 
-    tag_theta_workbook_sheet.write('A{}'.format(i), nd.navdata.tm)
+    tag_theta_workbook_sheet.write('A{}'.format(i), nd.navdata.tm/1000000)
     tag_theta_workbook_sheet.write('B{}'.format(i), nd.theta)
+
+    tag_x_norm_workbook_sheet.write('A{}'.format(i), nd.navdata.tm/1000000)
+    tag_x_norm_workbook_sheet.write('B{}'.format(i), nd.tag_norm_x)
+
+    tag_y_norm_workbook_sheet.write('A{}'.format(i), nd.navdata.tm/1000000)
+    tag_y_norm_workbook_sheet.write('B{}'.format(i), nd.tag_norm_y)
 
     i += 1
 
@@ -92,3 +125,5 @@ while not rospy.is_shutdown():
 tag_x_workbook.close()
 tag_y_workbook.close()
 tag_theta_workbook.close()
+tag_x_norm_workbook.close()
+tag_y_norm_workbook.close()
