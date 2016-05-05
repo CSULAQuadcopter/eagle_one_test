@@ -234,8 +234,10 @@ class HUD:
         cv2.circle(cv_image, center, radius,    color, thickness)
 
     def set_battery_font(self, medium, low):
-        # This is to color the battery font based on the battery level
-        # green > medium, yellow > low, red < low
+        """ Sets the color of the battery information font based on the battery
+            level:
+            green > medium, yellow > low, red < low
+        """
         if self.battery > medium:
             battery_font_color = (0, 255, 0)
         elif self.battery > low:
