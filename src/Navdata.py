@@ -39,9 +39,10 @@ class navdata_info(object):
 
     def callback(self, data):
         self.navdata = data
-        self.altd = data.altd
-        self.roll = data.rotY
-        self.pitch = data.rotX
+        # Convert the altitude from mm to m
+        self.altd = data.altd/1000
+        self.roll = math.radians(data.rotY)
+        self.pitch = math.radians(data.rotX)
         if data.tags_count > 0:
             self.tag_acquired = True
             self.theta = self.navdata.tags_orientation[0]
@@ -49,8 +50,8 @@ class navdata_info(object):
             self.tag_x = self.navdata.tags_yc[0]
             self.tag_y = self.navdata.tags_xc[0]
             # Calculate the normalized values
-            self.tag_norm_x = norm.real_position(self.tag_x, self.altd, self.pitch)
-            self.tag_norm_y = norm.real_position(self.tag_y, self.altd, self.roll)
-            self.r     = math.hypot(self.tag_x, self.tag_y)
+            self.tag_norm_x = norm.real_position(self.tag_x - 500, self.altd, self.pitch)
+            self.tag_norm_y = norm.real_position(self.tag_y - 500, self.altd, self.roll)
+            self.r = math.hypot(self.tag_x, self.tag_y)
         else:
             self.tag_acquired = False
