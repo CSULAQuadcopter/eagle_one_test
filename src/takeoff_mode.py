@@ -31,8 +31,11 @@ def main():
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(10) # 100Hz
 
+    # To let us know that the mode is working
+    rospy.loginfo("Started Takeoff Mode")
+
     while((takeoff.state != 'takeoff')):
-        print takeoff.state
+        # print takeoff.state
         rate.sleep()
 
     # To get this guy to take off! For some reason just calling this function
