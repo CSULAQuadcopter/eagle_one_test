@@ -28,7 +28,7 @@ from std_msgs.msg         import String
 class Mode(object):
     def __init__(self, node_name):
         # Initialize the node and rate
-        self.node = rospy.init_node(node_name)
+        # self.node = rospy.init_node(node_name)
 
         # Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', \

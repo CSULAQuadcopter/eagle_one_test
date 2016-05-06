@@ -30,7 +30,7 @@ class Takeoff(Mode):
                                              Twist, queue_size=1)
         #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
         self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', \
-                                            Empty, queue_size=1)
+                                            Empty, queue_size=1000)
 
         # Initialize member variables
         self.timer = rospy.Timer(rospy.Duration(timeout), \
@@ -46,21 +46,20 @@ class Takeoff(Mode):
         self.max_altitudeGoal = max_altitudeGoal
         self.speed = speed
         self.altitude = 0
+        self.state = 'nada'
 
     def navdata_cb(self, msg):
         self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
-        if(self.state == 'takeoff'):
-            if(msg.tags_count > 0):
-                self.tag_acquired = True
-                # If we do have the tag we need to stop the timer
-                self.turn_off_timer(self.timer)
-            # elif(msg.tags_count == 0):
-            else:
-                self.tag_acquired = False
-                # If we don't have the tag we need to start the timer
-                self.turn_on_timer(self.timer)
+        if(msg.tags_count > 0):
+            self.tag_acquired = True
+            # If we do have the tag we need to stop the timer
+            self.turn_off_timer(self.timer)
+        else:
+            self.tag_acquired = False
+            # If we don't have the tag we need to start the timer
+            self.turn_on_timer(self.timer)
 
 
     def launch(self):

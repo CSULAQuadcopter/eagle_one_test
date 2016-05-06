@@ -26,7 +26,7 @@ rospy.loginfo("Hulk Smach!") # Let's us know that this has loaded
 rate = rospy.Rate(100) # 100Hz
 
 # Setup the publishers and subscribers
-state_pub = rospy.Publisher('smach/state', String, queue_size=100)
+state_pub = rospy.Publisher('smach/state', String, queue_size=100000)
 transition_pub = rospy.Subscriber('smach/transition', String, transition_cb)
 
 

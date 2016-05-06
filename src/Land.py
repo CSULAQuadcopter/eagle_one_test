@@ -12,7 +12,7 @@ class Landing(Mode):
     # m/s	mm		seconds
     def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, timeout):
         # Initialize the node and rate
-        self.node = rospy.init_node('land_mode')
+        # self.node = rospy.init_node('land_mode')
 
         # Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)

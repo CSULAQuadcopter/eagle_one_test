@@ -27,7 +27,7 @@ from Takeoff import Takeoff
 def main():
     speed = 1	 # m/s
     max_altitudeGoal = 2500  # mm
-    timeout = 150 # seconds
+    timeout = 10 # seconds
     takeoff = Takeoff(speed, max_altitudeGoal, timeout)
     rate = rospy.Rate(10) # 100Hz
 
@@ -47,21 +47,23 @@ def main():
         rate.sleep()
 
     while not rospy.is_shutdown():
-            # We only want to execute these manuevers if we're in takeoff mode
-            # print takeoff.state
-            if takeoff.state == 'takeoff':
-                if(takeoff.altitude < takeoff.max_altitudeGoal):
-                    rospy.loginfo("Go up!")
-                    takeoff.change_altitude(speed)
-                elif(takeoff.altitude >= takeoff.max_altitudeGoal):
-                    speed = 0
-                    rospy.loginfo("Stop!")
-                    takeoff.change_altitude(speed)
-                    # To change states, we publish the fact that we've
-                    # reached our takeoff altitude
-                    rospy.loginfo("Going to follow mode")
-                    takeoff.goto_follow()
-                rate.sleep()
+        # We only want to execute these manuevers if we're in takeoff mode
+
+        if takeoff.state == 'takeoff':
+            if(takeoff.altitude < takeoff.max_altitudeGoal):
+                rospy.loginfo("Go up!")
+                takeoff.change_altitude(speed)
+            elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+                speed = 0
+                rospy.loginfo("Stop!")
+                # takeoff.change_altitude(speed)
+                # To change states, we publish the fact that we've
+                # reached our takeoff altitude
+                rospy.loginfo("Going to follow mode")
+                takeoff.goto_follow()
+        # else:
+        #     continue
+        rate.sleep()
 
 
 if __name__=='__main__':
