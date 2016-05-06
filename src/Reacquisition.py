@@ -44,8 +44,8 @@ class Reacquisition(Mode):
         super(self.__class__, self).__init__('reacquisition_mode')
 
         # Subscribers
-        self.sub_state = rospy.Subscriber('/smach/state', \
-                                             String, self.handle_timer_cb)
+        # self.sub_state = rospy.Subscriber('/smach/state', \
+        #                                      String, self.handle_timer_cb)
 
         self.sub_transition = rospy.Subscriber('/smach/transition', \
                                              String, self.transition_cb)
@@ -154,16 +154,16 @@ class Reacquisition(Mode):
         """
         self.transition_in = msg.data
 
-    def handle_timer_cb(self, msg):
-        """
-        Turns off the timers if the system is not in reacquisition mode. Turns
-        on the timers if the system is in the reacquisition mode
-        """
-        if(self.state == 'reacquisition'):
-            self.turn_on_timer(self.prev_state_timer)
-            self.turn_on_timer(self.land_timer)
-            # rospy.loginfo("Reacquisition timers turned on.")
-        else:
-            self.turn_off_timer(self.prev_state_timer)
-            self.turn_off_timer(self.land_timer)
-            # rospy.loginfo("Reacquisition timers turned off.")
+    # def handle_timer_cb(self, msg):
+    #     """
+    #     Turns off the timers if the system is not in reacquisition mode. Turns
+    #     on the timers if the system is in the reacquisition mode
+    #     """
+    #     if(self.state == 'reacquisition'):
+    #         self.turn_on_timer(self.prev_state_timer)
+    #         self.turn_on_timer(self.land_timer)
+    #         # rospy.loginfo("Reacquisition timers turned on.")
+    #     else:
+    #         self.turn_off_timer(self.prev_state_timer)
+    #         self.turn_off_timer(self.land_timer)
+    #         # rospy.loginfo("Reacquisition timers turned off.")

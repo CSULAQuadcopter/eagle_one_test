@@ -17,7 +17,7 @@ class Landing(Mode):
         # Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
-        self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
+        # self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -88,10 +88,10 @@ class Landing(Mode):
         # Stop the timer so that it doesn't keep going
         self.turn_off_timer(self.timer)
 
-    def handle_timer_cb(self, msg):
-        if(self.state == 'takeoff'):
-            self.turn_on_timer(self.timer)
-            # rospy.loginfo("Land timers turned on.")
-        else:
-            self.turn_off_timer(self.timer)
-            # rospy.loginfo("Land timers turned off.")
+    # def handle_timer_cb(self, msg):
+    #     if(self.state == 'takeoff'):
+    #         self.turn_on_timer(self.timer)
+    #         # rospy.loginfo("Land timers turned on.")
+    #     else:
+    #         self.turn_off_timer(self.timer)
+    #         # rospy.loginfo("Land timers turned off.")

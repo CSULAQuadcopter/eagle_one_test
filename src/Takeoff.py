@@ -17,13 +17,13 @@ from geometry_msgs.msg    import Twist
 
 class Takeoff(Mode):
                        # m/s  mm		        seconds
-    def __init__(self, speed, max_altitudeGoal, timeout):
+    def __init__(self, speed, max_altitude, timeout):
         # Initialize the node which is inherited from the Mode super class
         super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
-        self.sub_state = rospy.Subscriber('/smach/state', \
-                                             String, self.handle_timer_cb)
+        # self.sub_state = rospy.Subscriber('/smach/state', \
+        #                                      String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', \
@@ -43,7 +43,7 @@ class Takeoff(Mode):
         self.altitude_command.angular.x = 0.5
         self.altitude_command.angular.y = 0.5
 
-        self.max_altitudeGoal = max_altitudeGoal
+        self.max_altitude = max_altitude
         self.speed = speed
         self.altitude = 0
         self.state = 'nada'
@@ -84,10 +84,10 @@ class Takeoff(Mode):
         # Stop the timer so that it doesn't keep going
         self.timer.shutdown()
 
-    def handle_timer_cb(self, msg):
-        if(self.state == 'takeoff'):
-            self.turn_on_timer(self.timer)
-            # rospy.loginfo("Takeoff timer turned on.")
-        else:
-            self.turn_off_timer(self.timer)
-            # rospy.loginfo("Takeoff timer turned off.")
+    # def handle_timer_cb(self, msg):
+    #     if(self.state == 'takeoff'):
+    #         self.turn_on_timer(self.timer)
+    #         # rospy.loginfo("Takeoff timer turned on.")
+    #     else:
+    #         self.turn_off_timer(self.timer)
+    #         # rospy.loginfo("Takeoff timer turned off.")
