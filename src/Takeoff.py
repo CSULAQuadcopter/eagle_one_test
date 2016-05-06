@@ -87,7 +87,7 @@ class Takeoff(Mode):
     def handle_timer_cb(self, msg):
         if(self.state == 'takeoff'):
             self.turn_on_timer(self.timer)
-            # rospy.loginfo("Timers turned on.")
+            # rospy.loginfo("Takeoff timer turned on.")
         else:
             self.turn_off_timer(self.timer)
-            # rospy.loginfo("Timers turned off.")
+            # rospy.loginfo("Takeoff timer turned off.")

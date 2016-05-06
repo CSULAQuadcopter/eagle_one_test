@@ -86,12 +86,12 @@ class Landing(Mode):
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
-        self.timer.shutdown()
+        self.turn_off_timer(self.timer)
 
     def handle_timer_cb(self, msg):
         if(self.state == 'takeoff'):
             self.turn_on_timer(self.timer)
-            # rospy.loginfo("Timers turned on.")
+            # rospy.loginfo("Land timers turned on.")
         else:
             self.turn_off_timer(self.timer)
-            # rospy.loginfo("Timers turned off.")
+            # rospy.loginfo("Land timers turned off.")

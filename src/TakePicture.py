@@ -106,7 +106,9 @@ class TakePicture(Mode):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
             self.turn_off_timer(self.timer)
+            # rospy.loginfo("Take picture timer turned off.")
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
             self.turn_on_timer(self.timer)
+            # rospy.loginfo("Take picture timer turned on.")

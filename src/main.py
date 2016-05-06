@@ -27,7 +27,7 @@ def state_cb(msg):
     state = msg.data
 
 pub_transition = rospy.Publisher('/smach/transition', String, queue_size=1)
-sub_state = rospy.Subscriber('/smach/state', String, state_cb)
+sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 # Instantiate all of the modes
 # Set all of the necessary parameters
@@ -63,8 +63,10 @@ reac_prev_state_timeout = 5 # seconds
 reac = Reacquisition(reac_velocities, reac_max_alt, reac_tag_timeout, reac_prev_state_timeout)
 # follow = Follow()
 
+# TODO: Test all of this
 # The start of it all
-def main():
+# def main():
+while not rospy.is_shutdown():
     print state
 
     # NOTE: There are some subtleties here. We want to be able to use more than
@@ -73,10 +75,15 @@ def main():
     if (state == 'takeoff'):
         print "Takeoff Mode"
         # NOTE: This was copy and pasted from the takeoff node
-        # TODO: Test all of this
         # To get this guy to take off! For some reason just calling this
         # function once does not work. This value (50) was determined
         # experimentally
+        # TODO: Turn on takeoff mode's timer and turn off every other mode's
+        # timers EXCEPT take picture
+        takeoff.turn_on_timer(takeoff.timer)
+        land.turn_off_timer(land.timer)
+        reac.turn_off_timer(reac.prev_state_timer)
+        reac.turn_off_timer(reac.landtimer)
         while takeoff_counter < 50:
             takeoff.launch()
             takeoff_counter += 1
@@ -95,7 +102,13 @@ def main():
 
     # Check if we're in land mode
     elif (state == 'land'):
-        height_diff = land.max_altitudeGoal - land.altitude
+        # TODO: Turn on land mode's timer and turn off every other mode's
+        # timers EXCEPT take picture
+        takeoff.turn_off_timer(takeoff.timer)
+        land.turn_on_timer(land.timer)
+        reac.turn_off_timer(reac.prev_state_timer)
+        reac.turn_off_timer(reac.landtimer)
+        land_height_diff = land.max_altitudeGoal - land.altitude
         print("%d" % land.altitude)
             # if(land.tag_acquired):
         if(land.altitude > land.min_altitude):
@@ -114,16 +127,29 @@ def main():
 
     # Check if we're in take picture mode
     elif (state == 'take_picture'):
+        # NOTE: This timer should be left alone, but turn every other one off
+        takeoff.turn_off_timer(takeoff.timer)
+        land.turn_off_timer(land.timer)
+        reac.turn_off_timer(reac.prev_state_timer)
+        reac.turn_off_timer(reac.landtimer)
         print "Take Picture Mode"
         if(takepicture.finished()):
             print "Picture taken"
+
     # Check if we're in emergency mode
     elif (state == 'emergency'):
+        # NOTE: Turn off all timers
+        takeoff.turn_off_timer(takeoff.timer)
+        land.turn_off_timer(land.timer)
+        reac.turn_off_timer(reac.prev_state_timer)
+        reac.turn_off_timer(reac.landtimer)
         print "Emergency Mode"
         emergency.emergency_land()
 
     # Check if we're in reacquisition mode
     elif (state == 'reacquisition'):
+        # TODO: Turn on reacquisition mode's timer and turn off every other mode's
+        # timers EXCEPT take picture
         print "Reacquisition Mode"
         reac.move()
 
@@ -134,10 +160,10 @@ def main():
 
     # Check if we're in follow mode
     # Follow mode is used in every mode except for secure and emergency
-    if (not (state == 'secure') or not (state == 'emergency')):
+    if (not ((state == 'secure')) and (state == 'emergency')):
         print "Follow Mode"
 
-    rospy.spin()
-
-if __name__ == '__main__':
-    main()
+    rate.sleep()
+#
+# if __name__ == '__main__':
+#     main()

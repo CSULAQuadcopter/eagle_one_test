@@ -162,8 +162,8 @@ class Reacquisition(Mode):
         if(self.state == 'reacquisition'):
             self.turn_on_timer(self.prev_state_timer)
             self.turn_on_timer(self.land_timer)
-            # rospy.loginfo("Timers turned on.")
+            # rospy.loginfo("Reacquisition timers turned on.")
         else:
             self.turn_off_timer(self.prev_state_timer)
             self.turn_off_timer(self.land_timer)
-            # rospy.loginfo("Timers turned off.")
+            # rospy.loginfo("Reacquisition timers turned off.")
