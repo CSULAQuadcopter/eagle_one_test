@@ -55,7 +55,7 @@ takeoff = Takeoff(takeoff_speed, takeoff_max_alt, takeoff_timeout)
 emergency = Emergency()
 
 # Take Picture Mode Instantiation
-takepicture_time = 30 # seconds
+takepicture_time = 300 # seconds
 # takepicture_max_time   = 3 # seconds
 takepicture = TakePicture(takepicture_time)
 
@@ -72,15 +72,16 @@ reac = Reacquisition(reac_velocities, reac_max_alt, reac_tag_timeout, reac_prev_
 # land_to_reac_timer = rospy.Timer(rospy.Duration(land_to_reac_timeout), goto_reacquisition)
 # follow_to_reac_timer = rospy.Timer(rospy.Duration(follow_to_reac_timeout), goto_reacquisition)
 
-# smach = Smach()
+smach = Smach()
 
 # TODO: Test all of this
 # The start of it all
 # def main():
-takeoff.turn_off_timer(takeoff.timer)
-land.turn_off_timer(land.timer)
-reac.turn_off_timer(reac.prev_state_timer)
-reac.turn_off_timer(reac.land_timer)
+takeoff.turn_off_timer(takeoff.timer, 'Takeoff')
+land.turn_off_timer(land.timer, 'Land')
+reac.turn_off_timer(reac.prev_state_timer, 'Reac prev state')
+reac.turn_off_timer(reac.land_timer, 'Reac land')
+
 while not rospy.is_shutdown():
     print state
 
@@ -95,10 +96,12 @@ while not rospy.is_shutdown():
         # experimentally
         # TODO: Turn on takeoff mode's timer and turn off every other mode's
         # timers EXCEPT take picture
-        takeoff.turn_on_timer(takeoff.timer)
-        land.turn_off_timer(land.timer)
-        reac.turn_off_timer(reac.prev_state_timer)
-        reac.turn_off_timer(reac.land_timer)
+        takeoff.turn_on_timer(takeoff.timer, 'Takeoff')
+        land.turn_off_timer(land.timer, 'Land')
+        reac.turn_off_timer(reac.prev_state_timer, 'Reac prev state')
+        reac.turn_off_timer(reac.land_timer, 'Reac land')
+        # print "Turned on Takeoff Timer"
+        # print "Turned off Land, Previous State, and Land timers"
         while takeoff_counter < 50:
             takeoff.launch()
             takeoff_counter += 1
@@ -175,17 +178,20 @@ while not rospy.is_shutdown():
     #     print "Reacquisition Mode"
     #     reac.move()
     #
-    # # Check if we're in secure mode and do nothing
-    # elif (state == 'secure'):
-    #     # Do nothing
-    #     print "Secure Mode"
+    # Check if we're in secure mode and do nothing
+# elif (state == 'secure'):
+#         takeoff.turn_off_timer(takeoff.timer)
+#         land.turn_off_timer(land.timer)
+#         reac.turn_off_timer(reac.prev_state_timer)
+#         reac.turn_off_timer(reac.land_timer)
+#         print "Secure Mode"
     #
     # # Check if we're in follow mode
     # # Follow mode is used in every mode except for secure and emergency
     # if (not ((smach.state == 'secure')) and (smach.state == 'emergency')):
     #     print "Follow Mode"
 
-    # smach.change_state(transition)
+    smach.change_state(transition)
     rate.sleep()
 #
 # if __name__ == '__main__':

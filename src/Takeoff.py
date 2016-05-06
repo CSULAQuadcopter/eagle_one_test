@@ -55,11 +55,11 @@ class Takeoff(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
-            self.turn_off_timer(self.timer)
+            self.turn_off_timer(self.timer, 'Takeoff')
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
-            self.turn_on_timer(self.timer)
+            self.turn_on_timer(self.timer, 'Takeoff')
 
 
     def launch(self):
@@ -80,14 +80,14 @@ class Takeoff(Mode):
     def goto_reacquisition(self, event):
         self.transition.data = 'TAKEOFF_TAG_LOST'
         self.pub_transition.publish(self.transition)
-        rospy.loginfo("Transitioning to reacquisition mode")
+        rospy.loginfo("Transitioning to Reacquisition from Takeoff")
         # Stop the timer so that it doesn't keep going
-        self.timer.shutdown()
+        self.turn_off_timer(self.timer, 'Takeoff')
 
     # def handle_timer_cb(self, msg):
     #     if(self.state == 'takeoff'):
-    #         self.turn_on_timer(self.timer)
+    #         self.turn_on_timer(self.timer, 'Takeoff')
     #         # rospy.loginfo("Takeoff timer turned on.")
     #     else:
-    #         self.turn_off_timer(self.timer)
+    #         self.turn_off_timer(self.timer, 'Takeoff')
     #         # rospy.loginfo("Takeoff timer turned off.")

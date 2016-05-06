@@ -55,11 +55,11 @@ class Landing(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
-            self.turn_off_timer(self.timer)
+            self.turn_off_timer(self.timer, 'Land')
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
-            self.turn_on_timer(self.timer)
+            self.turn_on_timer(self.timer, 'Land')
 
     def state_cb(self, msg):
         self.state = msg.data
@@ -86,12 +86,12 @@ class Landing(Mode):
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
-        self.turn_off_timer(self.timer)
+        self.turn_off_timer(self.timer, 'Land')
 
     # def handle_timer_cb(self, msg):
     #     if(self.state == 'takeoff'):
-    #         self.turn_on_timer(self.timer)
+    #         self.turn_on_timer(self.timer, 'Land')
     #         # rospy.loginfo("Land timers turned on.")
     #     else:
-    #         self.turn_off_timer(self.timer)
+    #         self.turn_off_timer(self.timer, 'Land')
     #         # rospy.loginfo("Land timers turned off.")

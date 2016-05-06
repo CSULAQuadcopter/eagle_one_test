@@ -98,11 +98,11 @@ class Reacquisition(Mode):
         if((msg.tags_count > 0) and (self.state == 'reacquisition')):
             self.tag_acquired = True
             # If we do have the tag we need to stop the tag timer
-            self.turn_off_timer(self.land_timer)
+            self.turn_off_timer(self.land_timer, 'Reac land')
         elif((msg.tags_count < 1) and (self.state == 'reacquisition')):
             self.tag_acquired = False
             # If we don't have the tag we need to start the tag timer
-            self.turn_on_timer(self.land_timer)
+            self.turn_on_timer(self.land_timer, 'Reac land')
 
     def land(self, event):
         """
@@ -145,7 +145,7 @@ class Reacquisition(Mode):
         rospy.loginfo("Transitioning to back to the previous mode")
         # Stop the previous state timer so that it doesn't keep going
         # NOTE may not be necessary
-        # self.turn_off_timer(self.prev_state_timer)
+        # self.turn_off_timer(self.prev_state_timer, 'Reac')
 
     def transition_cb(self, msg):
         """
@@ -160,10 +160,10 @@ class Reacquisition(Mode):
     #     on the timers if the system is in the reacquisition mode
     #     """
     #     if(self.state == 'reacquisition'):
-    #         self.turn_on_timer(self.prev_state_timer)
-    #         self.turn_on_timer(self.land_timer)
+    #         self.turn_on_timer(self.prev_state_timer, 'Reac prev state')
+    #         self.turn_on_timer(self.land_timer, 'Reac land')
     #         # rospy.loginfo("Reacquisition timers turned on.")
     #     else:
-    #         self.turn_off_timer(self.prev_state_timer)
-    #         self.turn_off_timer(self.land_timer)
+    #         self.turn_off_timer(self.prev_state_timer, 'Reac prev state')
+    #         self.turn_off_timer(self.land_timer, 'Reac land')
     #         # rospy.loginfo("Reacquisition timers turned off.")
