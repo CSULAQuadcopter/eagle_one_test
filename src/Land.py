@@ -12,11 +12,11 @@ class Landing(Mode):
     # m/s	mm		seconds
     def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, timeout):
         # Initialize the node and rate
-        # self.node = rospy.init_node('land_mode')
+        super(self.__class__, self).__init__('land_mode')
 
         # Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
-        self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
+        ##self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
         # self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
 
         # Publishers
@@ -31,10 +31,8 @@ class Landing(Mode):
         # Initialize member variables
         self.transition = String()
         self.altitude = 0
-        self.state = 0
+        self.state = 'nada'
         self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
-
-        self.tag_acquired = False
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
@@ -48,19 +46,8 @@ class Landing(Mode):
         self.max_altitudeGoal = max_altitudeGoal
         self.height_diff = height_diff
 
-    def navdata_cb(self, msg):
-        self.altitude = msg.altd
-        # Mode of the QC, NOT the state of the state machine
-        self.mode = msg.state
-        if(msg.tags_count > 0):
-            self.tag_acquired = True
-            # If we do have the tag we need to stop the timer
-            self.turn_off_timer(self.timer, 'Land')
-        else:
-            self.tag_acquired = False
-            # If we don't have the tag we need to start the timer
-            self.turn_on_timer(self.timer, 'Land')
 
+    ###
     def state_cb(self, msg):
         self.state = msg.data
 

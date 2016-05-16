@@ -22,7 +22,7 @@ from cv_bridge import CvBridge, CvBridgeError
 
 # ROS messages
 from sensor_msgs.msg      import Image
-from std_msgs.msg         import String
+from std_msgs.msg         import String, Empty
 from ardrone_autonomy.msg import Navdata
 
 class TakePicture(Mode):
@@ -34,6 +34,8 @@ class TakePicture(Mode):
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         self.image_sub = rospy.Subscriber("/ardrone/image_raw",Image,self.img_cb)
 
+        self.pub_transition = rospy.Publisher('smach/transition', String, queue_size=1)
+
         self.rate = rospy.Rate(10)
 
         #OpenCV stuff
@@ -41,6 +43,7 @@ class TakePicture(Mode):
 
         self.altitude = 0
         self.start_time = None
+        self.state = 'nada'
         # We don't go to reacquisition from here
         # self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
 
@@ -105,10 +108,10 @@ class TakePicture(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
-            # self.turn_off_timer(self.timer)
+            self.turn_off_timer(self.timer, 'Take Picture')
             # rospy.loginfo("Take picture timer turned off.")
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
-            # self.turn_on_timer(self.timer)
+            self.turn_on_timer(self.timer, 'Take Picture')
             # rospy.loginfo("Take picture timer turned on.")

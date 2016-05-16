@@ -218,7 +218,8 @@ class HUD:
         vx = self.twist.linear.x
         vy = self.twist.linear.y
         # find the angle between the velocities
-        angle = math.atan2(vx, vy)
+        #TODO fix this if no correction to direction_arrow
+        angle = math.atan2(vy, vx)
 
         # print("%.3f" % angle)
         color = (255, 2, 255)
@@ -250,8 +251,8 @@ class HUD:
 
 def main(args):
     rospy.init_node('hud', anonymous=True)
-    top_left = (240, 135)
-    bottom_right = (400, 225)
+    top_left = (280, 157)
+    bottom_right = (360, 202)
     hud = HUD(top_left, bottom_right)
 
     try:

@@ -12,6 +12,15 @@ import rospy
 # The emergency class
 from Emergency import Emergency
 
+state = 'nada'
+
+def state_cb(msg):
+    global state
+    state = msg.data
+
+# pub_transition = rospy.Publisher('/smach/transition', String, queue_size=1)
+sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
+
 def main():
     emergency = Emergency()
 
@@ -19,7 +28,7 @@ def main():
     rospy.init_node('emergency_mode')
     rate = rospy.Rate(100) # 100Hz
     while not rospy.is_shutdown():
-        if(emergency.state == "emergency"):
+        if(state == "emergency"):
             emergency.emergency_land()
         rate.sleep()
 

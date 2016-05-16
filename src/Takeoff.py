@@ -26,15 +26,12 @@ class Takeoff(Mode):
         #                                      String, self.handle_timer_cb)
 
         # Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', \
-                                             Twist, queue_size=1)
-        #self.pub_land = rospy.Publisher('/ardrone/land', Empty, queue_size=100)
-        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', \
-                                            Empty, queue_size=1000)
+        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+
+        self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1000)
 
         # Initialize member variables
-        self.timer = rospy.Timer(rospy.Duration(timeout), \
-                                 self.goto_reacquisition)
+        self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed

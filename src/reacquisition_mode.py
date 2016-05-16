@@ -22,6 +22,15 @@ from std_msgs.msg         import String, Empty
 from geometry_msgs.msg    import Twist
 from ardrone_autonomy.msg import Navdata
 
+state = 'nada'
+
+def state_cb(msg):
+    global state
+    state = msg.data
+
+# pub_transition = rospy.Publisher('/smach/transition', String, queue_size=1)
+sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
+
 def main():
     velocities = (0.3, 0.3, 0.3) 	 # m/s
     max_alt = 3000  # mm
@@ -35,7 +44,7 @@ def main():
 
     while not rospy.is_shutdown():
         # print reacquisition.transition_in
-        if(reacquisition.state == 'reacquisition'):
+        if(state == 'reacquisition'):
             reacquisition.move()
             # if(reacquisition.timer() > reacquisition.max_time):
             #     reacquisition.land()
