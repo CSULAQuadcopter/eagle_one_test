@@ -219,7 +219,7 @@ class HUD:
         vy = self.twist.linear.y
         # find the angle between the velocities
         #TODO fix this if no correction to direction_arrow
-        angle = math.atan2(vy, vx)
+        angle = math.atan2(-vx, -vy)
 
         # print("%.3f" % angle)
         color = (255, 2, 255)
@@ -230,7 +230,7 @@ class HUD:
                              center[1] + int(radius * math.sin(angle)))
 
         # Draw the circle and line
-        if not (vx == 0 or vy ==0):
+        if not (vx == 0 and vy ==0):
             cv2.line(cv_image,     center, vel_end, color, thickness)
         cv2.circle(cv_image, center, radius,    color, thickness)
 
