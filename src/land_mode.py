@@ -24,6 +24,7 @@ from std_msgs.msg import String, Empty
 
 # Classes we need
 from Land import Landing
+from Follow import Follow
 from Controller import Controller
 from Navdata import navdata_info
 
@@ -42,18 +43,6 @@ def state_cb(msg):
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 
-def is_in_box(minimum, maximum, position):
-    """
-    Checks if the position is within the given bounds
-    """
-    if ((minimum < position) and (position < maximum)):
-        # print("In box")
-        return True
-    else:
-        # print("Out box")
-        return False
-
-
 def main():
     speed = -.5	 # m/s
     min_altitude = 700  # mm
@@ -67,72 +56,6 @@ def main():
     qc       = Twist()
     navdata  = navdata_info()
     ctrl     = Controller()
-
-    ########################
-    # Set the bounding box #
-    ########################
-    # X is in front and behind QC [0, 360] pixels
-    # Y is left and right of QC   [0, 640] pixels
-    bbx_max = 563
-    bbx_min = 438
-    bby_max = 563
-    bby_min = 438
-    yaw_max = 350
-    yaw_min = 10
-
-    ####################################
-    # Setup the individual controllers #
-    ####################################
-    # Note: in order to change the values for integrator max and min, you need
-    # to go into Controller.py and adjust the values there
-    # Set yaw controller
-    # NOTE: this doesn't seem to be working correctly...
-    ctrl.pid_theta.setKp(1/260.0)
-    # ctrl.pid_theta.setKp(0.0)
-    ctrl.pid_theta.setKi(0.0)
-    ctrl.pid_theta.setKd(0.0)
-    ctrl.pid_theta.setPoint(180.0)
-    default = 10
-    # ctrl.pid_theta.setIntegrator(100)
-    # ctrl.pid_theta.setDerivator(100)
-
-    # Set the x (forward/backward) controller
-    ctrl.pid_x.setKp(10.0)
-    ctrl.pid_x.setKi(5000)
-    ctrl.pid_x.setKd(0)
-    # ctrl.pid_x.setKd(0.0)
-    ctrl.pid_x.setPoint(500.0)
-    #ctrl.pid_x.setIntegrator(5000.0)
-    #ctrl.pid_x.setDerivator(5000.0)
-
-    # Set the y (left/right) controller
-    ctrl.pid_y.setKp(10.0)
-    # ctrl.pid_y.setKp(0.0)
-    ctrl.pid_y.setKi(5000)
-    ctrl.pid_y.setKd(0)
-    ctrl.pid_y.setPoint(500.0)
-    # ctrl.pid_y.setIntegrator(5000)
-    # ctrl.pid_y.setDerivator(5000)
-
-    # Set the z (altitude) controller
-    ctrl.pid_z.setKp(0.0)
-    ctrl.pid_z.setKi(0.0)
-    ctrl.pid_z.setKd(0.0)
-    ctrl.pid_z.setPoint(0.0)
-    # ctrl.pid_z.setIntegrator(500)
-    # ctrl.pid_z.setDerivator(500)
-
-    # Disable hover mode
-    qc.angular.x = 0.5
-    qc.angular.y = 0.5
-
-    # controller update values
-    yaw_update = 0
-    x_update   = 0
-    y_update   = 0
-    z_update   = 0
-
-    # i = 0
 
     while((state != 'land')):
         # print takeoff.state
@@ -159,7 +82,7 @@ def main():
                 # If the QC is in the bounding box then we should enter 'Hover'
                 # mode and just hang there
                 # is_in_box(minimum, maximum, position)
-                if (is_in_box(bbx_min, bbx_max, navdata.tag_y) and is_in_box(bby_min, bby_max, navdata.tag_x)):
+                if (follow.is_in_box(bbx_min, bbx_max, navdata.tag_y) and follow.is_in_box(bby_min, bby_max, navdata.tag_x)):
                     x_update = 0
                     y_update = 0
                     qc.angular.x = 0.0
@@ -185,9 +108,9 @@ def main():
                     print("Eagle one has descended!")
                     landing.land()
                     # To change states, we publish the fact that we've
-                    # reached our landing altitude
+                    # reached our takeoff altitude
                     rospy.loginfo("Going to secure mode")
-                    land.goto_secure()
+                    land.goto_f()
 
         # Make sure that we're not making any drastic updates
         # qc.angular.z = ctrl.pid_theta.avoid_drastic_corrections(yaw_update)
