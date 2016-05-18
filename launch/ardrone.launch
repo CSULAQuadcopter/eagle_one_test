@@ -18,7 +18,7 @@
         <param name="flight_without_shell" value="0" />
         <param name="altitude_max" value="3500" />
         <param name="altitude_min" value="50" />
-        <param name="euler_angle_max" value="0.21" />
+        <param name="euler_angle_max" value="0.3" />
         <param name="control_vz_max" value="100" />
         <param name="control_yaw" value="1.75" />
         <param name="detect_type" value="10" />
@@ -29,6 +29,9 @@
         <param name="ultrasound_freq" value="$(arg freq)" />
         <param name="realtime_navdata" value="true" />
         <param name="realtime_video" value="true" />
+        <param name="enable_navdata_altitude" value="true" />
+        <param name="enable_navdata_kalman_pressure" value="true" />
+        <param name="enable_navdata_pressure_raw" value="true" />
         <!-- Covariance Values (3x3 matrices reshaped to 1x9)-->
         <rosparam param="cov/imu_la">[0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.0, 0.0, 0.1]</rosparam>
         <rosparam param="cov/imu_av">[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]</rosparam>
