@@ -29,7 +29,7 @@ state = 'nada'
 def state_cb(msg):
     global state
     state = msg.data
-    
+
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def is_in_box(minimum, maximum, position):
@@ -95,19 +95,19 @@ def main():
     # ctrl.pid_theta.setDerivator(100)
 
     # Set the x (forward/backward) controller
-    ctrl.pid_x.setKp(10.0)
-    ctrl.pid_x.setKi(5000)
-    ctrl.pid_x.setKd(0)
+    ctrl.pid_x.setKp(6)
+    ctrl.pid_x.setKi(0.625)
+    ctrl.pid_x.setKd(2.5)
     # ctrl.pid_x.setKd(0.0)
     ctrl.pid_x.setPoint(500.0)
     #ctrl.pid_x.setIntegrator(5000.0)
     #ctrl.pid_x.setDerivator(5000.0)
 
     # Set the y (left/right) controller
-    ctrl.pid_y.setKp(10.0)
+    ctrl.pid_y.setKp(6)
     # ctrl.pid_y.setKp(0.0)
-    ctrl.pid_y.setKi(5000)
-    ctrl.pid_y.setKd(0)
+    ctrl.pid_y.setKi(0.875)
+    ctrl.pid_y.setKd(3.75)
     ctrl.pid_y.setPoint(500.0)
     # ctrl.pid_y.setIntegrator(5000)
     # ctrl.pid_y.setDerivator(5000)
@@ -157,16 +157,16 @@ def main():
             if (is_in_box(bbx_min, bbx_max, navdata.tag_y) and is_in_box(bby_min, bby_max, navdata.tag_x)):
                 x_update = 0
                 y_update = 0
-                qc.angular.x = 0.0
-                qc.angular.y = 0.0
+                # qc.angular.x = 0.0
+                # qc.angular.y = 0.0
                 # print("In the Box")
             # It's not in the bounding box therefore we should update the PIDs
             # and disable Hover mode
             else:
                 x_update  = ctrl.pid_x.update(navdata.tag_x)
                 y_update  = ctrl.pid_y.update(navdata.tag_y)
-                qc.angular.x = 0.5
-                qc.angular.y = 0.5
+                # qc.angular.x = 0.5
+                # qc.angular.y = 0.5
                 # print("%.3f" % ctrl.pid_x.getError())
 
         # Make sure that we're not making any drastic updates
