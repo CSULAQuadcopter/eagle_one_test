@@ -15,9 +15,9 @@ class Landing(Mode):
         super(self.__class__, self).__init__('land_mode')
 
         # Subscribers
-        self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
+        # self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         ##self.sub_state = rospy.Subscriber('/smach/state', String, self.state_cb)
-        # self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
+        self.sub_state = rospy.Subscriber('/smach/state',String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -30,22 +30,16 @@ class Landing(Mode):
 
         # Initialize member variables
         self.transition = String()
-        self.altitude = 0
         self.state = 'nada'
         self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
 
-        # to disable hover mode
-        self.altitude_command.angular.x = 0.5
-        self.altitude_command.angular.y = 0.5
-
         self.min_altitude = min_altitude
         self.speed = speed
         self.max_altitudeGoal = max_altitudeGoal
         self.height_diff = height_diff
-
 
     ###
     def state_cb(self, msg):
@@ -73,12 +67,18 @@ class Landing(Mode):
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to reacquisition mode")
         # Stop the timer so that it doesn't keep going
-        self.turn_off_timer(self.timer, 'Land')
+        # self.turn_off_timer(self.timer, 'Land')
 
-    # def handle_timer_cb(self, msg):
-    #     if(self.state == 'takeoff'):
-    #         self.turn_on_timer(self.timer, 'Land')
-    #         # rospy.loginfo("Land timers turned on.")
-    #     else:
-    #         self.turn_off_timer(self.timer, 'Land')
-    #         # rospy.loginfo("Land timers turned off.")
+    def handle_timer_cb(self, msg):
+        print self.state
+        if(self.state == 'land'):
+            if (self.tag_acquired ==  True):
+                print 'Tag acquired'
+                self.turn_off_timer(self.timer, 'Land')
+            elif (self.tag_acquired == False):
+                print 'Tag not acquired'
+                self.turn_on_timer(self.timer, 'Land')
+            # rospy.loginfo("Land timers turned on.")
+        else:
+            self.turn_off_timer(self.timer, 'Land')
+            # rospy.loginfo("Land timers turned off.")

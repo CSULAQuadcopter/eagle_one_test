@@ -71,9 +71,9 @@ def main():
     ########################
     # X is in front and behind QC [0, 360] pixels
     # Y is left and right of QC   [0, 640] pixels
-    bbx_max = 563
+    bbx_max = 562
     bbx_min = 438
-    bby_max = 563
+    bby_max = 562
     bby_min = 438
     yaw_max = 350
     yaw_min = 10
@@ -121,8 +121,8 @@ def main():
     # ctrl.pid_z.setDerivator(500)
 
     # Disable hover mode
-    qc.angular.x = 0.5
-    qc.angular.y = 0.5
+    # qc.angular.x = 0.5
+    # qc.angular.y = 0.5
 
     # controller update values
     yaw_update = 0
@@ -157,7 +157,7 @@ def main():
             if (is_in_box(bbx_min, bbx_max, navdata.tag_y) and is_in_box(bby_min, bby_max, navdata.tag_x)):
                 x_update = 0
                 y_update = 0
-                # qc.angular.x = 0.0
+                # # qc.angular.x = 0.0
                 # qc.angular.y = 0.0
                 # print("In the Box")
             # It's not in the bounding box therefore we should update the PIDs

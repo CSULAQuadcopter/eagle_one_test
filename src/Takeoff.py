@@ -22,8 +22,8 @@ class Takeoff(Mode):
         super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
-        # self.sub_state = rospy.Subscriber('/smach/state', \
-        #                                      String, self.handle_timer_cb)
+        self.sub_state = rospy.Subscriber('/smach/state', \
+                                             String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -81,10 +81,12 @@ class Takeoff(Mode):
         # Stop the timer so that it doesn't keep going
         self.turn_off_timer(self.timer, 'Takeoff')
 
-    # def handle_timer_cb(self, msg):
-    #     if(self.state == 'takeoff'):
-    #         self.turn_on_timer(self.timer, 'Takeoff')
-    #         # rospy.loginfo("Takeoff timer turned on.")
-    #     else:
-    #         self.turn_off_timer(self.timer, 'Takeoff')
-    #         # rospy.loginfo("Takeoff timer turned off.")
+    def handle_timer_cb(self, msg):
+        if(self.state == 'takeoff'):
+            if (self.tag_acquired):
+                self.turn_off_timer(self.timer, 'Takeoff')
+            elif (not self.tag_acquired):
+                self.turn_on_timer(self.timer, 'Takeoff')
+            # rospy.loginfo("Takeoff timers turned on.")
+        else:
+            self.turn_off_timer(self.timer, 'Takeoff')

@@ -22,7 +22,7 @@ from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Image
-from ardrone_autonomy.msg import Navdata
+from ardrone_autonomy.msg import Navdata, navdata_altitude
 
 class HUD:
     def __init__(self, box_top_left, box_bottom_right):
@@ -33,6 +33,8 @@ class HUD:
         self.image_sub = rospy.Subscriber("ardrone/image_raw",Image,self.cv_callback)
         self.navdata_sub = rospy.Subscriber("ardrone/navdata",Navdata,self.navdata_callback)
         self.twist_sub = rospy.Subscriber("cmd_vel", Twist, self.twist_callback)
+        self.sub_altitude = rospy.Subscriber('/ardrone/navdata_altitude', \
+                                       navdata_altitude, self.altitude_cb)
 
         self.tag_acquired = False
         self.tag_x = 0
@@ -92,8 +94,6 @@ class HUD:
         Callback for the navdata subscriber.
         """
         # HUD information
-        # Converts the altitude from mm to m
-        self.altitude = data.altd / 1000.0
         self.vx = data.vx
         self.vy = data.vy
         self.vz = data.vz
@@ -128,6 +128,10 @@ class HUD:
         self.twist.angular.x = msg.angular.x
         self.twist.angular.y = msg.angular.y
         self.twist.angular.z = msg.angular.z
+
+    def altitude_cb(self, msg):
+        # Convert mm to m
+        self.altitude = msg.altitude_raw/1000.0
 
     def hud_info(self, cv_image):
         """
@@ -173,18 +177,18 @@ class HUD:
 
         # Put the text on the image
         # Top left
-        cv2.putText(cv_image, altd,            (0, 15), font, 1.25, font_color)
-        cv2.putText(cv_image, tag_pos,     (0, 32), font, 1.25, font_color)
+        cv2.putText(cv_image, altd,      (0, 15), font, 1.25, font_color)
+        cv2.putText(cv_image, tag_pos,   (0, 32), font, 1.25, font_color)
         cv2.putText(cv_image, tag_theta, (0, 48), font, 1.25, font_color)
-        cv2.putText(cv_image, vx_est,        (0, 64), font, 1.25, font_color)
-        cv2.putText(cv_image, vy_est,        (0, 80), font, 1.25, font_color)
+        cv2.putText(cv_image, vx_est,    (0, 64), font, 1.25, font_color)
+        cv2.putText(cv_image, vy_est,    (0, 80), font, 1.25, font_color)
         # cv2.putText(cv_image, vz_est,        (0, 96), font, 1.25, font_color)
-        cv2.putText(cv_image, time,            (0, 96), font, 1.25, font_color)
+        cv2.putText(cv_image, time,      (0, 96), font, 1.25, font_color)
         # Bottom left
-        cv2.putText(cv_image, info,            (0, 265), font, 1.25, font_color)
-        cv2.putText(cv_image, linear_x,    (0, 280), font, 1.25, font_color)
-        cv2.putText(cv_image, linear_y,    (0, 295), font, 1.25, font_color)
-        cv2.putText(cv_image, linear_z,    (0, 310), font, 1.25, font_color)
+        cv2.putText(cv_image, info,      (0, 265), font, 1.25, font_color)
+        cv2.putText(cv_image, linear_x,  (0, 280), font, 1.25, font_color)
+        cv2.putText(cv_image, linear_y,  (0, 295), font, 1.25, font_color)
+        cv2.putText(cv_image, linear_z,  (0, 310), font, 1.25, font_color)
         cv2.putText(cv_image, angular_x, (0, 325), font, 1.25, font_color)
         cv2.putText(cv_image, angular_y, (0, 340), font, 1.25, font_color)
         cv2.putText(cv_image, angular_z, (0, 355), font, 1.25, font_color)
@@ -195,9 +199,9 @@ class HUD:
         cv2.putText(cv_image, pwm4, (520, 64), font, 1.25, font_color)
         # Bottom right
         cv2.putText(cv_image, battery, (440, 340), font, 1.25, battery_font_color)
-        cv2.putText(cv_image, state,     (440, 355), font, 1.25, font_color)
+        cv2.putText(cv_image, state,   (440, 355), font, 1.25, font_color)
         # Draw velocity vector
-        self.direction_arrow(cv_image)
+        self.heading(cv_image)
 
     def crosshair(self, cv_image):
         """
@@ -209,7 +213,7 @@ class HUD:
         cv2.circle(cv_image, (self.tag_x, self.tag_y), 10, (255, 255, 0), 2)
 
     # work in progress
-    def direction_arrow(self, cv_image):
+    def heading(self, cv_image):
         """
         Draws an arrow in the direction that the QC is being told to go. This
         is deteremined by doing some math on the Twist commands
@@ -218,7 +222,7 @@ class HUD:
         vx = self.twist.linear.x
         vy = self.twist.linear.y
         # find the angle between the velocities
-        #TODO fix this if no correction to direction_arrow
+        #TODO fix this if no correction to heading
         angle = math.atan2(-vx, -vy)
 
         # print("%.3f" % angle)

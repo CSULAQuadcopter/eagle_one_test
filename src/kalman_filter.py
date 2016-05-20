@@ -21,10 +21,13 @@ def main():
     rate = rospy.Rate(200) # 200Hz
 
     while not rospy.is_shutdown():
-        measurement[0, 0] = navdata.norm_tag_x
-        measurement[1, 0] = navdata.norm_tag_y
+        # measurement[0, 0] = navdata.norm_tag_x
+        # measurement[1, 0] = navdata.norm_tag_y
         # measurement[2, 0] = navdata.tag_vx
         # measurement[3, 0] = navdata.tag_vy
+
+        measurement[0, 0] = navdata.tag_x
+        measurement[1, 0] = navdata.tag_y
 
         kalman.state_callback()
         kalman.measurement_callback(measurement)
