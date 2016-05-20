@@ -9,26 +9,23 @@ Date Modified: 5/16/16
 
 This is to test the PID that controls the 4 Degrees Of Freedom (DOF) of the QC
 """
-# We're using ROS
+
+# We're using ROS here
 import rospy
 
-# Python libraries
-import math
+# ROS message
+from std_msgs.msg import String
 
-# The classes that we're using
-from Controller import Controller
-from Navdata import navdata_info
-
-# The messages that we need
-from std_msgs.msg import String, Empty
-from geometry_msgs.msg import Twist
-from ardrone_autonomy.msg import Navdata
+# The Takeoff class
+from Follow import Follow
 
 state = 'nada'
 
 def state_cb(msg):
     global state
     state = msg.data
+<<<<<<< HEAD
+=======
 
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
@@ -56,9 +53,18 @@ def is_in_box(minimum, maximum, position):
 #     # else:
 #     #     theta = default
 #     return theta
+>>>>>>> 4564c1a0dd54175510acc9b7cd1042a62d778fda
 
 def main():
-    rospy.init_node('follow_mode_test')
+    ctrl.pid_x.setKp = 6
+    ctrl.pid_x.setKi = .625
+    ctrl.pid_x.setKd = 2.5
+    ctrl.pid_y.setKp = 6
+    ctrl.pid_y.setKi = .875
+    ctrl.pid_y.setKd = 3.75
+
+    follow = Follow(ctrl.pid_x.setkp, ctrl.pid_x.setKi, ctrl.pid_x.setKd, ctrl.pid_y.setkp, ctrl.pid_y.setKi, ctrl.pid_y.setKd)
+
     rate     = rospy.Rate(200) # 200Hz
     pub_ctrl = rospy.Publisher('cmd_vel', Twist, queue_size=100)
 
@@ -66,6 +72,8 @@ def main():
     navdata = navdata_info()
     ctrl    = Controller()
 
+<<<<<<< HEAD
+=======
     ########################
     # Set the bounding box #
     ########################
@@ -132,13 +140,14 @@ def main():
 
     # i = 0
 
+>>>>>>> 4564c1a0dd54175510acc9b7cd1042a62d778fda
     while not rospy.is_shutdown():
         # always update the altitude
         z_update = ctrl.pid_z.update(z_update)
         # print("Theta %.2f"  % navdata.theta)
         # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
 
-        if navdata.tag_acquired:
+        if (navdata.tag_acquired):
             # print("Tag acquired %d" % i)
             # i += 1
             # If 10 < theta < 350 then let's rotate
@@ -154,7 +163,7 @@ def main():
             # If the QC is in the bounding box then we should enter 'Hover'
             # mode and just hang there
             # is_in_box(minimum, maximum, position)
-            if (is_in_box(bbx_min, bbx_max, navdata.tag_y) and is_in_box(bby_min, bby_max, navdata.tag_x)):
+            if (follow.is_in_box(bbx_min, bbx_max, navdata.tag_y) and follow.is_in_box(bby_min, bby_max, navdata.tag_x)):
                 x_update = 0
                 y_update = 0
                 # # qc.angular.x = 0.0

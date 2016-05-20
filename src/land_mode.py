@@ -23,6 +23,7 @@ from std_msgs.msg import String, Empty
 
 # Classes we need
 from Land import Landing
+from Follow import Follow
 from Controller import Controller
 from Navdata import navdata_info
 
