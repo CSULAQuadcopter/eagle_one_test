@@ -68,17 +68,6 @@ class Controller(object):
         # Should we use the bounding box?
         self.use_bounding_box = bounding_box
 
-        def is_in_box(self, minimum, maximum, position):
-            '''
-            Checks if the position is within the given bounds
-            '''
-            if ((minimum < position) and (position < maximum)):
-                # print("In box")
-                return True
-            else:
-                # print("Out box")
-                return False
-
         def update(self, values):
             '''
             This updates each controller and returns the updated values as a
