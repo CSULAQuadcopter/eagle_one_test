@@ -24,8 +24,11 @@ state = 'nada'
 def state_cb(msg):
     global state
     state = msg.data
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a2e9b60250c70523d1cec8323a79e82fa8d5d4a4
 
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
@@ -53,7 +56,10 @@ def is_in_box(minimum, maximum, position):
 #     # else:
 #     #     theta = default
 #     return theta
+<<<<<<< HEAD
 
+=======
+>>>>>>> a2e9b60250c70523d1cec8323a79e82fa8d5d4a4
 
 def main():
     ctrl.pid_x.setKp = 6
@@ -72,8 +78,11 @@ def main():
     navdata = navdata_info()
     ctrl    = Controller()
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a2e9b60250c70523d1cec8323a79e82fa8d5d4a4
     ########################
     # Set the bounding box #
     ########################
@@ -136,9 +145,12 @@ def main():
     y_update   = 0
     z_update   = 0
 
+<<<<<<< HEAD
     # i = 0
 
 
+=======
+>>>>>>> a2e9b60250c70523d1cec8323a79e82fa8d5d4a4
     while not rospy.is_shutdown():
         # always update the altitude
         z_update = ctrl.pid_z.update(z_update)
