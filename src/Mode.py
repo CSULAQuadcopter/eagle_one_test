@@ -79,9 +79,9 @@ class Mode(object):
             self.tag_y = self.navdata.tags_xc[0]
 
     def pwm_cb(self, msg):
-        # self.pwm = msg.motor1
-        # faking data, change this to get real data
-        self.pwm = 1
+        self.pwm = msg.motor1
+        # # faking data, change this to get real data
+        # self.pwm = 1
 
     def altitude_cb(self, msg):
         self.altitude = msg.altitude_raw/1000.0
