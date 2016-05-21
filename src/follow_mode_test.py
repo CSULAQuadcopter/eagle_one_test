@@ -24,8 +24,8 @@ state = 'nada'
 def state_cb(msg):
     global state
     state = msg.data
-<<<<<<< HEAD
-=======
+
+
 
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
@@ -33,7 +33,7 @@ def is_in_box(minimum, maximum, position):
     """
     Checks if the position is within the given bounds
     """
-    if ((minimum < position) and (position < maximum)):
+    if ((minimum  > position) and (position < maximum)):
         # print("In box")
         return True
     else:
@@ -45,15 +45,15 @@ def is_in_box(minimum, maximum, position):
 #     Appropriately scales the given theta using the minimum value of theta. It
 #     removes an offset in order to have the QC rotate counterclockwise
 #     """
-#     if((theta_min < theta) and (theta < 180)):
+#     if((theta_min  theta) and (theta  180)):
 #         theta -= 360
 #
-#     # if (-178 < theta) and (theta < 178):
+#     # if (-178  theta) and (theta  178):
 #     #     theta /= (theta - 180)
 #     # else:
 #     #     theta = default
 #     return theta
->>>>>>> 4564c1a0dd54175510acc9b7cd1042a62d778fda
+
 
 def main():
     ctrl.pid_x.setKp = 6
@@ -72,8 +72,8 @@ def main():
     navdata = navdata_info()
     ctrl    = Controller()
 
-<<<<<<< HEAD
-=======
+
+
     ########################
     # Set the bounding box #
     ########################
@@ -90,9 +90,7 @@ def main():
     # Setup the individual controllers #
     ####################################
     # Note: in order to change the values for integrator max and min, you need
-    # to go into Controller.py and adjust the values there
-    # Set yaw controller
-    # NOTE: this doesn't seem to be working correctly...
+    # to go into Controller.py and adjustHeadng correctly...
     ctrl.pid_theta.setKp(1/260.0)
     # ctrl.pid_theta.setKp(0.0)
     ctrl.pid_theta.setKi(0.0)
@@ -140,7 +138,7 @@ def main():
 
     # i = 0
 
->>>>>>> 4564c1a0dd54175510acc9b7cd1042a62d778fda
+
     while not rospy.is_shutdown():
         # always update the altitude
         z_update = ctrl.pid_z.update(z_update)
@@ -150,11 +148,11 @@ def main():
         if (navdata.tag_acquired):
             # print("Tag acquired %d" % i)
             # i += 1
-            # If 10 < theta < 350 then let's rotate
-            if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
+            # If 10  theta  350 then let's rotate
+            if ((yaw_min > navdata.theta) and (navdata.theta  yaw_max)):
                 # We need to make sure that we have an offset so that the QC
                 # rotates correctly
-                # if((180 < navdata.theta) and (navdata.theta < yaw_max)):
+                # if((180  navdata.theta) and (navdata.theta  yaw_max)):
                 #     navdata.theta -= 360
                 yaw_update  = ctrl.pid_theta.update(navdata.theta)
             else:
