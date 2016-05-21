@@ -25,7 +25,7 @@ Created by: Josh Saunders
 Date Created: 4/21/2016
 
 Modified by: Josh Saunders
-Date Modified: 4/28/2016
+Date Modified: 5/20/2016
 """
 # We're using ROS here
 import rospy
@@ -154,16 +154,17 @@ class Reacquisition(Mode):
         """
         self.transition_in = msg.data
 
-    # def handle_timer_cb(self, msg):
-    #     """
-    #     Turns off the timers if the system is not in reacquisition mode. Turns
-    #     on the timers if the system is in the reacquisition mode
-    #     """
-    #     if(self.state == 'reacquisition'):
-    #         self.turn_on_timer(self.prev_state_timer, 'Reac prev state')
-    #         self.turn_on_timer(self.land_timer, 'Reac land')
-    #         # rospy.loginfo("Reacquisition timers turned on.")
-    #     else:
-    #         self.turn_off_timer(self.prev_state_timer, 'Reac prev state')
-    #         self.turn_off_timer(self.land_timer, 'Reac land')
-    #         # rospy.loginfo("Reacquisition timers turned off.")
+
+    def handle_timer_cb(self, msg):
+        print self.state
+        if(self.state == 'reacquisition'):
+            if (self.tag_acquired ==  True):
+                print 'Tag acquired'
+                self.turn_off_timer(self.timer, 'Reacquisition')
+            elif (self.tag_acquired == False):
+                print 'Tag not acquired'
+                self.turn_on_timer(self.timer, 'Reacquisition')
+            # rospy.loginfo("Reacquisition timers turned on.")
+        else:
+            self.turn_off_timer(self.timer, 'Reacquisition')
+            # rospy.loginfo("Reacquisition timers turned off.")
