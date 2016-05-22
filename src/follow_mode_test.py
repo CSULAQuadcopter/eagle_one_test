@@ -1,14 +1,14 @@
 #! /usr/bin/env python
-"""
+'''
 Follow Mode Test
 Written by: Josh Saunders
 Date: 4/11/2016
 
-Modified by: David Rojas
-Date Modified: 5/16/16
+Modified by: David Rojas, Josh Saunders
+Date Modified: 5/16/16, 5/21/2016
 
 This is to test the PID that controls the 4 Degrees Of Freedom (DOF) of the QC
-"""
+'''
 
 # We're using ROS here
 import rospy
@@ -17,7 +17,7 @@ import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist
 
-# The Takeoff class
+# Custom classes
 from Follow import Follow
 from Navdata import navdata_info as nd
 
@@ -55,7 +55,6 @@ def main():
     y_update   = 0
     z_update   = 0
 
-    # navdata
     navdata = nd()
 
     # Twist commands
@@ -70,34 +69,28 @@ def main():
         # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
 
         if (navdata.tag_acquired):
-            # print("Tag acquired %d" % i)
-            # i += 1
             # If 10 < theta < 350 then let's rotate
-            if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
-                # We need to make sure that we have an offset so that the QC
-                # rotates correctly
-                # if((180 < navdata.theta) and (navdata.theta < yaw_max)):
-                #     navdata.theta -= 360
+            # if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
+            if ((yaw_min < navdata.theta < yaw_max)):
                 yaw_update  = ctrl.pid_theta.update(navdata.theta)
             else:
                 yaw_update = 0
 
-            # If the QC is in the bounding box then we should enter 'Hover'
-            # mode and just hang there
+
             # is_in_box(minimum, maximum, position)
             if (ctrl.is_in_box(bbx_min, bbx_max, navdata.tag_y) and ctrl.is_in_box(bby_min, bby_max, navdata.tag_x)):
+                # If the QC is in the bounding box then we should enter 'Hover'
+                # mode and just hang there
                 x_update = 0
                 y_update = 0
                 # # qc.angular.x = 0.0
                 # qc.angular.y = 0.0
                 # print("In the Box")
-            # It's not in the bounding box therefore we should update the PIDs
-            # and disable Hover mode
+
             else:
+                # It's not in the bounding box therefore we should update the PIDs
                 x_update  = ctrl.pid_x.update(navdata.tag_x)
                 y_update  = ctrl.pid_y.update(navdata.tag_y)
-                # qc.angular.x = 0.5
-                # qc.angular.y = 0.5
                 # print("%.3f" % ctrl.pid_x.getError())
 
         # Make sure that we're not making any drastic updates

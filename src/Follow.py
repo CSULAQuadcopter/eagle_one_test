@@ -28,6 +28,7 @@ class Follow(Mode, Controller):
     def __init__(self, bbx, bby, pid_x, pid_y, pid_z, pid_theta, bounding_box=True):
         # Initialize the node which is inherited from the Mode super class
         Mode.__init__(self, 'follow_mode')
+        # Initialize the controllers correctly
         Controller.__init__(self, pid_x, pid_y, pid_z, pid_theta, bounding_box)
 
         # Publishers
