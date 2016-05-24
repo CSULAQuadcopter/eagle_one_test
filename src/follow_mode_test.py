@@ -157,8 +157,6 @@ def main():
             else:
                 yaw_update = 0
 
-            # If the QC is in the bounding box then we should enter 'Hover'
-            # mode and just hang there
             # is_in_box(minimum, maximum, position)
             # if (is_in_box(bbx_min, bbx_max, navdata.tag_y) and is_in_box(bby_min, bby_max, navdata.tag_x)):
             # kalman filter testing
