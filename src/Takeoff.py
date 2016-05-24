@@ -17,7 +17,7 @@ from geometry_msgs.msg    import Twist
 
 class Takeoff(Mode):
                        # m/s  mm		        seconds
-    def __init__(self, speed, max_altitude, timeout):
+    def __init__(self, speed, max_altitude, tag_timeout):
         # Initialize the node which is inherited from the Mode super class
         super(self.__class__, self).__init__('takeoff_mode')
 
@@ -27,18 +27,13 @@ class Takeoff(Mode):
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
-
         self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1000)
 
         # Initialize member variables
-        self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
+        self.timer = rospy.Timer(rospy.Duration(tag_timeout), self.goto_reacquisition)
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
-
-        # to disable hover mode
-        self.altitude_command.angular.x = 0.5
-        self.altitude_command.angular.y = 0.5
 
         self.max_altitude = max_altitude
         self.speed = speed
@@ -87,6 +82,5 @@ class Takeoff(Mode):
                 self.turn_off_timer(self.timer, 'Takeoff')
             elif (not self.tag_acquired):
                 self.turn_on_timer(self.timer, 'Takeoff')
-            # rospy.loginfo("Takeoff timers turned on.")
         else:
             self.turn_off_timer(self.timer, 'Takeoff')
