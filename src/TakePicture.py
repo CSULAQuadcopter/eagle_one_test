@@ -67,8 +67,13 @@ class TakePicture(Mode):
     def save_image(self):
         self.counter += 1
         rospy.loginfo("Taking Pictures")
-        while self.counter <= 50:
-            filename = "recon_%d.png" % self.counter
+        while self.counter <= 500:
+            if self.counter < 10:
+                filename = "recon_00%d.jpg" % self.counter
+            elif self.counter < 100:
+                filename = "recon_0%d.jpg" % self.counter
+            else:
+                filename = "recon_%d.jpg" % self.counter
             cv2.imwrite(filename, self.cv_image)
             self.counter += 1
             self.rate.sleep()

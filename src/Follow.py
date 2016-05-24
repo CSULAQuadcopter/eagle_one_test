@@ -38,10 +38,10 @@ class Follow(Mode, Controller):
         # Set the bounding box #
         ########################
 
-        self.bbx_max = bbx[1]
         self.bbx_min = bbx[0]
-        self.bby_max = bby[1]
+        self.bbx_max = bbx[1]
         self.bby_min = bby[0]
+        self.bby_max = bby[1]
 
     def is_in_box(self, minimum, maximum, position):
         '''

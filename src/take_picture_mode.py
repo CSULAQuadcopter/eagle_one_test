@@ -45,7 +45,7 @@ def main(args):
     picture_time = 1 # seconds
     max_time     = 3 # seconds
     takepicture = TakePicture(picture_time)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(200)
     # TODO add a way to go to the next state, probably after the while loop
     while((state != 'take_picture')):
         # print takeoff.state
