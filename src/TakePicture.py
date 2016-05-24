@@ -44,7 +44,6 @@ class TakePicture(Mode):
         #OpenCV stuff
         self.bridge = CvBridge()
 
-        self.altitude = 0
         #self.start_time = None
         self.state = 'nada'
 
@@ -55,7 +54,6 @@ class TakePicture(Mode):
         self.altitude_command.linear.z = speed
 
         self.max_pic_altitude = pic_altitude
-        self.speed = speed
         self.follow_altitude = follow_altitude
         self.height_diff = height_diff
 
@@ -70,8 +68,8 @@ class TakePicture(Mode):
         self.pic_cmd_timer = rospy.Timer(rospy.Duration(picture_time), \
                                  self.pic_cmd)
 
-    def change_altitude(self, speed):
-        self.altitude_command.linear.z = speed
+    def change_altitude(self):
+        self.altitude_command.linear.z = self.speed
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
@@ -126,7 +124,6 @@ class TakePicture(Mode):
         self.save_image()
 
     def navdata_cb(self, msg):
-        self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
         if(msg.tags_count > 0):
