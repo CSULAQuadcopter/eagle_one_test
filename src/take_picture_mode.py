@@ -43,7 +43,6 @@ sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main(args):
     picture_time = 30 # seconds
-    max_time     = 3 # seconds
     takepicture = TakePicture(picture_time)
     rate = rospy.Rate(10)
     # TODO add a way to go to the next state, probably after the while loop
