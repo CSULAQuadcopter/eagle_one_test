@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 """
-Makes the QC land and decrease altitude until it reaches a specified
-altitude to land.
+Makes the QC follow and decrease altitude until it reaches a specified
+altitude to follow.
 If the tag is lost, a timer is started and if the tag cannot be recovered
 within a specified amount of time, it will enter the reacquisition mode. If the
 tag is recovered within the specified amount of time, it will continue on with
@@ -22,8 +22,7 @@ import rospy
 from std_msgs.msg import String, Empty
 
 # Classes we need
-from Land import Landing
-from Controller import Controller
+from Follow import Follow
 from Navdata import navdata_info as nd
 
 # The messages that we need
@@ -77,13 +76,13 @@ def main():
     follow  = Follow(bbx, bby, pid_x, pid_y, pid_z, pid_theta, bounding_box)
     rate = rospy.Rate(200)
 
-    while((land.state != 'land')):
+    while((follow.state != 'follow')):
         # print takeoff.state
         rate.sleep()
 
     while not rospy.is_shutdown():
         # always update the altitude
-        z_update = land.pid_z.update(z_update)
+        z_update = follow.pid_z.update(z_update)
         # print("Theta %.2f"  % navdata.theta)
         # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
 
@@ -92,13 +91,13 @@ def main():
             # if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
             if ((yaw_min < navdata.theta < yaw_max)):
                 print "Yaw!"
-                yaw_update  = land.pid_theta.update(navdata.theta)
+                yaw_update  = follow.pid_theta.update(navdata.theta)
             else:
                 print "No yaw!"
                 yaw_update = 0
 
             # is_in_box(minimum, maximum, position)
-            if (land.is_in_box(bbx_min, bbx_max, navdata.tag_y) and land.is_in_box(bby_min, bby_max, navdata.tag_x)):
+            if (follow.is_in_box(bbx_min, bbx_max, navdata.tag_y) and follow.is_in_box(bby_min, bby_max, navdata.tag_x)):
                 # If the QC is in the bounding box then we should enter 'Hover'
                 # mode and just hang there
                 x_update = 0
@@ -109,16 +108,16 @@ def main():
 
             else:
                 # It's not in the bounding box therefore we should update the PIDs
-                x_update  = land.pid_x.update(navdata.tag_x)
-                y_update  = land.pid_y.update(navdata.tag_y)
-                # print("%.3f" % land.pid_x.getError())
+                x_update  = follow.pid_x.update(navdata.tag_x)
+                y_update  = follow.pid_y.update(navdata.tag_y)
+                # print("%.3f" % follow.pid_x.getError())
 
         qc.angular.z = yaw_update
         qc.linear.x  = x_update
         qc.linear.y  = y_update
         # qc.linear.z  = z_update
 
-        land.pub_altitude.publish(qc)
+        follow.pub_ctrl.publish(qc)
         rate.sleep()
 
 if __name__=='__main__':
