@@ -27,13 +27,16 @@ from ardrone_autonomy.msg import Navdata
 
 class TakePicture(Mode):
         #seconds
-    def __init__(self, picture_time):
+    def __init__(self, picture_time, max_pic_altitude, speed, follow_altitude, height_diff):
         # Initialize the node which is inherited fromt the Mode super class
         super(self.__class__, self).__init__('take_picture_mode')
 
+        #ROS Subscribers
         self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
         self.image_sub = rospy.Subscriber("/ardrone/image_raw",Image,self.img_cb)
 
+        #ROS Publishers
+        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.pub_transition = rospy.Publisher('smach/transition', String, queue_size=1)
 
         self.rate = rospy.Rate(10)
@@ -42,10 +45,19 @@ class TakePicture(Mode):
         self.bridge = CvBridge()
 
         self.altitude = 0
-        self.start_time = None
+        #self.start_time = None
         self.state = 'nada'
+
         # We don't go to reacquisition from here
         # self.timer = rospy.Timer(rospy.Duration(timeout), self.goto_reacquisition)
+
+        self.altitude_command = Twist()
+        self.altitude_command.linear.z = speed
+
+        self.max_pic_altitude = pic_altitude
+        self.speed = speed
+        self.follow_altitude = follow_altitude
+        self.height_diff = height_diff
 
         self.picture_time = picture_time
         self.counter = 0
@@ -57,6 +69,14 @@ class TakePicture(Mode):
         # Initialize timer
         self.pic_cmd_timer = rospy.Timer(rospy.Duration(picture_time), \
                                  self.pic_cmd)
+
+    def change_altitude(self, speed):
+        self.altitude_command.linear.z = speed
+        self.pub_altitude.publish(self.altitude_command)
+        rospy.loginfo("Change altitude")
+
+    def height_diff(self, max_pic_altitude, follow_altitude):
+        self.height_diff = self.max_altitudeGoal - self.follow_altitude
 
     def img_cb(self,data):
         try:
@@ -79,17 +99,16 @@ class TakePicture(Mode):
     def finished(self):
         self.is_finished = True
 
-    # what is this needed for?
-    def start_timer(self):
-        self.start_time = rospy.Time.now().to_sec()
+    #def start_timer(self):
+    #    self.start_time = rospy.Time.now().to_sec()
 
     # Hey 'Ol Timer
     # Probably not necessary
-    def handle_pic_timer(self):
-        if (self.state == 'take_picture'):
-            self.pic_cmd_timer.run()
-        else:
-            self.pic_cmd_timer.shutdown()
+    # def handle_timer(self):
+    #     if (self.state == 'take_picture'):
+    #         self.pic_cmd_timer.run()
+    #     else:
+    #         self.pic_cmd_timer.shutdown()
 
     def goto_land(self):
         rospy.loginfo("Going to Land Mode")
