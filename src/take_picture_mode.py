@@ -43,8 +43,11 @@ sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main(args):
     picture_time = 1 # seconds
-    max_time     = 3 # seconds
-    takepicture = TakePicture(picture_time)
+    max_pic_altitude = 4.6 # meters
+    speed = 1
+    follow_altitude = 2.5 # meters
+    height_diff = 0 # meters
+    takepicture = TakePicture(picture_time, max_pic_altitude, speed, follow_altitude, height_diff)
     rate = rospy.Rate(10)
     # TODO add a way to go to the next state, probably after the while loop
     while((state != 'take_picture')):
