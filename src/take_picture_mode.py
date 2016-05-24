@@ -42,7 +42,7 @@ sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 #        return False
 
 def main(args):
-    picture_time = 30 # seconds
+    picture_time = 1 # seconds
     max_time     = 3 # seconds
     takepicture = TakePicture(picture_time)
     rate = rospy.Rate(10)

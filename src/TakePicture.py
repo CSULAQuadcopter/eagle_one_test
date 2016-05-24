@@ -75,7 +75,6 @@ class TakePicture(Mode):
         rospy.loginfo("Finished Taking Pictures")
         self.goto_land()
         self.finished()
-        self.pic_cmd_timer.shutdown()
 
     def finished(self):
         self.is_finished = True
@@ -108,10 +107,10 @@ class TakePicture(Mode):
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
-            self.turn_off_timer(self.timer, 'Take Picture')
+            # self.turn_off_timer(self.timer, 'Take Picture')
             # rospy.loginfo("Take picture timer turned off.")
         else:
             self.tag_acquired = False
             # If we don't have the tag we need to start the timer
-            self.turn_on_timer(self.timer, 'Take Picture')
+            # self.turn_on_timer(self.timer, 'Take Picture')
             # rospy.loginfo("Take picture timer turned on.")

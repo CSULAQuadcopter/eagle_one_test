@@ -6,13 +6,16 @@ from std_msgs.msg           import String, Empty
 from geometry_msgs.msg      import Twist
 from ardrone_autonomy.msg   import Navdata
 
+from Controller import Controller
 from Mode import Mode
 
-class Landing(Mode):
+class Landing(Mode, Controller):
     # m/s	mm		seconds
-    def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, timeout):
+    def __init__(self, speed, min_altitude, max_altitudeGoal, height_diff, \
+    timeout, bbx, bby, pid_x, pid_y, pid_z, pid_theta, bounding_box=True):
         # Initialize the node and rate
-        super(self.__class__, self).__init__('land_mode')
+        Mode.__init__(self, 'land_mode')
+        Controller.__init__(self, pid_x, pid_y, pid_z, pid_theta, bounding_box)
 
         # Subscribers
         # self.sub_navdata = rospy.Subscriber('/ardrone/navdata', Navdata, self.navdata_cb)
@@ -82,3 +85,14 @@ class Landing(Mode):
         else:
             self.turn_off_timer(self.timer, 'Land')
             # rospy.loginfo("Land timers turned off.")
+
+    def is_in_box(self, minimum, maximum, position):
+        '''
+        Checks if the position is within the given bounds
+        '''
+        if ((minimum < position) and (position < maximum)):
+            # print("In box")
+            return True
+        else:
+            # print("Out box")
+            return False
