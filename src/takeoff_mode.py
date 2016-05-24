@@ -16,20 +16,20 @@ Date Modified: 4/21/2016, 5/24/2016
 # We're using ROS here
 import rospy
 
-# ROS message
+# ROS messages
 from std_msgs.msg import String
 
 # The Takeoff class
 from Takeoff import Takeoff
 
 # if landed, takeoff
-# TODO only works when max_altitudeGoal is 3000 mm or lower, need to fix
+# TODO only works when altitude_goal is 3.0 m or lower, need to fix
 def main():
     speed = 1	 # m/s
-    max_altitudeGoal = 2.5 # meters
-    timeout = 10 # seconds
-    takeoff = Takeoff(speed, max_altitudeGoal, timeout)
-    rate = rospy.Rate(10) # 100Hz
+    altitude_goal = 2.5 # meters
+    tag_timeout = 10 # seconds
+    takeoff = Takeoff(speed, altitude_goal, tag_timeout)
+    rate = rospy.Rate(100) # 100Hz
 
     # To let us know that the mode is working
     rospy.loginfo("Started Takeoff Mode")
@@ -48,11 +48,10 @@ def main():
 
     while not rospy.is_shutdown():
         # We only want to execute these manuevers if we're in takeoff mode
-
         if takeoff.state == 'takeoff':
             if(takeoff.altitude < takeoff.max_altitudeGoal):
                 rospy.loginfo("Go up!")
-                takeoff.change_altitude(speed)
+                takeoff.change_altitude()
             elif(takeoff.altitude >= takeoff.max_altitudeGoal):
                 speed = 0
                 rospy.loginfo("Stop!")
@@ -61,6 +60,9 @@ def main():
                 # reached our takeoff altitude
                 rospy.loginfo("Going to follow mode")
                 takeoff.goto_follow()
+                # Let's change the launch file and then we can
+                # break
+                # out from the loop
         # else:
         #     continue
         rate.sleep()

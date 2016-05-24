@@ -41,14 +41,11 @@ class Takeoff(Mode):
         self.altitude_command.angular.y = 0.5
 
         self.max_altitude = max_altitude
-        self.speed = speed
-        self.altitude = 0
+        # self.speed = speed
         self.state = 'nada'
 
     def navdata_cb(self, msg):
-        self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
-        self.mode = msg.state
         if(msg.tags_count > 0):
             self.tag_acquired = True
             # If we do have the tag we need to stop the timer
@@ -65,8 +62,7 @@ class Takeoff(Mode):
 
     # If we're above the max altitude don't increase the altitude,
     # otherwise go up!
-    def change_altitude(self, speed):
-        self.altitude_command.linear.z = speed
+    def change_altitude(self):
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
