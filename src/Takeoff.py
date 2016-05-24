@@ -27,7 +27,6 @@ class Takeoff(Mode):
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
-
         self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1000)
 
         # Initialize member variables
@@ -79,6 +78,5 @@ class Takeoff(Mode):
                 self.turn_off_timer(self.timer, 'Takeoff')
             elif (not self.tag_acquired):
                 self.turn_on_timer(self.timer, 'Takeoff')
-            # rospy.loginfo("Takeoff timers turned on.")
         else:
             self.turn_off_timer(self.timer, 'Takeoff')
