@@ -21,7 +21,7 @@ from Mode       import Mode
 from Navdata    import navdata_info
 
 # The messages that we need
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg    import Twist
 from ardrone_autonomy.msg import Navdata
 
 class Follow(Mode, Controller):
