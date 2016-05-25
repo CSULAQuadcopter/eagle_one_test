@@ -27,7 +27,7 @@ rate = rospy.Rate(100) # 100Hz
 
 # Setup the publishers and subscribers
 state_pub = rospy.Publisher('/smach/state', String, queue_size=100000)
-transition_sub = rospy.Subscriber('smach/transition', String, transition_cb)
+transition_sub = rospy.Subscriber('/smach/transition', String, transition_cb)
 counter_pub = rospy.Publisher('/smach/counter', Int32, queue_size=1000)
 counter = 0
 

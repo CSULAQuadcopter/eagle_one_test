@@ -22,15 +22,15 @@ class Takeoff(Mode):
         super(self.__class__, self).__init__('takeoff_mode')
 
         # Subscribers
-        self.sub_state = rospy.Subscriber('/smach/state', \
-                                             String, self.handle_timer_cb)
+        # self.sub_state = rospy.Subscriber('/smach/state', \
+                                            #  String, self.handle_timer_cb)
 
         # Publishers
         self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.pub_takeoff = rospy.Publisher('/ardrone/takeoff', Empty, queue_size=1000)
 
         # Initialize member variables
-        self.timer = rospy.Timer(rospy.Duration(tag_timeout), self.goto_reacquisition)
+        # self.timer = rospy.Timer(rospy.Duration(tag_timeout), self.goto_reacquisition)
 
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
@@ -61,7 +61,6 @@ class Takeoff(Mode):
     # If we're above the max altitude don't increase the altitude,
     # otherwise go up!
     def change_altitude(self):
-        self.altitude_command.linear.z = speed
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
@@ -74,13 +73,13 @@ class Takeoff(Mode):
         self.pub_transition.publish(self.transition)
         rospy.loginfo("Transitioning to Reacquisition from Takeoff")
         # Stop the timer so that it doesn't keep going
-        self.turn_off_timer(self.timer, 'Takeoff')
+        # self.turn_off_timer(self.timer, 'Takeoff')
 
-    def handle_timer_cb(self, msg):
-        if(self.state == 'takeoff'):
-            if (self.tag_acquired):
-                self.turn_off_timer(self.timer, 'Takeoff')
-            elif (not self.tag_acquired):
-                self.turn_on_timer(self.timer, 'Takeoff')
-        else:
-            self.turn_off_timer(self.timer, 'Takeoff')
+    # def handle_timer_cb(self, msg):
+    #     if(self.state == 'takeoff'):
+    #         if (self.tag_acquired):
+    #             self.turn_off_timer(self.timer, 'Takeoff')
+    #         elif (not self.tag_acquired):
+    #             self.turn_on_timer(self.timer, 'Takeoff')
+    #     else:
+    #         self.turn_off_timer(self.timer, 'Takeoff')

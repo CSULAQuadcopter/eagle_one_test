@@ -49,10 +49,10 @@ def main():
     while not rospy.is_shutdown():
         # We only want to execute these manuevers if we're in takeoff mode
         if takeoff.state == 'takeoff':
-            if(takeoff.altitude < takeoff.max_altitudeGoal):
+            if(takeoff.altitude < takeoff.max_altitude):
                 rospy.loginfo("Go up!")
                 takeoff.change_altitude()
-            elif(takeoff.altitude >= takeoff.max_altitudeGoal):
+            elif(takeoff.altitude >= takeoff.max_altitude):
                 speed = 0
                 rospy.loginfo("Stop!")
                 # takeoff.change_altitude(speed)
