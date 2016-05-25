@@ -19,6 +19,7 @@ from std_msgs.msg import String
 # The classes that we're using
 from Controller import Controller
 from Navdata import navdata_info
+from geometry_msgs.msg    import Twist
 from TakePicture import TakePicture
 
 state = 'nada'
@@ -46,9 +47,12 @@ def main(args):
     max_pic_altitude = 4.6 # meters
     speed = 1
     follow_altitude = 2.5 # meters
-    height_diff = 0 # meters
-    takepicture = TakePicture(picture_time, max_pic_altitude, speed, follow_altitude, height_diff)
+    takepicture = TakePicture(picture_time, max_pic_altitude, speed, follow_altitude)
     rate = rospy.Rate(10)
+
+    qc = Twist()
+
+
     # TODO add a way to go to the next state, probably after the while loop
     while((state != 'take_picture')):
         # print takeoff.state
@@ -59,8 +63,18 @@ def main(args):
         ##z_update = ctrl.pid_z.update(z_update)
         # We only want to execute these manuevers if we're in take_picture mode
         if state == 'take_picture':
-            if(takepicture.finished()):
-                break
+            if(takepicture.altitude <= takepicture.max_pic_altitude):
+                qc.linear.z  = speed
+            elif(takepicture.altitude > takepicture.max_pic_altitude):
+                speed = 0
+                qc.linear.z  = speed
+                takepicture.save_image()
+                if(takepicture.is_finished == True):
+                    speed = -0.05
+                    if(takepicture.altitude > takepicture.follow_altitude):
+                        qc.linear.z  = speed
+                    elif(takepicture.altitude <= takepicture.follow_altitude):
+                        takepicture.goto_land()
         ##pub_ctrl.publish(qc)
         rate.sleep()
 
