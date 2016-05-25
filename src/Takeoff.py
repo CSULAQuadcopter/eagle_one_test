@@ -37,11 +37,9 @@ class Takeoff(Mode):
 
         self.max_altitude = max_altitude
         self.speed = speed
-        self.altitude = 0
         self.state = 'nada'
 
     def navdata_cb(self, msg):
-        self.altitude = msg.altd
         # Mode of the QC, NOT the state of the state machine
         self.mode = msg.state
         if(msg.tags_count > 0):

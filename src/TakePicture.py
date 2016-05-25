@@ -23,11 +23,12 @@ from cv_bridge import CvBridge, CvBridgeError
 # ROS messages
 from sensor_msgs.msg      import Image
 from std_msgs.msg         import String, Empty
+from geometry_msgs.msg    import Twist
 from ardrone_autonomy.msg import Navdata
 
 class TakePicture(Mode):
         #seconds
-    def __init__(self, picture_time, max_pic_altitude, speed, follow_altitude, height_diff):
+    def __init__(self, picture_time, max_pic_altitude, speed, follow_altitude):
         # Initialize the node which is inherited fromt the Mode super class
         super(self.__class__, self).__init__('take_picture_mode')
 
@@ -53,13 +54,12 @@ class TakePicture(Mode):
         self.altitude_command = Twist()
         self.altitude_command.linear.z = speed
 
-        self.max_pic_altitude = pic_altitude
+        self.max_pic_altitude = max_pic_altitude
         self.follow_altitude = follow_altitude
-        self.height_diff = height_diff
 
         self.picture_time = picture_time
         self.counter = 0
-        self.is_finished = False
+        self.finished = False
 
         # Initialize the the cv_image variable
         self.cv_image = None
@@ -73,8 +73,6 @@ class TakePicture(Mode):
         self.pub_altitude.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
-    def height_diff(self, max_pic_altitude, follow_altitude):
-        self.height_diff = self.max_altitudeGoal - self.follow_altitude
 
     def img_cb(self,data):
         try:
@@ -85,22 +83,24 @@ class TakePicture(Mode):
     def save_image(self):
         self.counter += 1
         rospy.loginfo("Taking Pictures")
-        while self.counter <= 500:
-            if self.counter < 10:
-                filename = "recon_00%d.jpg" % self.counter
-            elif self.counter < 100:
-                filename = "recon_0%d.jpg" % self.counter
-            else:
-                filename = "recon_%d.jpg" % self.counter
-            cv2.imwrite(filename, self.cv_image)
-            self.counter += 1
-            self.rate.sleep()
+        # while self.counter <= 500:
+        #     if self.counter < 10:
+        #         filename = "recon_00%d.jpg" % self.counter
+        #     elif self.counter < 100:
+        #         filename = "recon_0%d.jpg" % self.counter
+        #     else:
+        #         filename = "recon_%d.jpg" % self.counter
+            # cv2.imwrite(filename, self.cv_image)
+            # self.counter += 1
+            # self.rate.sleep()
+        filename = "recon_01.jpg"
+        cv2.imwrite(filename, self.cv_image)
         rospy.loginfo("Finished Taking Pictures")
         self.goto_land()
-        self.finished()
+        self.is_finished()
 
-    def finished(self):
-        self.is_finished = True
+    def is_finished(self):
+        self.finished = True
 
     #def start_timer(self):
     #    self.start_time = rospy.Time.now().to_sec()
@@ -121,7 +121,7 @@ class TakePicture(Mode):
     def pic_cmd(self, event):
         self.transition.data = 'PICTURE_COMMAND'
         self.pub_transition.publish(self.transition)
-        self.save_image()
+        #self.save_image()
 
     def navdata_cb(self, msg):
         # Mode of the QC, NOT the state of the state machine
