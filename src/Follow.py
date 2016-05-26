@@ -1,13 +1,16 @@
+
+
 #! /usr/bin/env python
 '''
-Follow Mode Test
+Follow
+
+Uses four PID controllers to make the QC follow the tag
+
 Written by: Josh Saunders
 Date: 4/11/2016
 
 Modified by: David Rojas, Josh Saunders
-Date Modified: 5/16/16, 5/20/2016
-
-This is to test the PID that controls the 4 Degrees Of Freedom (DOF) of the QC
+Date Modified: 5/16/16, 5/26/2016
 '''
 # We're using ROS
 import rospy
