@@ -36,7 +36,7 @@ class Controller(object):
         self.pid_z     = PID()
         self.pid_theta = PID()
 
-        # Set gains
+        # Set gains, integrators, derivators, and set points
         self.pid_x.setKp(pid_x[0])
         self.pid_x.setKi(pid_x[1])
         self.pid_x.setKd(pid_x[2])

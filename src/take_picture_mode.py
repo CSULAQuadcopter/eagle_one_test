@@ -1,11 +1,13 @@
 #! /usr/bin/env python
-"""
-Makes the QC take a picture
+'''
+Makes the QC take a picture. It increases the altitude to the proper altitude,
+then it takes pictures, then it decreases its altitude to the proper altitude.
+
 Created by: David Rojas
 Date Created: March 31, 2016
 Modified by: Josh Saunders and David Rojas
-Date Modified: 4/25/2016
-"""
+Date Modified: 4/25/2016, 5/26/2016
+'''
 # We're using ROS here
 import rospy
 
@@ -28,19 +30,7 @@ def state_cb(msg):
     global state
     state = msg.data
 
-# pub_transition = rospy.Publisher('/smach/transition', String, queue_size=1)
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
-
-#def is_in_box(minimum, maximum, position):
-#    """
-#    Checks if the position is within the given bounds
-#    """
-#    if ((minimum < position) and (position < maximum)):
-#        # print("In box")
-#        return True
-#    else:
-#        # print("Out box")
-#        return False
 
 def main(args):
     picture_time = 1 # seconds
@@ -48,10 +38,15 @@ def main(args):
     speed = 1
     follow_altitude = 2.5 # meters
     takepicture = TakePicture(picture_time, max_pic_altitude, speed, follow_altitude)
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(200)
 
     qc = Twist()
-
+    # HACK ity HACK HACK HACK
+    # We're assuming that the RC vehicle is moving in a straight line along the
+    # x-direction
+    # Determine/vary this value experimentally as needed. This will need to
+    # with different Euler angles set in the launch file
+    qc.linear.x = 0.5
 
     # TODO add a way to go to the next state, probably after the while loop
     while((state != 'take_picture')):
@@ -66,8 +61,10 @@ def main(args):
             if(takepicture.altitude <= takepicture.max_pic_altitude):
                 qc.linear.z  = speed
             elif(takepicture.altitude > takepicture.max_pic_altitude):
-                speed = 0
-                qc.linear.z  = speed
+                # NOTE: we may keep increasing the altitude while taking pictures
+                # BE CAREFUL!!!
+                # speed = 0
+                # qc.linear.z  = speed
                 takepicture.save_image()
                 if(takepicture.is_finished == True):
                     speed = -0.05
@@ -75,7 +72,7 @@ def main(args):
                         qc.linear.z  = speed
                     elif(takepicture.altitude <= takepicture.follow_altitude):
                         takepicture.goto_land()
-        ##pub_ctrl.publish(qc)
+        pub_ctrl.publish(qc)
         rate.sleep()
 
 if __name__ == '__main__':

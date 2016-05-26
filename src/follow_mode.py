@@ -49,7 +49,7 @@ def main():
     pid_x = (6, 0.625, 2.5, 0, 0, 500)
     pid_y = (6, 0.875, 3.75, 0, 0, 500)
     pid_z = (0.25,0,0,0,0,2.5)
-    pid_theta = (1/260,0,0,0,0,0)
+    pid_theta = (1/260.0,0,0,0,0,0)
 
     # set the bounding box
     bbx = (375, 625)
@@ -90,10 +90,10 @@ def main():
             # If 10 < theta < 350 then let's rotate
             # if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
             if ((yaw_min < navdata.theta < yaw_max)):
-                print "Yaw!"
                 yaw_update  = follow.pid_theta.update(navdata.theta)
+                # print "%.3f" % yaw_update
             else:
-                print "No yaw!"
+                # print "No yaw!"
                 yaw_update = 0
 
             # is_in_box(minimum, maximum, position)
@@ -115,7 +115,7 @@ def main():
         qc.angular.z = yaw_update
         qc.linear.x  = x_update
         qc.linear.y  = y_update
-        # qc.linear.z  = z_update
+        qc.linear.z  = z_update
 
         follow.pub_ctrl.publish(qc)
         rate.sleep()

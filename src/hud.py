@@ -159,8 +159,8 @@ class HUD:
         time            = "Time: %f "                % self.time
 
         info = "Sent Velocities"
-        linear_x    = "Vx: %.3f mm/s"    % self.twist.linear.x
-        linear_y    = "Vy: %.3f mm/s"    % self.twist.linear.y
+        linear_x    = "Vx: %.3f mm/s"    % (self.twist.linear.x/2500.0)
+        linear_y    = "Vy: %.3f mm/s"    % (self.twist.linear.y/2500.0)
         linear_z    = "Vz: %.3f mm/s"    % self.twist.linear.z
         angular_x = "Rx: %.3f rad/s" % self.twist.angular.x
         angular_y = "Ry: %.3f rad/s" % self.twist.angular.y
@@ -233,10 +233,13 @@ class HUD:
         vel_end = (center[0] + int(radius * math.cos(angle)), \
                              center[1] + int(radius * math.sin(angle)))
 
-        # Draw the circle and line
+        # Draw the heading
+        heading = "Heading"
+        font = cv2.FONT_HERSHEY_PLAIN
         if not (vx == 0 and vy ==0):
             cv2.line(cv_image,     center, vel_end, color, thickness)
-        cv2.circle(cv_image, center, radius,    color, thickness)
+        cv2.putText(cv_image, heading, (480, 210), font, 1.25, color)
+        cv2.circle(cv_image, center, radius, color, thickness)
 
     def set_battery_font(self, medium, low):
         """
