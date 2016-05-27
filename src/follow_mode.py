@@ -40,7 +40,6 @@ from ardrone_autonomy.msg import Navdata
 # sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main():
-    speed = -.05	 # m/s
     min_altitude = 0.8  # mm
     altitude_goal = 2.5# mm
     height_diff = 0 #mm
@@ -48,7 +47,7 @@ def main():
     # pid_i = (kp, ki, kd, integrator, derivator, set_point)
     pid_x = (6, 0.625, 2.5, 0, 0, 500)
     pid_y = (6, 0.875, 3.75, 0, 0, 500)
-    pid_z = (0.25,0,0,0,0,2.5)
+    pid_z = (0.1,0,0,0,0,altitude_goal)
     pid_theta = (1/260.0,0,0,0,0,0)
 
     # set the bounding box
@@ -82,15 +81,23 @@ def main():
 
     while not rospy.is_shutdown():
         # always update the altitude
-        z_update = follow.pid_z.update(z_update)
+        if not (altitude_goal - 0.25 < navdata.altitude < altitude_goal + 0.25):
+        # if (navdata.altitude < altitude_goal):
+            z_update = follow.pid_z.update(navdata.altitude)
         # print("Theta %.2f"  % navdata.theta)
         # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
+        if (altitude_goal  - 0.25 < navdata.altitude):
+            qc.linear.z = 0.25
+        elif (navdata.altitude < altitude_goal + 0.25):
+            qc.linear.z = -0.25
+        else:
+            qc.linear.z = 0
 
         if (navdata.tag_acquired):
             # If 10 < theta < 350 then let's rotate
-            # if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
-            if ((yaw_min < navdata.theta < yaw_max)):
-                yaw_update  = follow.pid_theta.update(navdata.theta)
+            if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
+            # if ((yaw_min < navdata.theta < yaw_max)):
+                yaw_update  = follow.pid_theta.update(navdata.theta-180)
                 # print "%.3f" % yaw_update
             else:
                 # print "No yaw!"
@@ -115,7 +122,7 @@ def main():
         qc.angular.z = yaw_update
         qc.linear.x  = x_update
         qc.linear.y  = y_update
-        qc.linear.z  = z_update
+        # qc.linear.z  = z_update
 
         follow.pub_ctrl.publish(qc)
         rate.sleep()

@@ -57,7 +57,7 @@ class navdata_info(object):
         self.pitch = math.radians(data.rotX)
         if data.tags_count > 0:
             self.tag_acquired = True
-            self.theta = self.navdata.tags_orientation[0]
+            self.theta = self.navdata.tags_orientation[0] - 180
             # These are actually switched for the controller purposes
             self.prev_tag_x = self.tag_x
             self.tag_x = self.navdata.tags_yc[0]
@@ -82,8 +82,8 @@ class navdata_info(object):
 
     def altd_cb(self, data):
         # Convert the altitude to m (from mm)
-        # self.altitude = data.altitude_raw/1000.0
-        self.altitude = data.altitude_raw
+        self.altitude = data.altitude_raw/1000.0
+        # self.altitude = data.altitude_raw
         # alt = Float32()
         # # alt.data = self.altitude
         # pub_alt.publish(alt)

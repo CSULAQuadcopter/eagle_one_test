@@ -25,7 +25,7 @@ from Takeoff import Takeoff
 # if landed, takeoff
 # TODO only works when altitude_goal is 3.0 m or lower, need to fix
 def main():
-    speed = 1	 # m/s
+    speed = 0.75	 # m/s
     altitude_goal = 2.5 # meters
     tag_timeout = 10 # seconds
     takeoff = Takeoff(speed, altitude_goal, tag_timeout)
@@ -49,10 +49,10 @@ def main():
     while not rospy.is_shutdown():
         # We only want to execute these manuevers if we're in takeoff mode
         if takeoff.state == 'takeoff':
-            if(takeoff.altitude < takeoff.max_altitude):
+            if(takeoff.altitude < altitude_goal):
                 rospy.loginfo("Go up!")
                 takeoff.change_altitude()
-            elif(takeoff.altitude >= takeoff.max_altitude):
+            elif(takeoff.altitude >= altitude_goal):
                 speed = 0
                 rospy.loginfo("Stop!")
                 # takeoff.change_altitude(speed)

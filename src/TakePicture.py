@@ -37,7 +37,7 @@ class TakePicture(Mode):
         self.image_sub = rospy.Subscriber("/ardrone/image_raw",Image,self.img_cb)
 
         #ROS Publishers
-        self.pub_altitude = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.pub_ctrl = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.pub_transition = rospy.Publisher('smach/transition', String, queue_size=1)
 
         self.rate = rospy.Rate(10)
@@ -70,7 +70,7 @@ class TakePicture(Mode):
 
     def change_altitude(self):
         self.altitude_command.linear.z = self.speed
-        self.pub_altitude.publish(self.altitude_command)
+        self.pub_ctrl.publish(self.altitude_command)
         rospy.loginfo("Change altitude")
 
 
@@ -83,7 +83,7 @@ class TakePicture(Mode):
     def save_image(self):
         self.counter += 1
         rospy.loginfo("Taking Pictures")
-        while self.counter <= 500:
+        while self.counter <= 5:
             if self.counter < 10:
                 filename = "recon_00%d.jpg" % self.counter
             elif self.counter < 100:
