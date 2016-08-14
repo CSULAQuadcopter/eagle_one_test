@@ -26,7 +26,7 @@ from Navdata import navdata_info
 
 # Python libraries
 from sys import argv
-import datetime
+from datetime import datetime
 
 # This let's us write to an Excel file
 import xlsxwriter
@@ -34,12 +34,9 @@ import xlsxwriter
 # Take the argument from the terminal and use it as part of the filename
 script, test_name = argv
 
-# Create the file names
-now = datetime.datetime.now()
-timestamp = str(now.year) + '-' + str(now.month) + '-' + str(now.hour) + '-'
-timestamp += str(now.minute) + '-' + str(now.second)
+# Create the file name
+timestamp = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 filename = test_name + '-' + timestamp +  '.xlsx'
-
 
 # Create the Excel files with the given file name
 workbook = xlsxwriter.Workbook(filename)
