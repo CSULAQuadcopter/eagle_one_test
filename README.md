@@ -12,5 +12,5 @@ flight of the AR.Drone 2.0.
 * ardrone_tutorials
 
 ### Python Packages
-* XlsxWriter
-* transitions
+* [XlsxWriter](https://xlsxwriter.readthedocs.io/)
+* [transitions](https://github.com/tyarkoni/transitions)
