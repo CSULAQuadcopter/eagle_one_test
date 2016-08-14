@@ -83,7 +83,3 @@ class navdata_info(object):
     def altd_cb(self, data):
         # Convert the altitude to m (from mm)
         self.altitude = data.altitude_raw/1000.0
-        # self.altitude = data.altitude_raw
-        # alt = Float32()
-        # # alt.data = self.altitude
-        # pub_alt.publish(alt)

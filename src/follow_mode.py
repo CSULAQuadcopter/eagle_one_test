@@ -30,14 +30,14 @@ from geometry_msgs.msg import Twist
 from ardrone_autonomy.msg import Navdata
 
 #
-# state = 'nada'
-#
-# def state_cb(msg):
-#     global state
-#     state = msg.data
+state = 'nada'
+
+def state_cb(msg):
+    global state
+    state = msg.data
 # ##
 # #pub_transition = rospy.Publisher('/smach/transition', String, queue_size=1)
-# sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
+sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main():
     min_altitude = 0.8  # mm
@@ -80,44 +80,45 @@ def main():
         rate.sleep()
 
     while not rospy.is_shutdown():
-        # always update the altitude
-        if not (altitude_goal - 0.25 < navdata.altitude < altitude_goal + 0.25):
-        # if (navdata.altitude < altitude_goal):
-            z_update = follow.pid_z.update(navdata.altitude)
-        # print("Theta %.2f"  % navdata.theta)
-        # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
-        if (altitude_goal  - 0.25 < navdata.altitude):
-            qc.linear.z = 0.25
-        elif (navdata.altitude < altitude_goal + 0.25):
-            qc.linear.z = -0.25
-        else:
-            qc.linear.z = 0
-
-        if (navdata.tag_acquired):
-            # If 10 < theta < 350 then let's rotate
-            if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
-            # if ((yaw_min < navdata.theta < yaw_max)):
-                yaw_update  = follow.pid_theta.update(navdata.theta-180)
-                # print "%.3f" % yaw_update
+        if(state == 'follow'):
+            # always update the altitude
+            # if not (altitude_goal - 0.25 < navdata.altitude < altitude_goal + 0.25):
+            # if (navdata.altitude < altitude_goal):
+                # z_update = follow.pid_z.update(navdata.altitude)
+            # print("Theta %.2f"  % navdata.theta)
+            # print("(%d, %d)"  % (navdata.tag_x, navdata.tag_y))
+            if (navdata.altitude < altitude_goal  - 0.25):
+                qc.linear.z = 0.25
+            elif (altitude_goal + 0.25 < navdata.altitude):
+                qc.linear.z = -0.25
             else:
-                # print "No yaw!"
-                yaw_update = 0
+                qc.linear.z = 0
 
-            # is_in_box(minimum, maximum, position)
-            if (follow.is_in_box(bbx_min, bbx_max, navdata.tag_y) and follow.is_in_box(bby_min, bby_max, navdata.tag_x)):
-                # If the QC is in the bounding box then we should enter 'Hover'
-                # mode and just hang there
-                x_update = 0
-                y_update = 0
-                # # qc.angular.x = 0.0
-                # qc.angular.y = 0.0
-                # print("In the Box")
+            if (navdata.tag_acquired):
+                # If 10 < theta < 350 then let's rotate
+                if ((yaw_min < navdata.theta) and (navdata.theta < yaw_max)):
+                # if ((yaw_min < navdata.theta < yaw_max)):
+                    yaw_update  = follow.pid_theta.update(navdata.theta-180)
+                    # print "%.3f" % yaw_update
+                else:
+                    # print "No yaw!"
+                    yaw_update = 0
 
-            else:
-                # It's not in the bounding box therefore we should update the PIDs
-                x_update  = follow.pid_x.update(navdata.tag_x)
-                y_update  = follow.pid_y.update(navdata.tag_y)
-                # print("%.3f" % follow.pid_x.getError())
+                # is_in_box(minimum, maximum, position)
+                if (follow.is_in_box(bbx_min, bbx_max, navdata.tag_y) and follow.is_in_box(bby_min, bby_max, navdata.tag_x)):
+                    # If the QC is in the bounding box then we should enter 'Hover'
+                    # mode and just hang there
+                    x_update = 0
+                    y_update = 0
+                    # # qc.angular.x = 0.0
+                    # qc.angular.y = 0.0
+                    # print("In the Box")
+
+                else:
+                    # It's not in the bounding box therefore we should update the PIDs
+                    x_update  = follow.pid_x.update(navdata.tag_x)
+                    y_update  = follow.pid_y.update(navdata.tag_y)
+                    # print("%.3f" % follow.pid_x.getError())
 
         qc.angular.z = yaw_update
         qc.linear.x  = x_update

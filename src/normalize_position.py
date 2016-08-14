@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""
+'''
 Normalizes the tag. Without this, from the perspective of the QC, the tag will
 move when either pitching or rolling. By using some trig, the tag will appear
 to be stationary when pitching and rolling.
@@ -9,7 +9,7 @@ Much of this information was sourced from:
 http://ludep.com/tracking-algorithm-condsidering-the-inclination-of-the-drone
 
 When using this, take care to set the origin of the image to be the center of
-the image (i.e. both x and y of the image should be [-500px, +500px])
+the image (i.e. both x and y of the image should be [x - 500px, y + 500px])
 
 NOTE:
     Inputs:
@@ -30,7 +30,7 @@ Date Created: 5/5/2016
 
 Modified by:
 Date Modified:
-"""
+'''
 import math
 
 alpha   = math.radians(32)

@@ -33,7 +33,7 @@ def state_cb(msg):
 sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main(args):
-    picture_time = 1 # seconds
+    picture_time = 10 # seconds
     max_pic_altitude = 4.6 # meters
     speed = 1
     follow_altitude = 2.5 # meters
@@ -46,7 +46,7 @@ def main(args):
     # x-direction
     # Determine/vary this value experimentally as needed. This will need to
     # with different Euler angles set in the launch file
-    # qc.linear.x = 0.5
+    qc.linear.x = 0.5
 
     # TODO add a way to go to the next state, probably after the while loop
     while((state != 'take_picture')):
@@ -58,21 +58,23 @@ def main(args):
         ##z_update = ctrl.pid_z.update(z_update)
         # We only want to execute these manuevers if we're in take_picture mode
         if state == 'take_picture':
+
             if(takepicture.altitude <= takepicture.max_pic_altitude):
                 qc.linear.z  = speed
             elif(takepicture.altitude > takepicture.max_pic_altitude):
                 # NOTE: we may keep increasing the altitude while taking pictures
                 # BE CAREFUL!!!
-                # speed = 0
-                # qc.linear.z  = speed
+                speed = 0
+                qc.linear.z  = speed
                 takepicture.save_image()
                 if(takepicture.is_finished == True):
-                    speed = -0.15
+                    speed = -0.3
                     if(takepicture.altitude > takepicture.follow_altitude):
                         qc.linear.z  = speed
                     elif(takepicture.altitude <= takepicture.follow_altitude):
-                        qc.linear.z  = 0
+                        # qc.linear.z  = 0
                         takepicture.goto_land()
+                        # break
         takepicture.pub_ctrl.publish(qc)
         rate.sleep()
 

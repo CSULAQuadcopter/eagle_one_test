@@ -41,7 +41,7 @@ from ardrone_autonomy.msg import Navdata
 # sub_state = rospy.Subscriber('/smach/state', String, state_cb, queue_size=1000)
 
 def main():
-    speed = -.05	 # m/s
+    speed = -.5	 # m/s
     min_altitude = 0.8  # mm
     max_altitudeGoal = 2.5# mm
     height_diff = 0 #mm
@@ -122,13 +122,13 @@ def main():
             # print("%.3f m" % land.altitude)
             if(land.altitude > land.min_altitude):
                 print("Go down")
-                qc.linear.z  = speed
-                # if(land.height_diff > land.min_altitude):
-                #     # qc.linear.z  = speed
-                #     rate.sleep()
-                #     print("Descending")
-                # elif(land.height_diff <= land.min_altitude):
-                #     qc.linear.z  = 0
+                # qc.linear.z  = speed
+                if(land.height_diff > land.min_altitude):
+                    qc.linear.z = speed
+                    rate.sleep()
+                    print("Descending")
+                elif(land.height_diff <= land.min_altitude):
+                    qc.linear.z  = 0
             else:
             # elif((land.altitude < land.min_altitude)):
                 if not (land.altitude == 0):
@@ -139,7 +139,7 @@ def main():
                     rospy.loginfo("Going to secure mode")
                     land.goto_secure()
 
-        qc.angular.z = yaw_update
+        # qc.angular.z = yaw_update
         qc.linear.x  = x_update
         qc.linear.y  = y_update
         # qc.linear.z  = z_update

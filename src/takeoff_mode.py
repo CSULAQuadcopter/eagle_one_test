@@ -29,7 +29,7 @@ def main():
     altitude_goal = 2.5 # meters
     tag_timeout = 10 # seconds
     takeoff = Takeoff(speed, altitude_goal, tag_timeout)
-    rate = rospy.Rate(100) # 100Hz
+    rate = rospy.Rate(200) # 100Hz
 
     # To let us know that the mode is working
     rospy.loginfo("Started Takeoff Mode")
