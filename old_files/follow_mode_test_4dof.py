@@ -182,9 +182,9 @@ def main():
     # sub_navdata = rospy.Subscriber('ardrone/navdata', Navdata, navdata_callback)
 
     follow_yaw = YawControl(350, 10, -0.5)
-    follow_x   = XControl(270, 90, 0.075)
-    follow_y   = YControl(480, 160, 0.075)
-    # follow_z   = ZControl(1100, 1000, 0.1)
+    follow_x   = XControl(225, 135, 0.075)
+    follow_y   = YControl(400, 240, 0.075)
+    follow_z   = ZControl(1200, 1150, 0.25)
 
     # Hopefully this continues until we turn off the program in the control window
     while not rospy.is_shutdown():
@@ -193,7 +193,7 @@ def main():
         qc.linear.x = follow_x.check_x()
 
         qc.linear.y = follow_y.check_y()
-        # qc.linear.z = follow_z.check_z()
+        qc.linear.z = follow_z.check_z()
 
         pub_qc.publish(qc)
         rate.sleep()

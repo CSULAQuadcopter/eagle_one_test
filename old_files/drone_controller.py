@@ -39,15 +39,15 @@ class BasicDroneController(object):
 
 		# Allow the controller to publish to the /cmd_vel topic and thus control the drone
 		self.pubCommand = rospy.Publisher('/cmd_vel',Twist)
-		self.start_pub = rospy.Publisher("/eagle_one/start",String,queue_size=1)
+		# self.start_pub = rospy.Publisher("/eagle_one/start",String,queue_size=1)
 
 		# Setup regular publishing of control packets
 		self.command = Twist()
 		self.commandTimer = rospy.Timer(rospy.Duration(COMMAND_PERIOD/1000.0),self.SendCommand)
 
 		# Setup regular publishing of state packets
-		elf.stateTimer = rospy.Timer(rospy.Duration(COMMAND_PERIOD/1000.0),self.SendState)
-		self.state = String()
+		# elf.stateTimer = rospy.Timer(rospy.Duration(COMMAND_PERIOD/1000.0),self.SendState)
+		# self.state = String()
 
 		# Land the drone if we are shutting down
 		rospy.on_shutdown(self.SendLand)
@@ -83,8 +83,8 @@ class BasicDroneController(object):
 		if self.status == DroneStatus.Flying or self.status == DroneStatus.GotoHover or self.status == DroneStatus.Hovering:
 			self.pubCommand.publish(self.command)
 
-	def SetState(self,state):
-		self.state.data = state
-
-	def SendState(self, event):
-		self.start_pub(self.state)
+	# def SetState(self,state):
+	# 	self.state.data = state
+	#
+	# def SendState(self, event):
+	# 	self.start_pub(self.state)

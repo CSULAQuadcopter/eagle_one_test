@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import sys
 import rospy
 from eagle_one_test.srv import *
@@ -9,8 +8,9 @@ states = ['secure', 'takeoff', 'follow', 'take_picture', \
 
 transitions = ['TAKEOFF_COMMAND', 'TAKEOFF_ALT_REACHED', 'PICTURE_COMMAND', \
                'PICTURE_TAKEN', 'LAND_ALT_REACHED', 'EMERGENCY_CONDITION', \
-               'TAG_LOST', 'TAKEOFF_TAG_FOUND', 'FOLLOW_TAG_FOUND', \
-               'LAND_TAG_FOUND', 'TIMED_OUT']
+               'TAKEOFF_TAG_LOST', 'FOLLOW_TAG_LOST', 'LAND_TAG_LOST', 'TAKE_PICTURE_TAG_LOST' \
+               'TAKEOFF_TAG_FOUND' , 'FOLLOW_TAG_FOUND' , 'LAND_TAG_FOUND' , 'TAKE_PICTURE_TAG_FOUND'\
+               'TIMED_OUT' , 'RESET']
 
 def send_transition(current_state, transition):
     rospy.wait_for_service('qc_smach')

@@ -19,7 +19,7 @@
 	    <!-- in millimeters = 5cm = 2" -->
         <param name="altitude_min" value="100" />
         <!-- maximum allowable body angle in radians = 5 degrees (0.1)-->
-        <param name="euler_angle_max" value="0.1" />
+        <param name="euler_angle_max" value="0." />
 		<!-- maximum z velocity in mm/sec = 0.2m/sec (100)-->
         <param name="control_vz_max" value="0.9" />
 		<!-- maximum rotation rate in radians/sec = 40 degrees per second (1/9 rev/sec) (0.7)-->

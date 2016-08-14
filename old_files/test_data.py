@@ -3,15 +3,11 @@
 Test Data
 Written by: Josh Saunders
 Date: 4/11/2016
-
 Saves messages to a file
-
 Use:      in the terminal type: ./test_data.py [filename_of_bag]
-
 Messages: /ardrone/navdata/tags_xc[0]
           /ardrone/navdata/tags_xc[0]
           /ardrone/navdata/tags_orientation[0]
-
 Files:    'tag_x_'     + argv[1] + '.txt'
           'tag_y_'     + argv[1] + '.txt'
           'tag_theta_' + argv[1] + '.txt'

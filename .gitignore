@@ -3,3 +3,9 @@
 
 # Ignore *~
 *~
+
+# Ignore *.xlsx
+*.xlsx
+
+# Ignore *.bag
+*.bag
